@@ -52,18 +52,18 @@ function App() {
       </Row>
       <div id="coverage-content">
         <p>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
-          really informative and educational information is what this<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
+          really informative and educational information is what this is.<br/>
         </p>
       </div>
     </Container>
