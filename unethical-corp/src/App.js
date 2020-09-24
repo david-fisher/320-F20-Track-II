@@ -1,40 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Chart from 'chart.js';
-
-// const value = 1.6
-// const chartConfig = {
-//   type: 'radar',
-//   data: {
-//     labels: ["Safety", "Privacy", "Reputation", "Salary"],
-//     datasets: [{
-//       label: "Student A",
-//       backgroundColor: colorLimit(value),
-//       data: [65, 75, 70, 80]
-//     }]
-//   },
-
-//   options: {
-//     scale: {
-//       ticks: {
-//         beginAtZero: true,
-//         min: 0
-//       }
-//     }
-//   }
-// };
+import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 
 function App() {
-
-
 
   const chartContainer = useRef(null);
   const [chartInstance, setChartInstance] = useState(null);
   // state for input
   const [input, setInput] = useState(0);
   const chartConfig = onChartChange(input)
-
 
   useEffect(() => {
     if (chartContainer && chartContainer.current) {
@@ -44,19 +24,60 @@ function App() {
   }, [chartContainer]);
 
   return (
-    <div>
-      <canvas
-        ref={chartContainer}
-      />
-      <form>
-        <label>
-          Input:
-          <input type="text" value={input} onChange={(event) => { setInput(event.target.value) }} />
-        </label>
+    <>
+    <Container>
+      <Row>
+        {/* <div className="h-centered"> */}
+          <h3 className="h-centered">Coverage Of Issues</h3>
+        {/* </div> */}
+      </Row>
+      <Row>
+        <Col>
+          <Button variant="light">Back</Button>
+        </Col>
+        <Col>
+          <div className="text-right"><Button variant="primary">Next</Button></div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <canvas
+            ref={chartContainer}
+            id="coverage-plot"
+            className="h-centered"
+          />
+          <div id="coverage-content">
+            <p>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+              really informative and educational information is what this<br/>
+            </p>
+          </div>
+          {/* <form>
+            <label>
+              Input:
+              <input type="text" value={input} onChange={(event) => { setInput(event.target.value) }} />
+            </label>
 
-      </form>
+          </form> */}
+        </Col>
+      </Row>
+    </Container>
+    
+    <div>
+
 
     </div>
+    </>
   );
 }
 
@@ -76,11 +97,11 @@ function onChartChange(input) {
   return {
     type: 'radar',
     data: {
-      labels: ["Safety", "Privacy", "Reputation", "Salary"],
+      labels: ["Safety", "Salary", "Reputation", "Privacy"],
       datasets: [{
         label: "Student A",
         backgroundColor: colorLimit(input),
-        data: [65, 75, 70, 80]
+        data: [0.5, 0.667, 1.0, 0.8]
       }]
     },
 
