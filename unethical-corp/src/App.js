@@ -26,10 +26,8 @@ function App() {
   return (
     <>
     <Container>
-      <Row>
-        {/* <div className="h-centered"> */}
-          <h3 className="h-centered">Coverage Of Issues</h3>
-        {/* </div> */}
+      <Row className="justify-content-center">
+          <h3 >Coverage Of Issues</h3>
       </Row>
       <Row>
         <Col>
@@ -39,29 +37,11 @@ function App() {
           <div className="text-right"><Button variant="primary">Next</Button></div>
         </Col>
       </Row>
-      <Row>
-        <Col>
+      <Row className="justify-content-center">
           <canvas
             ref={chartContainer}
             id="coverage-plot"
-            className="h-centered"
           />
-          <div id="coverage-content">
-            <p>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-              really informative and educational information is what this<br/>
-            </p>
-          </div>
           {/* <form>
             <label>
               Input:
@@ -69,8 +49,23 @@ function App() {
             </label>
 
           </form> */}
-        </Col>
       </Row>
+      <div id="coverage-content">
+        <p>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+          really informative and educational information is what this<br/>
+        </p>
+      </div>
     </Container>
     
     <div>
