@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 const scenarios = [{id : 1, name : 'Walmart Tech Lab', desc : '', stakeholders: [{name: 'Professor Ron'}]},
-{id : 2, name : 'Uber Eats', desc : '', stakeholders: [{name: 'Professor Sarah'}, [name: 'Company Lawyer']]}]
+{id : 2, name : 'Uber Eats', desc : '', stakeholders: [{name: 'Professor Sarah'}, {name: 'Company Lawyer'}]}]
 app.use(bodyParser.json())
 
 
