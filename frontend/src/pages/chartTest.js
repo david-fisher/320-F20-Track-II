@@ -58,7 +58,6 @@ function RadarTest(props) {
     for (let issue in Total_Emphasis) {
         Coverage[issue] = Student_Emphasis[issue] / Total_Emphasis[issue];
     }
-    console.log(Coverage)
     const Ethcical_Importance = {
         issue1: 0.5,
         issue2: 0.9,

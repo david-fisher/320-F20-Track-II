@@ -11,7 +11,7 @@ import Radar from './chart/chart';
 
 function Results() {
     let Summary_Value = 2.03;
-    let Coverage = { Safety: 0.5, Salary: 0.667,  Reputation: 1.0 , Privacy: 0.8}
+    let Coverage = { Safety: 0.5, Salary: 0.667, Reputation: 1.0, Privacy: 0.8 }
     return (
         <div>
             <Container>
