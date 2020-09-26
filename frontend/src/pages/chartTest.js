@@ -58,7 +58,7 @@ function RadarTest(props) {
     for (let issue in Total_Emphasis) {
         Coverage[issue] = Student_Emphasis[issue] / Total_Emphasis[issue];
     }
-
+    console.log(Coverage)
     const Ethcical_Importance = {
         issue1: 0.5,
         issue2: 0.9,
@@ -90,9 +90,7 @@ function RadarTest(props) {
                     </Col>
                 </Row>
                 <Row className="justify-content-center">
-                    <Radar key={testInput1 + testInput2 + testInput3 + ''} coverage={Coverage} summary={Summary_Value}
-
-                    />
+                    <Radar key={testInput1 + testInput2 + testInput3 + ''} coverage={Coverage} summary={Summary_Value} />
                 </Row>
                 <br />
                 {/* { <form> */}
