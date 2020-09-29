@@ -9,7 +9,7 @@ function App() {
     <div>
       <body>
 
-        <h1>About Us</h1>
+        <h1>Home Page</h1>
         <p>Lorem Ipsum Porem Lorem Ipsum Porem</p>
 
       </body>
