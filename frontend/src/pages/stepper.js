@@ -32,8 +32,8 @@ function getSteps() {
     <Button style={{ color: "#A80909" }}>Gathered Information</Button>,
     <Button style={{ color: "#A80909" }}>Stakeholders</Button>,
     <Button style={{ color: "#A80909" }}>Results</Button>,
-    <Button diabled>Feedback</Button>,
-    <Button diabled>Response</Button>,
+    <Button disabled>Feedback</Button>,
+    <Button disabled>Response</Button>,
   ];
 }
 
