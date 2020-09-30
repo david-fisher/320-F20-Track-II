@@ -8,7 +8,8 @@ import Col from "react-bootstrap/Col";
 import Grid from "@material-ui/core/grid";
 import Stepper from "./stepper.js";
 import Radar from "./chart/chart";
-import EMenu from "./notesMenu.js";
+import CustomizedMenus from "./notesMenu.js";
+import VirtualizedList from "./gatheredList.js";
 import { Typography, Box } from "@material-ui/core";
 
 function Results() {
@@ -51,7 +52,7 @@ function Results() {
           </Typography>
         </Grid>
         <Grid item lg={3}>
-          <EMenu />
+          <VirtualizedList/>
         </Grid>
       </Grid>
     </div>
