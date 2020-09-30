@@ -35,17 +35,16 @@ renderRow.propTypes = {
 export default function VirtualizedList() {
   const classes = useStyles();
 
-  let [showContent, setShowContent] = React.useState(true);
+  let [showList, setShowContent] = React.useState(true);
 
-  const test = () => {
-    setShowContent(bool => !bool)
-    console.log(showContent);
+  const toggleShow = () => {
+    setShowContent(show => !show)
   };
 
   return (
     <div className={classes.root}>
-      <Button onClick={test}>Gathered Information</Button>
-      {showContent &&
+      <Button onClick={toggleShow}>Gathered Information</Button>
+      {showList &&
         <List>
           <ListItem button>
             <ListItemText height={400} width={300} itemSize={46} itemCount={200}>
