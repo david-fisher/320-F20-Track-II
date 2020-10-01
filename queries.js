@@ -33,13 +33,18 @@ const getScenraioById = (request, response) => {
 
 //create a new scenraio
 const createScenario = (request, response) => {
+    // const name = request.params.name
+    // const stakeholder = request.params.stakeholder
+    // console.log(name)
     const { name, stakeholder } = request.body
   
     pool.query('INSERT INTO scenarios (name, stakeholder) VALUES ($1, $2)', [name, stakeholder], (error, results) => {
       if (error) {
         throw error
       }
-      response.status(201).send(`User added with ID: ${result.insertId}`)
+      // console.log(results.rows)
+      response.status(200).send(`Created scenario with name: ${name} and stakeholder: ${stakeholder}`)
+      console.log(`Created scenario with name: ${name} and stakeholder: ${stakeholder}`)
     })
 }
 
@@ -55,7 +60,8 @@ const updateScenario = (request, response) => {
         if (error) {
           throw error
         }
-        response.status(200).send(`User modified with ID: ${id}`)
+        response.status(200).send(`Updated scenario with ID: ${id}`)
+        console.log(`Updated scenario with ID: ${id}`)
       }
     )
 }
@@ -68,7 +74,8 @@ const deleteScenario = (request, response) => {
       if (error) {
         throw error
       }
-      response.status(200).send(`User deleted with ID: ${id}`)
+      response.status(200).send(`Deleted scenario with ID: ${id}`)
+      console.log(`Deleted scenario with id: ${id}`)
     })
 }
 

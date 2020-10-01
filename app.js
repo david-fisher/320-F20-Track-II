@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.get('/scenarios', db.getScenarios)
 app.get('/scenarios/:id', db.getScenraioById)
-app.post('/scenarios', db.createScenario)
+app.post('/scenarios/', db.createScenario)
 app.put('/scenarios/:id', db.updateScenario)
 app.delete('/scenarios/:id', db.deleteScenario)
 
