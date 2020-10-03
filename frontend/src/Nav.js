@@ -13,6 +13,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import SimulationWindow from "./pages/simulationWindow";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,12 +44,15 @@ function Nav() {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" className={classes.title}>
+              <Typography variant='h6' className={classes.title}>
                 <Link style={{ color: "#FFF" }} to="/">
                   <Button color="inherit">Home</Button>
                 </Link>
                 <Link style={{ color: "#FFF" }} to="/results">
                   <Button color="inherit">Results</Button>
+                </Link>
+                <Link style={{ color: "#FFF" }} to="/simulation">
+                  <Button color="inherit">Simulation Window</Button>
                 </Link>
                 <Link style={{ color: "#FFF" }} to="/chartTest">
                   <Button color="inherit">Chart</Button>
@@ -66,6 +70,9 @@ function Nav() {
             </Route>
             <Route path="/results" exact>
               <Results />
+            </Route>
+            <Route path="/simulation" exact>
+              <SimulationWindow/>
             </Route>
             <Route path="/chartTest" exact>
               <RadarTest />

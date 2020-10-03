@@ -4,9 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-//import { FixedSizeList } from 'react-window';
 import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,13 +45,13 @@ export default function VirtualizedList() {
       {showList &&
         <List>
           <ListItem button>
-            <ListItemText height={400} width={300} itemSize={46} itemCount={200}>
+            <ListItemText height={400} width={300}>
               StakeHolder 1
           </ListItemText>
           </ListItem>
 
           <ListItem button>
-            <ListItemText height={400} width={300} itemSize={46} itemCount={200}>
+            <ListItemText height={400} width={300}>
               StakeHolder 2
           </ListItemText>
           </ListItem>

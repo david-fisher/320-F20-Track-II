@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Chart from 'chart.js';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
 import Radar from './chart/chart';
 
 
@@ -34,15 +32,15 @@ function RadarTest(props) {
     const Total_Emphasis = {};
     for (let conversant in scenario_scoring_matrix) {
         for (let issue in scenario_scoring_matrix[conversant]) {
-            Total_Emphasis[issue] = (Total_Emphasis[issue] == undefined) ? scenario_scoring_matrix[conversant][issue] : scenario_scoring_matrix[conversant][issue] + Total_Emphasis[issue]
+            Total_Emphasis[issue] = (Total_Emphasis[issue] === undefined) ? scenario_scoring_matrix[conversant][issue] : scenario_scoring_matrix[conversant][issue] + Total_Emphasis[issue]
         }
     }
     // a perfect student
     let Student_Emphasis = {};
-    if (testInput1 == 0 && testInput2 == 0 && testInput3 == 0) {
+    if (testInput1 === 0 && testInput2 === 0 && testInput3 === 0) {
         for (let conversant in scenario_scoring_matrix) {
             for (let issue in scenario_scoring_matrix[conversant]) {
-                Student_Emphasis[issue] = (Student_Emphasis[issue] == undefined) ? scenario_scoring_matrix[conversant][issue] : scenario_scoring_matrix[conversant][issue] + Student_Emphasis[issue]
+                Student_Emphasis[issue] = (Student_Emphasis[issue] === undefined) ? scenario_scoring_matrix[conversant][issue] : scenario_scoring_matrix[conversant][issue] + Student_Emphasis[issue]
             }
         }
     } else {
