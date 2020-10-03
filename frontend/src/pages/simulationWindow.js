@@ -20,7 +20,7 @@ function SimulationWindow() {
       </Grid>
       <Grid container spacing={2}>
         <Grid item lg={3}>
-          <Stepper />
+          <Stepper activePage={activePage} pages={pages} key={activePage} />
         </Grid>
         <Grid item lg={6}>
             {React.cloneElement(pages[activePage].html, {

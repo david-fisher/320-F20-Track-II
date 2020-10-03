@@ -24,17 +24,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getSteps() {
-  return [
-    <Button style={{ color: "#A80909" }}>Introduction</Button>,
-    <Button style={{ color: "#A80909" }}>Project Assignment</Button>,
-    <Button style={{ color: "#A80909" }}>Response</Button>,
-    <Button style={{ color: "#A80909" }}>Gathered Information</Button>,
-    <Button style={{ color: "#A80909" }}>Stakeholders</Button>,
-    <Button style={{ color: "#A80909" }}>Results</Button>,
-    <Button disabled>Feedback</Button>,
-    <Button disabled>Response</Button>,
-  ];
+function getSteps(stepNum) {
+  let stepArr = [];
+  let stepNameArr = ['Introduction', 'Project Assignment','Response', 'Gathered Information', 'Stakeholders','Results', 'FeedBack', 'Response'];
+  for(let i = 0; i < stepNum + 1; i++){
+    stepArr.push(<Button style={{ color: "#A80909" }}>{stepNameArr[i]}</Button>)
+  }
+  for(let i = stepNum + 1; i < 8; i++){
+    stepArr.push(<Button disabled>{stepNameArr[i]}</Button>)
+  }
+  
+  return stepArr;
+}
+
+function getCurrentPageNum(pageName){
+  let stepNameArr = ['introduction', 'projectAssignment','responseOne', 'gatheredInformation', 'stakeholders','results', 'feedBack', 'response'];
+  for(let i = 0; i < stepNameArr.length; i++){
+    if(pageName == stepNameArr[i]){
+      return i;
+    }
+  }
 }
 
 function getStepContent(step) {
@@ -50,10 +59,13 @@ function getStepContent(step) {
   }
 }
 
-export default function VerticalLinearStepper() {
+export default function VerticalLinearStepper(props) {
+  //<Stepper activePage={activePage} pages={pages} />
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps();
+  const pages =  props.pages;
+  let curr = getCurrentPageNum(props.activePage);
+  const [activeStep, setActiveStep] = React.useState(curr);
+  const steps = getSteps(activeStep);
 
   return (
     <div className={classes.root}>

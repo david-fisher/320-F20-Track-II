@@ -9,7 +9,6 @@ function Radar(props) {
     // state for input
 
     const chartConfig = onChartChange(props.summary)
-    console.log(Object.keys(coverage), 'coverage')
     useEffect(() => {
         if (chartContainer && chartContainer.current) {
             const newChartInstance = new Chart(chartContainer.current, chartConfig);
@@ -19,15 +18,10 @@ function Radar(props) {
 
 
     return (
-
         <canvas
             ref={chartContainer}
             id="coverage-plot"
         />
-
-
-
-
     )
 
     function colorLimit(value) {
