@@ -65,7 +65,6 @@ function getStepContent(step) {
 export default function VerticalLinearStepper(props) {
   //<Stepper activePage={activePage} pages={pages} />
   const classes = useStyles();
-  const pages =  props.pages;
   let curr = getCurrentPageNum(props.activePage);
   const [activeStep, setActiveStep] = React.useState(curr);
   const steps = getSteps(props.pages);
