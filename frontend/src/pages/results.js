@@ -7,15 +7,25 @@ import Radar from "./chart/chart";
 import { Typography, Box } from "@material-ui/core";
 
 function Results({pages, setPages, activePage, setActivePage}) {
-  function goToResponse(){
-    if (!pages.response.visited) {
+  function goToStakeholders(){
+    if (!pages.stakeholders.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.response.visited = true;
+        copy.stakeholders.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'response');
+    setActivePage(prevPage => 'stakeholders');
+  }
+  function goToFeedback(){
+    if (!pages.feedback.visited) {
+      setPages(prevPages => {
+        let copy = {...prevPages};
+        copy.feedback.visited = true;
+        return copy;
+      });
+    }
+    setActivePage(prevPage => 'feedback');
   }
   let Summary_Value = 2.03;
   let Coverage = { Safety: 0.5, Salary: 0.667, Reputation: 1.0, Privacy: 0.8 };
@@ -28,10 +38,10 @@ function Results({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginLeft: "2rem", marginBottom: "1rem" }}>
-          <Button variant="light">Back</Button>
+          <Button variant="light" onClick={goToStakeholders}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginBottom: "1rem" }}>
-          <Button variant="primary" onClick={goToResponse}>Next</Button>
+          <Button variant="primary" onClick={goToFeedback}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

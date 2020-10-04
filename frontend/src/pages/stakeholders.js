@@ -4,30 +4,40 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Grid from "@material-ui/core/grid";
 import { Typography, Box } from "@material-ui/core";
 
-function Response({pages, setPages, activePage, setActivePage}) {
-  function goToFeedBack(){
-    if (!pages.feedback.visited) {
+function Stakeholders({pages, setPages, activePage, setActivePage}) {
+  function goToGatheredInformation(){
+    if (!pages.gatheredInformation.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.feedback.visited = true;
+        copy.gatheredInformation.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'feedback')
+    setActivePage(prevPage => 'gatheredInformation')
+  }
+  function goToResults(){
+    if (!pages.results.visited) {
+      setPages(prevPages => {
+        let copy = {...prevPages};
+        copy.results.visited = true;
+        return copy;
+      });
+    }
+    setActivePage(prevPage => 'results')
   }
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
         <Typography variant="h4" align="center" gutterBottom>
-          Response
+            Stakeholders
         </Typography>
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginLeft: "2rem", marginBottom: "1rem" }}>
-          <Button variant="light" onClick={goToFeedBack}>Back</Button>
+            <Button variant="light" onClick={goToGatheredInformation}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginBottom: "1rem" }}>
-          <Button variant="primary">Next</Button>
+          <Button variant="primary" onClick={goToResults}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
@@ -35,7 +45,7 @@ function Response({pages, setPages, activePage, setActivePage}) {
           <Box m="2rem">
           </Box>
           <Typography variant="body1" align="center">
-            Some Response.
+            Some Stakeholders.
           </Typography>
         </Grid>
       </Grid>
@@ -43,4 +53,4 @@ function Response({pages, setPages, activePage, setActivePage}) {
   );
 }
 
-export default Response;
+export default Stakeholders;

@@ -4,30 +4,42 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Grid from "@material-ui/core/grid";
 import { Typography, Box } from "@material-ui/core";
 
-function Response({pages, setPages, activePage, setActivePage}) {
-  function goToFeedBack(){
-    if (!pages.feedback.visited) {
+function responseOne({pages, setPages, activePage, setActivePage}) {
+  function goToProjectAssignment(){
+    if (!pages.projectAssignment.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.feedback.visited = true;
+        copy.projectAssignment.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'feedback')
+    setActivePage(prevPage => 'projectAssignment')
   }
+
+  function goToGatheredInformation(){
+    if (!pages.gatheredInformation.visited) {
+      setPages(prevPages => {
+        let copy = {...prevPages};
+        copy.gatheredInformation.visited = true;
+        return copy;
+      });
+    }
+    setActivePage(prevPage => 'gatheredInformation')
+  }
+
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
         <Typography variant="h4" align="center" gutterBottom>
-          Response
+          the first response
         </Typography>
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginLeft: "2rem", marginBottom: "1rem" }}>
-          <Button variant="light" onClick={goToFeedBack}>Back</Button>
+        <Button variant="light" onClick={goToProjectAssignment}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginBottom: "1rem" }}>
-          <Button variant="primary">Next</Button>
+          <Button variant="primary" onClick={goToGatheredInformation}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
@@ -43,4 +55,4 @@ function Response({pages, setPages, activePage, setActivePage}) {
   );
 }
 
-export default Response;
+export default responseOne;

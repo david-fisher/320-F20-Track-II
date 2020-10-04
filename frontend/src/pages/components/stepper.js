@@ -24,21 +24,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getSteps(stepNum) {
+function getSteps(pages) {
   let stepArr = [];
-  let stepNameArr = ['Introduction', 'Project Assignment','Response', 'Gathered Information', 'Stakeholders','Results', 'FeedBack', 'Response'];
-  for(let i = 0; i < stepNum + 1; i++){
-    stepArr.push(<Button style={{ color: "#A80909" }}>{stepNameArr[i]}</Button>)
-  }
-  for(let i = stepNum + 1; i < 8; i++){
-    stepArr.push(<Button disabled>{stepNameArr[i]}</Button>)
-  }
+  let keys = Object.keys(pages)
   
+  for(let i = 0; i < keys.length; i++){
+    let buttonName = keys[i].charAt(0).toUpperCase() + keys[i].slice(1);
+    if(pages[keys[i]].visited == false){
+      stepArr.push(<Button disabled>{buttonName}</Button>)
+    }else{
+      stepArr.push(<Button style={{ color: "#A80909" }}>{buttonName}</Button>)
+    }
+  }
   return stepArr;
 }
 
+// for testing purposes
 function getCurrentPageNum(pageName){
-  let stepNameArr = ['introduction', 'projectAssignment','responseOne', 'gatheredInformation', 'stakeholders','results', 'feedBack', 'response'];
+  let stepNameArr = ['introduction', 'projectAssignment','responseOne', 'gatheredInformation', 'stakeholders','results', 'feedback', 'response'];
   for(let i = 0; i < stepNameArr.length; i++){
     if(pageName == stepNameArr[i]){
       return i;
@@ -65,7 +68,7 @@ export default function VerticalLinearStepper(props) {
   const pages =  props.pages;
   let curr = getCurrentPageNum(props.activePage);
   const [activeStep, setActiveStep] = React.useState(curr);
-  const steps = getSteps(activeStep);
+  const steps = getSteps(props.pages);
 
   return (
     <div className={classes.root}>

@@ -1,17 +1,29 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Grid from "@material-ui/core/grid";
-import Stepper from "./stepper.js";
-import VirtualizedList from "./gatheredList.js";
-import Results from "./results";
-import Response from "./response";
+import Stepper from "./components/stepper.js";
+import VirtualizedList from "./components/gatheredList.js";
+import Results from "./results.js";
+import Response from "./response.js";
+import Introduction from "./introduction.js";
+import ResponseOne from "./responseOne.js";
+import ProjectAssignment from "./projectAssignment.js";
+import GatheredInformation from "./gatheredInformation.js";
+import Stakeholders from "./stakeholders.js";
+import Feedback from "./feedback.js";
 
 function SimulationWindow() {
 
-  const [activePage, setActivePage] = useState("results");
+  const [activePage, setActivePage] = useState("introduction");
   const [pages, setPages] = useState({
-    results: {visited: false, html: (<Results/>)},
-    response: {visited: false, html: (<Response/>)}
+    introduction: {visited: true, pageNumber: 1, html: (<Introduction/>)},
+    projectAssignment: {visited: false, pageNumber: 2, html: (<ProjectAssignment/>)},
+    responseOne: {visited: false, pageNumber: 3, html: (<ResponseOne/>)},
+    gatheredInformation: {visited: false, pageNumber: 4, html: (<GatheredInformation/>)},
+    stakeholders: {visited: false, pageNumber: 5, html: (<Stakeholders/>)},
+    results: {visited: false, pageNumber: 6, html: (<Results/>)},
+    feedback: {visited: false, pageNumber: 7, html: (<Feedback/>)},
+    response: {visited: false, pageNumber: 8, html: (<Response/>)}
   });
 
   return (
