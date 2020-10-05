@@ -1,12 +1,9 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
+import { makeStyles,Typography, Paper, Stepper, Step, 
+        StepLabel, StepContent, Button, Box} 
+from "@material-ui/core";
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -33,7 +30,7 @@ function getSteps(pages) {
     if(pages[keys[i]].visited == false){
       stepArr.push(<Button disabled>{buttonName}</Button>)
     }else{
-      stepArr.push(<Button style={{ color: "#A80909" }}>{buttonName}</Button>)
+      stepArr.push(<Button style={{ color: "#881c1c" }}>{buttonName}</Button>)
     }
   }
   return stepArr;
@@ -69,27 +66,35 @@ export default function VerticalLinearStepper(props) {
   const [activeStep, setActiveStep] = React.useState(curr);
   const steps = getSteps(props.pages);
 
+
   return (
     <div className={classes.root}>
-      <Stepper activeStep={activeStep} orientation="vertical">
-        {steps.map((label, index) => (
-          <Step key={index}>
-            <StepLabel>{label}</StepLabel>
-            <StepContent>
-              <Typography>{getStepContent(index)}</Typography>
-              <div className={classes.actionsContainer}>
-                <div></div>
-              </div>
-            </StepContent>
-          </Step>
-        ))}
-      </Stepper>
+      <Box mt = {3} ml = {1}>
+       
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((label, index) => (
+              <Step key={index}>
+                <StepLabel
+                icon = {<div style={{backgroundColor: '#881c1c', width:'30px', padding: '2px', textAlign: 'center', color : '#ced4da',height: '30px', fontSize: '17.5px', borderRadius: '50%'}}>{index + 1}</div>}>
+                  {label}
+                </StepLabel>
+                <StepContent>
+                  <Typography>{getStepContent(index)}</Typography>
+                  <div className={classes.actionsContainer}>
+                    <div></div>
+                  </div>
+                </StepContent>
+              </Step>
+            ))}
+          </Stepper>
 
-      {activeStep === steps.length && (
-        <Paper square elevation={0} className={classes.resetContainer}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
-        </Paper>
-      )}
+          {activeStep === steps.length && (
+            <Paper square elevation={0} className={classes.resetContainer}>
+              <Typography>All steps completed - you&apos;re finished</Typography>
+            </Paper>
+          )}
+        
+      </Box>
     </div>
   );
 }

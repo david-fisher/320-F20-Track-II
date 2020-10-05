@@ -4,12 +4,9 @@ import Results from "./pages/results";
 import App from "./App";
 import RadarTest from "./pages/chartTest";
 
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
+import { ThemeProvider,createMuiTheme, makeStyles, AppBar, 
+        Toolbar, Typography, Button, IconButton} 
+from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
@@ -21,11 +18,25 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
+    backgroundColor: "#ced4da"
+
   },
   title: {
     flexGrow: 1,
-  },
+    color: "#FFF",
+    //textDecoration: 'none'
+  }
 }));
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#881c1c" ,
+    }
+  },
+});
+
+
 
 function Nav() {
   const classes = useStyles();
@@ -34,7 +45,8 @@ function Nav() {
     <div className={classes.root}>
       <Router>
         <div>
-          <AppBar position="static" style={{ backgroundColor: "#A80909" }}>
+        <ThemeProvider theme={theme}>
+          <AppBar position="static" color = 'primary'>
             <Toolbar>
               <IconButton
                 edge="start"
@@ -44,23 +56,26 @@ function Nav() {
               >
                 <MenuIcon />
               </IconButton>
+              {/* Whenever you hover of buttons, underline in blue, style={{ textDecoration: 'none' }} 
+              will get placed in makeStyles when a solution is figured out */}
               <Typography variant='h6' className={classes.title}>
-                <Link style={{ color: "#FFF" }} to="/">
-                  <Button color="inherit">Home</Button>
+                <Link style={{ textDecoration: 'none' }} to="/">
+                  <Button className={classes.title} color="inherit">Home</Button>
                 </Link>
-                <Link style={{ color: "#FFF" }} to="/results">
-                  <Button color="inherit">Results</Button>
+                <Link style={{ textDecoration: 'none' }} to="/results">
+                  <Button className={classes.title} color="inherit">Results</Button>
                 </Link>
-                <Link style={{ color: "#FFF" }} to="/simulation">
-                  <Button color="inherit">Simulation Window</Button>
+                <Link style={{ textDecoration: 'none' }} to="/simulation">
+                  <Button className={classes.title} color="inherit">Simulation Window</Button>
                 </Link>
-                <Link style={{ color: "#FFF" }} to="/chartTest">
-                  <Button color="inherit">Chart</Button>
+                <Link style={{ textDecoration: 'none' }} to="/chartTest">
+                  <Button className={classes.title} color="inherit">Chart</Button>
                 </Link>
               </Typography>
               <Button color="inherit">Login</Button>
             </Toolbar>
           </AppBar>
+          </ ThemeProvider>
 
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}

@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Button from '@material-ui/core/Button';
+import { ThemeProvider, createMuiTheme, makeStyles, 
+          List, ListItem, ListItemText, Button, Box } 
+from '@material-ui/core';
+import PersonIcon from '@material-ui/icons/Person';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,8 +11,17 @@ const useStyles = makeStyles((theme) => ({
     height: 400,
     maxWidth: 300,
     backgroundColor: theme.palette.background.paper,
+    color: "#5b7f95"
   },
 }));
+
+const colorChange = createMuiTheme({
+  palette:{
+    primary:{
+      main : "#373a3c"
+    },
+  }
+});
 
 function renderRow(props) {
   const { index, style } = props;
@@ -41,22 +49,38 @@ export default function VirtualizedList() {
 
   return (
     <div className={classes.root}>
-      <Button onClick={toggleShow}>Gathered Information</Button>
+      <Box mt = {6} ml = {8}>
+      <ThemeProvider theme = {colorChange}>
+        <Button onClick={toggleShow} 
+         color = "primary"
+         style = {{ fontSize: '16px'}}
+         disableRipple = "true"
+         >
+         Gathered Information
+         </Button>
+      </ThemeProvider>
       {showList &&
         <List>
           <ListItem button>
+          <Box mr = {1} mb = {0.75}>
+            <PersonIcon style = {{ color: "#373a3c"}}/>
+          </Box>
             <ListItemText height={400} width={300}>
               StakeHolder 1
           </ListItemText>
           </ListItem>
 
           <ListItem button>
+          <Box mr = {1} mb = {0.75}>
+            <PersonIcon style = {{ color: "#373a3c"}}/>
+          </Box>
             <ListItemText height={400} width={300}>
               StakeHolder 2
           </ListItemText>
           </ListItem>
         </List>
       }
+     </Box> 
     </div>
   );
 }

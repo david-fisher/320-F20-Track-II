@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Grid from "@material-ui/core/grid";
+import {Grid} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import VirtualizedList from "./components/gatheredList.js";
 import Results from "./results.js";
@@ -34,7 +34,7 @@ function SimulationWindow() {
         <Grid item lg={3}>
           <Stepper activePage={activePage} pages={pages} key={activePage} />
         </Grid>
-        <Grid item lg={6}>
+        <Grid item lg={6} >
             {React.cloneElement(pages[activePage].html, {
                 pages: pages,
                 setPages: setPages,

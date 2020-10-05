@@ -1,10 +1,13 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Grid from "@material-ui/core/grid";
 import Radar from "./chart/chart";
+import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
 
-import { Typography, Box } from "@material-ui/core";
+const TextTypography = withStyles({
+  root: {
+    color: "#373a3c"
+  }
+})(Typography);
 
 function Results({pages, setPages, activePage, setActivePage}) {
   function goToStakeholders(){
@@ -32,16 +35,18 @@ function Results({pages, setPages, activePage, setActivePage}) {
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
-        <Typography variant="h4" align="center" gutterBottom>
-          Coverage Of Issues
-        </Typography>
+        <Box mt = {5}>
+          <TextTypography variant="h4" align="center" gutterBottom>
+            Coverage Of Issues
+          </TextTypography>
+        </Box>
       </Grid>
       <Grid container direction="row" justify="space-between">
-        <Grid item style={{ marginLeft: "2rem", marginBottom: "1rem" }}>
-          <Button variant="light" onClick={goToStakeholders}>Back</Button>
+        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+          <Button onClick={goToStakeholders}>Back</Button>
         </Grid>
-        <Grid item style={{ marginRight: "2rem", marginBottom: "1rem" }}>
-          <Button variant="primary" onClick={goToFeedback}>Next</Button>
+        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+          <Button onClick={goToFeedback}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
@@ -49,7 +54,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
           <Box m="2rem">
             <Radar coverage={Coverage} summary={Summary_Value} />
           </Box>
-          <Typography variant="body1">
+          <TextTypography variant="body1">
             Artificial intelligence and machine learning technologies are
             rapidly transforming society and will continue to do so in the
             coming decades. This social transformation will have deep ethical
@@ -60,7 +65,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
             in history we should think very carefully about how to make this
             transition, or we risk empowering the grimmer side of our nature,
             rather than the brighter.
-          </Typography>
+          </TextTypography>
         </Grid>
       </Grid>
     </div>
