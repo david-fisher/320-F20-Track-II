@@ -41,10 +41,10 @@ function GatheredInformation({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button onClick={goToResponseOne}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToResponseOne}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button onClick={goToStakeholders} >Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToStakeholders} >Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

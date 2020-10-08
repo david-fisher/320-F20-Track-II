@@ -2,20 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js';
 
 
-function Radar(props) {
-    let coverage = props.coverage;
+function Radar({coverage, summary}) {
     const chartContainer = useRef(null);
     const [chartInstance, setChartInstance] = useState(null);
     // state for input
 
-    const chartConfig = onChartChange(props.summary)
+    const chartConfig = onChartChange(summary)
     useEffect(() => {
         if (chartContainer && chartContainer.current) {
             const newChartInstance = new Chart(chartContainer.current, chartConfig);
             setChartInstance(newChartInstance);
         }
     }, [chartContainer]);
-
 
     return (
         <canvas
@@ -37,7 +35,6 @@ function Radar(props) {
     }
 
     function onChartChange(input) {
-
         return {
             type: 'radar',
             data: {
@@ -49,7 +46,6 @@ function Radar(props) {
                     data: Object.values(coverage)
                 }]
             },
-
             options: {
                 scale: {
                     ticks: {
@@ -63,7 +59,4 @@ function Radar(props) {
     }
 }
 
-
 export default Radar;
-
-

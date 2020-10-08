@@ -34,7 +34,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
          {/*  <Button>Back</Button>*/}
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button onClick={goToPrjectAssignment}>Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToPrjectAssignment}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

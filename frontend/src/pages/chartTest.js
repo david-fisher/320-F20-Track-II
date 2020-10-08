@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import {Button, Grid} from '@material-ui/core';
 import Radar from './chart/chart';
 
 
@@ -70,25 +66,21 @@ function RadarTest(props) {
 
     return (
         <div>
-            <Container>
-                <Row className="justify-content-center">
+            <Grid container>
+                <Grid container direction="row" justify="center">
                     <h3 >Coverage Of Issues</h3>
-                </Row>
-                <Row>
-                    <Col>
-                        <Button variant="light" onClick={(e) => {
-                            e.preventDefault();
-                            setInput(input + 1);
+                </Grid>
+                <Grid container direction="row" justify="space-around">
+                    <Button variant="contained" disableElevation onClick={(e) => {
+                        e.preventDefault();
+                        setInput(input + 1);
 
-                        }}>Back</Button>
-                    </Col>
-                    <Col>
-                        <div className="text-right"><Button variant="primary">Next</Button></div>
-                    </Col>
-                </Row>
-                <Row className="justify-content-center">
+                    }}>Back</Button>
+                    <Button variant="contained" color="primary" disableElevation>Next</Button>
+                </Grid>
+                <Grid container direction="row" justify="center">
                     <Radar key={testInput1 + testInput2 + testInput3 + ''} coverage={Coverage} summary={Summary_Value} />
-                </Row>
+                </Grid>
                 <br />
                 {/* { <form> */}
                 <label>
@@ -106,7 +98,7 @@ function RadarTest(props) {
 
                 {/* </form> } */}
 
-            </Container>
+            </Grid>
         </div>
     );
 }

@@ -32,7 +32,7 @@ function Response({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button onClick={goToFeedBack}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToFeedBack}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
           {/*<Button variant="outlined">Next</Button>*/}

@@ -48,10 +48,10 @@ function projectAssignment({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button  onClick={goToIntroduction}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToIntroduction}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button  onClick={goToResponseOne} >Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToResponseOne} >Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
