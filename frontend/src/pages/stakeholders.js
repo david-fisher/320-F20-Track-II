@@ -43,6 +43,9 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
             <Button variant="contained" disableElevation onClick={goToGatheredInformation}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToResults}>Next</Button>
         </Grid>
       </Grid>
