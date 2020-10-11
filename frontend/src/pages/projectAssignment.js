@@ -27,14 +27,16 @@ function projectAssignment({pages, setPages, activePage, setActivePage}) {
     setActivePage(prevPage => 'introduction')
   }
   let goToResponseOne = ()=>{
-    if(pages.responseOne.completed && !pages.responseOne.visited) {
-        setPages(prevPages => {
-          let copy = {...prevPages};
-          copy.responseOne.visited = true;
-          return copy;
-        });
-      }
-      setActivePage(prevPage => 'responseOne')
+    if(pages.responseOne.completed){
+      if(!pages.responseOne.visited) {
+          setPages(prevPages => {
+            let copy = {...prevPages};
+            copy.responseOne.visited = true;
+            return copy;
+          });
+        }
+        setActivePage(prevPage => 'responseOne')
+    }
   }
 
   return (
