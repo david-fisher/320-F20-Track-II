@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { withStyles,Typography, Box, Grid, Button } from "@material-ui/core";
 
 const TextTypography = withStyles({
@@ -41,10 +40,10 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
         </Box>
       </Grid>
       <Grid container direction="row" justify="space-between">
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
         <Button variant="contained" disableElevation onClick={goToResults}>Back</Button>
         </Grid>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToResponse}>Next</Button>
         </Grid>
       </Grid>

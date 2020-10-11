@@ -99,5 +99,9 @@ function Nav() {
   );
 }
 
+<<<<<<< Updated upstream
 export default Nav;
 
+=======
+export default Nav;
+>>>>>>> Stashed changes

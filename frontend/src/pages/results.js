@@ -41,15 +41,15 @@ function Results({pages, setPages, activePage, setActivePage}) {
         </Box>
       </Grid>
       <Grid container direction="row" justify="space-between">
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation onClick={goToStakeholders}>Back</Button>
         </Grid>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToFeedback}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item XS={48} sm={24} lg={12}>
           <Box m="2rem">
             <Radar coverage={Coverage} summary={Summary_Value} />
           </Box>
