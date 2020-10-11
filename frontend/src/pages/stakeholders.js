@@ -41,14 +41,9 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
             <Button variant="contained" disableElevation onClick={goToGatheredInformation}>Back</Button>
         </Grid>
-<<<<<<< Updated upstream
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
-=======
+
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
->>>>>>> Stashed changes
+
           <Button variant="contained" disableElevation color="primary" onClick={goToResults}>Next</Button>
         </Grid>
       </Grid>
