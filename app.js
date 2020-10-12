@@ -41,6 +41,37 @@ router.route('/scenarios')
     })  
 //use this code as a template
 
+router.route('/scenarios/intro')
+
+    .get(function(req, res){
+        // studentID = req.body
+        // scenarios = db.getScenarios(studentID)
+        scenarioIntro = db.getIntro(scenarioName)
+        res.json(scenarioIntro)
+    })  
+
+router.route('/scenarios/task')
+
+.get(function(req, res){
+    // studentID = req.body
+    // scenarios = db.getScenarios(studentID)
+    scenarioTask = db.getTask(scenarioName)
+    res.json(scenarioTask)
+})  
+
+.get(function(req, res){
+    // studentID = req.body
+    // scenarios = db.getScenarios(studentID)
+    scenarioFinal = db.getFinalAction(scenarioName)
+    res.json(scenarioFinal)
+})  
+
+.get(function(req, res){
+    // studentID = req.body
+    // scenarios = db.getScenarios(studentID)
+    scenarioConsequences = db.getConsequences(scenarioName)
+    res.json(scenarioConsequences)
+})  
 
 router.route('/scenarios/scenarioName')
 //add get functions for this route
