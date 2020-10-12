@@ -59,12 +59,16 @@ router.route('/scenarios/task')
     res.json(scenarioTask)
 })  
 
+router.route('/scenarios/final')
+
 .get(function(req, res){
     // studentID = req.body
     // scenarios = db.getScenarios(studentID)
     scenarioFinal = db.getFinalAction(scenarioName)
     res.json(scenarioFinal)
 })  
+
+router.route('/scenarios/consequences')
 
 .get(function(req, res){
     // studentID = req.body
