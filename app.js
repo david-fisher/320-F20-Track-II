@@ -65,6 +65,34 @@ router.route('/scenarios/task')
         res.json(scenarioTask)
     })  
 
+router.route('/scenarios/scenarioName/initReflect')
+
+    .get(function(req, res){
+        // 
+        //
+        scenarioID = req.body.scenarioID
+        db.getInitReflect(scenarioID, function(result){
+            console.log("Initial Reflection-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got initial relfection")
+    })
+
+router.route('/scenarios/scenarioName/InitActions')
+
+    .get(function(req, res){
+        //
+        //
+        scenarioID = req.body.scenarioID
+        db.getInitActions(scenarioID, function(result){
+            console.log("Initial Action-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got initial actions")
+    })
+
 router.route('/scenarios/final')
 
     .get(function(req, res){
@@ -140,6 +168,33 @@ router.route('/scenarios/scenarioName/midReflect')
         console.log("Got middle reflection")
     })
 
+router.route('/scenario/scenarioName/finalReflection')
+
+    .get(function(req, res){
+        //
+        //
+        scenarioID = req.body.scenarioID
+        db.getFinalReflection(scenarioID, function(result){
+            console.log("Final Relfection-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got final reflection")
+    })
+
+router.route('/scenario/scenarioName/Conclusion')
+
+    .get(function(req, res){
+        //
+        //
+        scenarioID = req.body.scenarioID
+        db.getConclusion(scenarioID, function(result){
+            console.log("Conclusion-", reuslt)
+            res.status(200).json.(result)
+        })
+
+        console.log("Got Conclusion")
+    })
 
 router.route('/scenarios/scenarioName')
 //add get functions for this route
