@@ -83,6 +83,64 @@ router.route('/scenarios/consequences')
         res.json(scenarioConsequences)
     })  
 
+router.route('/scenarios/stakeholders')
+
+    .get(function(req, res){
+        // scenarios = db.getScenarios(studentID)
+        // scenarios = db.getScenarios()
+        studentID = req.body.studentID
+        data = req.body.data
+        db.getStakeholderHistory(studetnID, data, function(result){
+            console.log("Stakeholder History-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got stakeholder history")
+    })
+
+router.route('/scenarios/scenarioName/stakeholders')
+
+    .get(function(req, res){
+        // scenarios = db.getScenarios(studentID)
+        // scenarios = db.getScenarios()
+        scenarioID = req.body.scenarioID
+        db.getStakeholders(scenarioID, function(result){
+            console.log("Stakeholders-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got all stakeholders")
+    })
+
+router.route('/scenarios/scenarioName/stakeholders/convo')
+   
+    .get(function(req, res){
+        // scenarios = db.getScenarios(studentID)
+        // scenarios = db.getScenarios()
+        scenarioID = req.body.scenarioID
+        db.getStakeholdersConvo(scenarioID, function(result){
+            console.log("Stakeholders Conversation-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got stakeholder conversation")
+    })
+
+router.route('/scenarios/scenarioName/midReflect')
+
+    .get(function(req, res){
+        // scenarios = db.getScenarios(studentID)
+        // scenarios = db.getScenarios()
+        scenarioID = req.body.scenarioID
+        db.getMidReflectPage(scenarioID, function(result){
+            console.log("Middle Reflection-", result)
+            res.status(200).json(result)
+        })
+        
+        console.log("Got middle reflection")
+    })
+
+
 router.route('/scenarios/scenarioName')
 //add get functions for this route
 
