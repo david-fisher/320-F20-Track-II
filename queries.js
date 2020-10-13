@@ -8,6 +8,7 @@ const pool = new Pool({
 })
 
 //get all scenarios
+/*
 const getScenarios = (request, response) => {
     pool.query('SELECT * FROM scenarios ORDER BY id ASC', (error, results) => {
       if (error) {
@@ -16,6 +17,18 @@ const getScenarios = (request, response) => {
       response.status(200).json(results.rows)
       console.log(`Got all scenarios`)
     })
+}
+*/
+
+function getScenarios(studentID, callback){
+  pool.query('SELECT * FROM scenarios ORDER BY id ASC', (error, results) => {
+    if (error) {
+      throw error
+    }
+  console.log(studentID)
+  //console.log(results.rows)
+  callback(results.rows)  
+  })  
 }
 
 //get scenario by id
