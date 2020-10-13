@@ -118,7 +118,7 @@ router.route('/scenarios/stakeholders')
         // scenarios = db.getScenarios()
         studentID = req.body.studentID
         data = req.body.data
-        db.getStakeholderHistory(studetnID, data, function(result){
+        db.getStakeholderHistory(studentID, data, function(result){
             console.log("Stakeholder History-", result)
             res.status(200).json(result)
         })
@@ -189,8 +189,8 @@ router.route('/scenario/scenarioName/Conclusion')
         //
         scenarioID = req.body.scenarioID
         db.getConclusion(scenarioID, function(result){
-            console.log("Conclusion-", reuslt)
-            res.status(200).json.(result)
+            console.log("Conclusion-", result)
+            res.status(200).json(result)
         })
 
         console.log("Got Conclusion")
