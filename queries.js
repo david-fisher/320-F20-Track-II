@@ -123,8 +123,8 @@ module.exports = {
     getScenarios,
     getIntro,
     getTask,
-    getScenraioById,
-    createScenario,
-    updateScenario,
-    deleteScenario,
+    // getScenraioById,
+    // createScenario,
+    // updateScenario,
+    // deleteScenario,
 }
