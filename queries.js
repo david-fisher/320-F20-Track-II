@@ -2,7 +2,7 @@ const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'goon',
   host: 'localhost',
-  database: 'api',
+  database: 'simulator',
   password: 'enterdb',
   port: 5432,
 })
@@ -20,16 +20,40 @@ const getScenarios = (request, response) => {
 }
 */
 
+//functions to test api calls on mock db
+
 function getScenarios(studentID, callback){
-  pool.query('SELECT * FROM scenarios ORDER BY id ASC', (error, results) => {
+  pool.query('SELECT id, name, description FROM scenarios ORDER BY id ASC', (error, results) => {
     if (error) {
       throw error
     }
-  console.log(studentID)
+  // console.log(studentID)
   //console.log(results.rows)
   callback(results.rows)  
   })  
 }
+
+function getIntro(scenarioID, callback){
+  pool.query('SELECT introduction from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    // console.log(scenarioID)
+    callback(results.rows)
+  })
+}
+
+function getTask(scenarioID, callback){
+  pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    // console.log(scenarioID)
+    callback(results.rows)
+  })
+}
+
+/*
 
 //get scenario by id
 const getScenraioById = (request, response) => {
@@ -92,9 +116,13 @@ const deleteScenario = (request, response) => {
     })
 }
 
+*/
+
 //export functions
 module.exports = {
     getScenarios,
+    getIntro,
+    getTask,
     getScenraioById,
     createScenario,
     updateScenario,

@@ -38,7 +38,7 @@ router.route('/scenarios')
         // scenarios = db.getScenarios()
         studentID = req.body.studentID
         db.getScenarios(studentID, function(result){
-            console.log("scenarios-",result)
+            // console.log("scenarios-",result)
             res.status(200).json(result)
         })
         
@@ -49,23 +49,31 @@ router.route('/scenarios')
 router.route('/scenarios/intro')
 
     .get(function(req, res){
-        // studentID = req.body
-        // scenarios = db.getScenarios(studentID)
-        scenarioIntro = db.getIntro(scenarioName)
-        res.json(scenarioIntro)
+        scenarioID = req.body.scenarioID
+        db.getIntro(scenarioID, function(result){
+            // console.log("intro-",result)
+            res.status(200).json(result)
+        })
+        
+        console.log("Got scenario introduction")
     })  
 
 
 router.route('/scenarios/task')
 
     .get(function(req, res){
-        // studentID = req.body
-        // scenarios = db.getScenarios(studentID)
-        scenarioTask = db.getTask(scenarioName)
-        res.json(scenarioTask)
+        scenarioID = req.body.scenarioID
+        db.getTask(scenarioID, function(result){
+            // console.log("task-",result)
+            res.status(200).json(result)
+        })
+        
+        console.log("Got scenario task")
     })  
 
-router.route('/scenarios/scenarioName/initReflect')
+// mock queries done till this point
+
+router.route('/scenarios/initReflect')
 
     .get(function(req, res){
         // 
@@ -79,7 +87,7 @@ router.route('/scenarios/scenarioName/initReflect')
         console.log("Got initial relfection")
     })
 
-router.route('/scenarios/scenarioName/InitActions')
+router.route('/scenarios/InitActions')
 
     .get(function(req, res){
         //
@@ -111,7 +119,7 @@ router.route('/scenarios/consequences')
         res.json(scenarioConsequences)
     })  
 
-router.route('/scenarios/stakeholders')
+router.route('/scenarios/stakeholderHistory')
 
     .get(function(req, res){
         // scenarios = db.getScenarios(studentID)
@@ -126,7 +134,7 @@ router.route('/scenarios/stakeholders')
         console.log("Got stakeholder history")
     })
 
-router.route('/scenarios/scenarioName/stakeholders')
+router.route('/scenarios/stakeholders')
 
     .get(function(req, res){
         // scenarios = db.getScenarios(studentID)
@@ -140,7 +148,7 @@ router.route('/scenarios/scenarioName/stakeholders')
         console.log("Got all stakeholders")
     })
 
-router.route('/scenarios/scenarioName/stakeholders/convo')
+router.route('/scenarios/stakeholders/convo')
    
     .get(function(req, res){
         // scenarios = db.getScenarios(studentID)
@@ -154,7 +162,7 @@ router.route('/scenarios/scenarioName/stakeholders/convo')
         console.log("Got stakeholder conversation")
     })
 
-router.route('/scenarios/scenarioName/midReflect')
+router.route('/scenarios/midReflect')
 
     .get(function(req, res){
         // scenarios = db.getScenarios(studentID)
@@ -168,7 +176,7 @@ router.route('/scenarios/scenarioName/midReflect')
         console.log("Got middle reflection")
     })
 
-router.route('/scenario/scenarioName/finalReflection')
+router.route('/scenario/finalReflection')
 
     .get(function(req, res){
         //
@@ -182,7 +190,7 @@ router.route('/scenario/scenarioName/finalReflection')
         console.log("Got final reflection")
     })
 
-router.route('/scenario/scenarioName/Conclusion')
+router.route('/scenario/Conclusion')
 
     .get(function(req, res){
         //
