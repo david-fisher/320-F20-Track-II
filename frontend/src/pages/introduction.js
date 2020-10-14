@@ -1,12 +1,25 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
+import { withStyles, Typography, Box, Grid, Button, makeStyles } from "@material-ui/core";
 
 const TextTypography = withStyles({
   root: {
-    color: "#373a3c"
+    color: "#373a3c",
+    whiteSpace: 'pre-line'
   }
 })(Typography);
+
+const useStyles = makeStyles({
+  textBox:{
+    overflowY: 'auto',
+    maxHeight: window.innerHeight * 0.6,
+    marginTop: '30px', borderRadius: '5px',
+    boxShadow: '0px 0px 2px'
+  }
+})
+
+// placeholder text
+const introText ="A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc. \n\n A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc.\n\nA good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc. \n\n A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc.\n\nA good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc. \n\n A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc.";
 
 function Introduction({ pages, setPages, activePage, setActivePage }) {
   function goToPrjectAssignment() {
@@ -19,6 +32,8 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
     }
     setActivePage(prevPage => 'projectAssignment')
   }
+
+  const classes = useStyles();
 
   return (
     <div>
@@ -39,11 +54,11 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
       </Grid>
       <Grid container spacing={2}>
         <Grid item lg={12}>
-          <Box m="2rem">
+          <Box p={2} className={classes.textBox}>
+            <TextTypography variant="body1">
+              {introText}
+            </TextTypography>
           </Box>
-          <TextTypography variant="body1" align="center">
-            Some Introduction.
-          </TextTypography>
         </Grid>
       </Grid>
     </div>
