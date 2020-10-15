@@ -49,7 +49,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item XS={48} sm={24} lg={12}>
+        <Grid lg={12}>
           <Box m="2rem">
             <Radar coverage={Coverage} summary={Summary_Value} />
           </Box>

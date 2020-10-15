@@ -45,9 +45,9 @@ function Response({pages, setPages, activePage, setActivePage}) {
             Some Response.
           </TextTypography>
         </Grid>
-        <Grid item lg={12}>
-          
-        </Grid>  
+        {/* <Grid item lg={12}>
+          next button here if needed
+        </Grid>   */}
       </Grid>
     </div>
   );
