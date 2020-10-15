@@ -24,11 +24,8 @@ function RadarTest(props) {
     const totalEmphasis = {};
     for (let conversant in scenarioScoringMatrix) {
       for (let issue in scenarioScoringMatrix[conversant]) {
-        totalEmphasis[issue] =
-          totalEmphasis[issue] === undefined
-            ? scenarioScoringMatrix[conversant][issue]
-            : scenarioScoringMatrix[conversant][issue] +
-              totalEmphasis[issue];
+        totalEmphasis[issue] = scenarioScoringMatrix[conversant][issue] +(
+              totalEmphasis[issue]??0);
       }
       return totalEmphasis;
     }
@@ -41,11 +38,8 @@ function RadarTest(props) {
     if (testInput1 === 0 && testInput2 === 0 && testInput3 === 0) {
       for (let conversant in scenarioScoringMatrix) {
         for (let issue in scenarioScoringMatrix[conversant]) {
-          studentEmphasis[issue] =
-            studentEmphasis[issue] === undefined
-              ? scenarioScoringMatrix[conversant][issue]
-              : scenarioScoringMatrix[conversant][issue] +
-                studentEmphasis[issue];
+          studentEmphasis[issue] = scenarioScoringMatrix[conversant][issue] +
+                (studentEmphasis[issue]??0);
         }
       }
     } else {
