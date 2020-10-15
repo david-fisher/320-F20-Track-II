@@ -8,7 +8,9 @@ function RadarTest(props) {
   const [testInput2, setTestInput2] = useState(0);
   const [testInput3, setTestInput3] = useState(0);
 
+
   const scenarioScoringMatrix = {
+
     Tim: {
       issue1: 1,
       issue2: 4,
@@ -20,6 +22,7 @@ function RadarTest(props) {
       issue3: 3,
     },
   };
+
   function totalEmphasisF(scenarioScoringMatrix) {
     const totalEmphasis = {};
     for (let conversant in scenarioScoringMatrix) {
@@ -107,6 +110,7 @@ function RadarTest(props) {
             key={testInput1 + testInput2 + testInput3 + ""}
             coverage={coverage}
             summary={summaryValue}
+
           />
         </Grid>
         <br />
