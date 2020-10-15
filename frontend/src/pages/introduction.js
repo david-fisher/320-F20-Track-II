@@ -1,6 +1,7 @@
 import React from "react";
 import { withStyles, Typography, Box, Grid, Button, makeStyles } from "@material-ui/core";
 
+
 const TextTypography = withStyles({
   root: {
     color: "#373a3c",
@@ -48,7 +49,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
        <Grid item style={{ marginLeft: "0rem", marginRight: "0rem", marginTop: "-3rem" }}>
          {/*  <Button>Back</Button>*/}
         </Grid>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem",  marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToPrjectAssignment}>Next</Button>
         </Grid>
       </Grid>
