@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
 
 const TextTypography = withStyles({
@@ -33,7 +32,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
        <Grid item style={{ marginLeft: "0rem", marginRight: "0rem", marginTop: "-3rem" }}>
          {/*  <Button>Back</Button>*/}
         </Grid>
-        <Grid item style={{ marginRight: "2rem", marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem",  marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToPrjectAssignment}>Next</Button>
         </Grid>
       </Grid>

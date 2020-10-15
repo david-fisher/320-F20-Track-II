@@ -27,7 +27,7 @@ function getSteps(pages) {
   
   for(let i = 0; i < keys.length; i++){
     let buttonName = keys[i].charAt(0).toUpperCase() + keys[i].slice(1);
-    if(pages[keys[i]].visited == false){
+    if(pages[keys[i]].visited === false){
       stepArr.push(<Button disabled>{buttonName}</Button>)
     }else{
       stepArr.push(<Button style={{ color: "#881c1c" }}>{buttonName}</Button>)
@@ -40,7 +40,7 @@ function getSteps(pages) {
 function getCurrentPageNum(pageName){
   let stepNameArr = ['introduction', 'projectAssignment','responseOne', 'gatheredInformation', 'stakeholders','results', 'feedback', 'response'];
   for(let i = 0; i < stepNameArr.length; i++){
-    if(pageName == stepNameArr[i]){
+    if(pageName === stepNameArr[i]){
       return i;
     }
   }
@@ -63,6 +63,7 @@ export default function VerticalLinearStepper(props) {
   //<Stepper activePage={activePage} pages={pages} />
   const classes = useStyles();
   let curr = getCurrentPageNum(props.activePage);
+  // eslint-disable-next-line
   const [activeStep, setActiveStep] = React.useState(curr);
   const steps = getSteps(props.pages);
 

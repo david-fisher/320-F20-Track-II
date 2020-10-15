@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import {Grid} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import VirtualizedList from "./components/gatheredList.js";
@@ -16,14 +15,14 @@ function SimulationWindow() {
 
   const [activePage, setActivePage] = useState("introduction");
   const [pages, setPages] = useState({
-    introduction: {visited: true, pageNumber: 1, html: (<Introduction/>)},
-    projectAssignment: {visited: false, pageNumber: 2, html: (<ProjectAssignment/>)},
-    responseOne: {visited: false, pageNumber: 3, html: (<ResponseOne/>)},
-    gatheredInformation: {visited: false, pageNumber: 4, html: (<GatheredInformation/>)},
-    stakeholders: {visited: false, pageNumber: 5, html: (<Stakeholders/>)},
-    results: {visited: false, pageNumber: 6, html: (<Results/>)},
-    feedback: {visited: false, pageNumber: 7, html: (<Feedback/>)},
-    response: {visited: false, pageNumber: 8, html: (<Response/>)}
+    introduction: {visited: true, completed: true, pageNumber: 1, html: (<Introduction/>)},
+    projectAssignment: {visited: false, completed: true, pageNumber: 2, html: (<ProjectAssignment/>)},
+    responseOne: {visited: false, completed: false, pageNumber: 3, html: (<ResponseOne/>)},
+    gatheredInformation: {visited: false, completed: true, pageNumber: 4, html: (<GatheredInformation/>)},
+    stakeholders: {visited: false, completed: true, pageNumber: 5, html: (<Stakeholders/>)},
+    results: {visited: false, completed: true, pageNumber: 6, html: (<Results/>)},
+    feedback: {visited: false, completed: true, pageNumber: 7, html: (<Feedback/>)},
+    response: {visited: false, completed: true, pageNumber: 8, html: (<Response/>)}
   });
 
   return (
