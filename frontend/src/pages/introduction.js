@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { withStyles, Typography, Box, Grid, Button, makeStyles } from "@material-ui/core";
 
 const TextTypography = withStyles({
