@@ -8,7 +8,7 @@ function RadarTest(props) {
   const [testInput2, setTestInput2] = useState(0);
   const [testInput3, setTestInput3] = useState(0);
 
-  const scenario_scoring_matrix = {
+  const scenarioScoringMatrix = {
     Tim: {
       issue1: 1,
       issue2: 4,
@@ -20,71 +20,71 @@ function RadarTest(props) {
       issue3: 3,
     },
   };
-  function Total_EmphasisF(scenario_scoring_matrix) {
-    const Total_Emphasis = {};
-    for (let conversant in scenario_scoring_matrix) {
-      for (let issue in scenario_scoring_matrix[conversant]) {
-        Total_Emphasis[issue] =
-          Total_Emphasis[issue] === undefined
-            ? scenario_scoring_matrix[conversant][issue]
-            : scenario_scoring_matrix[conversant][issue] +
-              Total_Emphasis[issue];
+  function totalEmphasisF(scenarioScoringMatrix) {
+    const totalEmphasis = {};
+    for (let conversant in scenarioScoringMatrix) {
+      for (let issue in scenarioScoringMatrix[conversant]) {
+        totalEmphasis[issue] =
+          totalEmphasis[issue] === undefined
+            ? scenarioScoringMatrix[conversant][issue]
+            : scenarioScoringMatrix[conversant][issue] +
+              totalEmphasis[issue];
       }
-      return Total_Emphasis;
+      return totalEmphasis;
     }
   }
-  const Total_Emphasis = Total_EmphasisF(scenario_scoring_matrix);
+  const totalEmphasis = totalEmphasisF(scenarioScoringMatrix);
   // a perfect student
 
-  function Student_EmphasisF(scenario_scoring_matrix) {
-    let Student_Emphasis = {};
+  function studentEmphasisF(scenarioScoringMatrix) {
+    let studentEmphasis = {};
     if (testInput1 === 0 && testInput2 === 0 && testInput3 === 0) {
-      for (let conversant in scenario_scoring_matrix) {
-        for (let issue in scenario_scoring_matrix[conversant]) {
-          Student_Emphasis[issue] =
-            Student_Emphasis[issue] === undefined
-              ? scenario_scoring_matrix[conversant][issue]
-              : scenario_scoring_matrix[conversant][issue] +
-                Student_Emphasis[issue];
+      for (let conversant in scenarioScoringMatrix) {
+        for (let issue in scenarioScoringMatrix[conversant]) {
+          studentEmphasis[issue] =
+            studentEmphasis[issue] === undefined
+              ? scenarioScoringMatrix[conversant][issue]
+              : scenarioScoringMatrix[conversant][issue] +
+                studentEmphasis[issue];
         }
       }
     } else {
-      Student_Emphasis = {
+      studentEmphasis = {
         issue1: testInput1,
         issue2: testInput2,
         issue3: testInput3,
       };
     }
-    return Student_Emphasis;
+    return studentEmphasis;
   }
-  let Student_Emphasis = Student_EmphasisF(scenario_scoring_matrix);
+  let studentEmphasis = studentEmphasisF(scenarioScoringMatrix);
 
-  function CoverageF(Total_Emphasis, Student_Emphasis) {
-    const Coverage = {};
-    for (let issue in Total_Emphasis) {
-      Coverage[issue] = Student_Emphasis[issue] / Total_Emphasis[issue];
+  function coverageF(totalEmphasis, studentEmphasis) {
+    const coverage = {};
+    for (let issue in totalEmphasis) {
+      coverage[issue] = studentEmphasis[issue] / totalEmphasis[issue];
     }
-    return Coverage;
+    return coverage;
   }
-  let Coverage = CoverageF(Total_Emphasis, Student_Emphasis);
-  const Ethcical_Importance = {
+  let coverage = coverageF(totalEmphasis, studentEmphasis);
+  const ethcicalImportance = {
     issue1: 0.5,
     issue2: 0.9,
     issue3: 0.8,
   };
 
-  function Summary_ValueF(Total_Emphasis, Ethcical_Importance, Coverage) {
-    let Summary_Value = 0;
-    for (let issue in Total_Emphasis) {
-      Summary_Value += Ethcical_Importance[issue] * Coverage[issue];
+  function summaryValueF(totalEmphasis, ethcicalImportance, coverage) {
+    let summaryValue = 0;
+    for (let issue in totalEmphasis) {
+      summaryValue += ethcicalImportance[issue] * coverage[issue];
     }
-    return Summary_Value;
+    return summaryValue;
   }
 
-  let Summary_Value = Summary_ValueF(
-    Total_Emphasis,
-    Ethcical_Importance,
-    Coverage
+  let summaryValue = summaryValueF(
+    totalEmphasis,
+    ethcicalImportance,
+    coverage
   );
 
   return (
@@ -111,8 +111,8 @@ function RadarTest(props) {
         <Grid container direction="row" justify="center">
           <Radar
             key={testInput1 + testInput2 + testInput3 + ""}
-            coverage={Coverage}
-            summary={Summary_Value}
+            coverage={coverage}
+            summary={summaryValue}
           />
         </Grid>
         <br />
