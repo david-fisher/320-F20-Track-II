@@ -45,9 +45,9 @@ CREATE TABLE "instructs" (
 
 
 CREATE TABLE "enrolled" (
-	"id" int references users,
+	"student_id" int references users,
 	"course_id" int references courses,
-	primary key("id", "course_id")
+	primary key("student_id", "course_id")
 	);
 
 CREATE TABLE "scenario" (
