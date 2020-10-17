@@ -3,6 +3,7 @@ drop table courses cascade;
 drop table instructs cascade; 
 drop table enrolled cascade; 
 drop table scenario cascade; 
+drop table contains cascade;
 drop table pages cascade;
 drop table prompt cascade;
 drop table conversation_task cascade;
@@ -51,11 +52,17 @@ CREATE TABLE "enrolled" (
 
 CREATE TABLE "scenario" (
 	"id" SERIAL primary key,
-	"course_id" int references courses NOT NULL,
+	-- "course_id" int references courses NOT NULL,
 	"due_date" date,
 	"description" varchar,
 	"additional_data" varchar
 	); 
+
+CREATE TABLE "contains" {
+	"course_id" int references courses,
+	"scenario_id" int references scenario
+
+};
 
 
 CREATE TABLE "pages" (
@@ -157,7 +164,7 @@ insert into enrolled values(2, 2);
 insert into enrolled values(4, 2);
 
 -- test scenario 1
-insert into scenario values(DEFAULT, 1, '2020-12-01', 'description: test scenario', '<additional_data>');
+insert into scenario values(DEFAULT, '2020-12-01', 'description: test scenario', '<additional_data>');
 
 insert into pages values(DEFAULT, 1, 'PRMPT', 1);
 insert into prompt values(1, 'prompt: Initial reflection');
@@ -205,7 +212,7 @@ insert into mcq_response values(7, 'MCQ: A, B, A, D, C, C, D, E');
 
 
 -- test scenario 2
-insert into scenario values(DEFAULT, 2, '2020-12-18', 'description: sceanrio 2', '<additional_data for scenario 2>');
+insert into scenario values(DEFAULT, '2020-12-18', 'description: sceanrio 2', '<additional_data for scenario 2>');
 
 insert into pages values(DEFAULT, 1, 'PRMPT', 2);
 insert into prompt values(7, 'prompt: s2 Initial reflection');
