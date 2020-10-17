@@ -37,10 +37,10 @@ CREATE TABLE "courses" (
 
 
 CREATE TABLE "instructs" (
-	"id" int references users,
+	"instructor_id" int references users,
 	"webpage" varchar,
 	"course_id" int references courses,
-	primary key("course_id", "id")
+	primary key("course_id", "instructor_id")
 	);
 
 
