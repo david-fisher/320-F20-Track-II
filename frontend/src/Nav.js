@@ -24,7 +24,12 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
     color: "#FFF",
-    //textDecoration: 'none'
+  },
+  link: {
+    "&:hover": {
+      color: "#000000",
+      textDecoration: "#000000"
+    }
   }
 }));
 
@@ -56,23 +61,21 @@ function Nav() {
               >
                 <MenuIcon />
               </IconButton>
-              {/* Whenever you hover of buttons, underline in blue, style={{ textDecoration: 'none' }} 
-              will get placed in makeStyles when a solution is figured out */}
               <Typography variant='h6' className={classes.title}>
-                <Link style={{ textDecoration: 'none' }} to="/">
+                <Link className={classes.link} to="/">
                   <Button className={classes.title} color="inherit">Home</Button>
                 </Link>
-                <Link style={{ textDecoration: 'none' }} to="/results">
+                <Link className={classes.link} to="/results">
                   <Button className={classes.title} color="inherit">Results</Button>
                 </Link>
-                <Link style={{ textDecoration: 'none' }} to="/simulation">
+                <Link className={classes.link} to="/simulation">
                   <Button className={classes.title} color="inherit">Simulation Window</Button>
                 </Link>
-                <Link style={{ textDecoration: 'none' }} to="/chartTest">
+                <Link className={classes.link} to="/chartTest">
                   <Button className={classes.title} color="inherit">Chart</Button>
                 </Link>
               </Typography>
-              <Button color="inherit">Login</Button>
+              <Button color="inherit">LogOut</Button>
             </Toolbar>
           </AppBar>
           </ ThemeProvider>

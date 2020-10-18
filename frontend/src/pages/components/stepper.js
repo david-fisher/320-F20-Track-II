@@ -19,6 +19,20 @@ const useStyles = makeStyles((theme) => ({
   resetContainer: {
     padding: theme.spacing(3),
   },
+  step:{
+    "&$completed": {
+      color: "#881c1c"
+     },
+     "&$active": {
+      color: "#881c1c"
+     },
+     "&$disabled": {
+      color: "#444e58"
+     }
+  },
+  active: {},
+  completed: {},
+  disabled: {}
 }));
 
 function getSteps(pages) {
@@ -74,8 +88,23 @@ export default function VerticalLinearStepper(props) {
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((label, index) => (
               <Step key={index}>
+                <Step 
+                key={index}
+                classes={{
+                  root: classes.step,
+                  completed: classes.completed,
+                  active: classes.active
+                }}
+              ></Step>
                 <StepLabel
-                icon = {<div style={{backgroundColor: '#881c1c', width:'30px', padding: '2px', textAlign: 'center', color : '#ced4da',height: '30px', fontSize: '17.5px', borderRadius: '50%'}}>{index + 1}</div>}>
+                  StepIconProps={{
+                    classes: {
+                     root: classes.step,
+                     completed: classes.completed,
+                     active: classes.active
+                   }
+                  }}
+                >
                   {label}
                 </StepLabel>
                 <StepContent>
