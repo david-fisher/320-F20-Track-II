@@ -106,17 +106,29 @@ router.route('/scenarios/final')
     .get(function(req, res){
         // studentID = req.body
         // scenarios = db.getScenarios(studentID)
-        scenarioFinal = db.getFinalAction(scenarioName)
-        res.json(scenarioFinal)
+        studentID = req.body.studentID
+        scenarioID = req.body.scenarioID
+        db.getFinalAction(studentID, scenarioID, function(result){
+            console.log("Final Action-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got stakeholder history")
     })  
 
 router.route('/scenarios/consequences')
 
     .get(function(req, res){
         // studentID = req.body
-        // scenarios = db.getScenarios(studentID)
-        scenarioConsequences = db.getConsequences(scenarioName)
-        res.json(scenarioConsequences)
+        // scenarios = db.getScenarios(studentID)]
+        studentID = req.body.studentID
+        scenarioID = req.body.scenarioID
+        db.getFinalAction(studentID, scenarioID, data, function(result){
+            console.log("Consequences-", result)
+            res.status(200).json(result)
+        })
+
+        console.log("Got stakeholder history")
     })  
 
 router.route('/scenarios/stakeholderHistory')
