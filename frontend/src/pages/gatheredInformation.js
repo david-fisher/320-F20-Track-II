@@ -8,15 +8,17 @@ const TextTypography = withStyles({
 })(Typography);
 
 function GatheredInformation({pages, setPages, activePage, setActivePage}) {
-  function goToResponseOne(){
-    if (!pages.responseOne.visited) {
-      setPages(prevPages => {
-        let copy = {...prevPages};
-        copy.responseOne.visited = true;
-        return copy;
-      });
+  let goToInitialAction = ()=>{
+    if(pages.initialAction.completed){
+      if(!pages.initialAction.visited) {
+          setPages(prevPages => {
+            let copy = {...prevPages};
+            copy.initialAction.visited = true;
+            return copy;
+          });
+        }
+        setActivePage(prevPage => 'initialAction')
     }
-    setActivePage(prevPage => 'responseOne')
   }
   function goToStakeholders(){
     if (!pages.stakeholders.visited) {
@@ -40,7 +42,7 @@ function GatheredInformation({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToResponseOne}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToInitialAction}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToStakeholders} >Next</Button>

@@ -5,8 +5,8 @@ import VirtualizedList from "./components/gatheredList.js";
 import Results from "./results.js";
 import Response from "./response.js";
 import Introduction from "./introduction.js";
-import ResponseOne from "./responseOne.js";
 import ProjectAssignment from "./projectAssignment.js";
+import InitialAction from "./initialAction.js";
 import GatheredInformation from "./gatheredInformation.js";
 import Stakeholders from "./stakeholders.js";
 import Feedback from "./feedback.js";
@@ -17,8 +17,8 @@ function SimulationWindow() {
   const [pages, setPages] = useState({
     introduction: {visited: true, completed: true, pageNumber: 1, html: (<Introduction/>)},
     projectAssignment: {visited: false, completed: true, pageNumber: 2, html: (<ProjectAssignment/>)},
-    responseOne: {visited: false, completed: false, pageNumber: 3, html: (<ResponseOne/>)},
-    gatheredInformation: {visited: false, completed: true, pageNumber: 4, html: (<GatheredInformation/>)},
+    initialAction: {visited: false, completed: true, pageNumber: 3, html: (<InitialAction/>)},
+    gatheredInformation: {visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation/>)},
     stakeholders: {visited: false, completed: true, pageNumber: 5, html: (<Stakeholders/>)},
     results: {visited: false, completed: true, pageNumber: 6, html: (<Results/>)},
     feedback: {visited: false, completed: true, pageNumber: 7, html: (<Feedback/>)},
