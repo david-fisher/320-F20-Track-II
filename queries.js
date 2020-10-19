@@ -53,7 +53,6 @@ function getTask(scenarioID, callback){
   })
 }
 
-
 function addInitReflect(studentID, scenarioID, data, callback){
   console.log(studentID, scenarioID, data)
   pool.query('UPDATE responses set initialreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error,results) => {
@@ -62,6 +61,50 @@ function addInitReflect(studentID, scenarioID, data, callback){
     }
 
     callback(`Initial Reflection updated for studentID: ${studentID}`)
+  })
+}
+
+function addStakeholder(studentID, stakeholder, scenarioID, callback){
+  console.log(studentID, stakeholder, scenarioID)
+  pool.query(/* something */ [studentID, stakeholder, scenarioID], (error, results) => {
+    if(error){
+      throw error
+    }
+
+    callback(`Stakeholder updated for studentID: ${studentID}`)
+  })
+}
+
+function addMidReflect(studentID, input, scenarioID, callback){
+  console.log(studentID, input, scenarioID)
+  pool.query(/* something */ [studentID, input, scenarioID], (error, results) => {
+    if(error){
+      throw error
+    }
+
+    callback(`Middle reflection updated for studentID: ${studentID}`)
+  })
+}
+
+function addFinalAction(studentID, data, scenerioID, callback){
+  console.log(studentID, data, scenarioID)
+  pool.query(/*something */ [studentID, data, scenarioID], (error, results) => {
+    if(error){
+      throw error
+    }
+
+    callback(`Final action updated for studentID: ${studentID}`)
+  })
+}
+
+function addFinalReflection(studentID, input, scenarioID, callback){
+  console.log(studentID, input, scenarioID)
+  pool.query(/*something */ [studentID, input, scenarioID], (error, results) => {
+    if(error){
+      throw error
+    }
+
+    callback(`Final reflection updated for studentID: ${studentID}`)
   })
 }
 

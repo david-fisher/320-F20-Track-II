@@ -104,8 +104,6 @@ router.route('/scenarios/initReflect')
         console.log("Updated initial relfection")
     })
 
-
-
 router.route('/scenarios/InitActions')
 
     .get(function(req, res){
@@ -132,8 +130,21 @@ router.route('/scenarios/final')
             res.status(200).json(result)
         })
 
-        console.log("Got stakeholder history")
+        console.log("Got final action")
     })  
+
+    .put(function(req, res){
+        //
+        //
+        studentID = req.body.studentID
+        data = req.body.data
+        scenarioID = req.body.scenarioID
+        db.addFinalAction(studentID, data, scenarioID, function(result){
+            res.status(200).send(result)
+        })
+
+        console.log("Updated final action student decision")
+    })
 
 router.route('/scenarios/consequences')
 
@@ -147,7 +158,7 @@ router.route('/scenarios/consequences')
             res.status(200).json(result)
         })
 
-        console.log("Got stakeholder history")
+        console.log("Got scenario consequences")
     })  
 
 router.route('/scenarios/stakeholderHistory')
@@ -179,6 +190,19 @@ router.route('/scenarios/stakeholders')
         console.log("Got all stakeholders")
     })
 
+    .put(function(req, res){
+        //
+        //
+        scenarioID = req.body.scenarioID
+        stakeholder = req.body.stakeholder
+        studentID = req.body.studentID
+        db.addStakeholder(studentID, stakeholder, scenarioID, function(result){
+            res.status(200).send(result)
+        })
+
+        console.log("Added stakeholder")
+    })
+
 router.route('/scenarios/stakeholders/convo')
    
     .get(function(req, res){
@@ -207,6 +231,19 @@ router.route('/scenarios/midReflect')
         console.log("Got middle reflection")
     })
 
+    .put(function(req, res){
+        //
+        //
+        studentID = req.body.studentID
+        input = req.body.input
+        scenarioID = req.body.scenarioID
+        db.addMidReflect(studentID, input, scenarioID, function(result){
+            res.status(200).send(result)
+        })
+
+        console.log("Updated middle reflection")
+    })
+
 router.route('/scenario/finalReflection')
 
     .get(function(req, res){
@@ -219,6 +256,19 @@ router.route('/scenario/finalReflection')
         })
 
         console.log("Got final reflection")
+    })
+
+    .put(function(req, res){
+        //
+        //
+        studentID = req.body.studentID
+        input = req.body.input
+        scenarioID = req.body.scenarioID
+        db.addFinalReflection(studentID, input, scenarioID, function(result){
+            res.status(200).send(result)
+        })
+
+        console.log("Updated final reflection")
     })
 
 router.route('/scenario/Conclusion')
