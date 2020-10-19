@@ -26,8 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const mainText =
-  "You have just been presented with a scenario about a new project that your company is developing. You have a role to play in the development and eventual launch of that project. Thinking about that role and about what you have learned about this new project, please provide responses to the following questions. You must write something, but your responses do not need to be highly polished; you should aim for a few thoughtful sentences.";
+const mainText = "You have just been presented with a scenario about a new project that your company is developing. You have a role to play in the development and eventual launch of that project. Thinking about that role and about what you have learned about this new project, please provide responses to the following questions. You must write something, but your responses do not need to be highly polished; you should aim for a few thoughtful sentences.";
 
 function InitialReflection({ pages, setPages, activePage, setActivePage }) {
   function goToPrjectAssignment() {
@@ -86,9 +85,10 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
           </Button>
         </Grid>
       </Grid>
+      <p >{mainText}</p>
       <Grid container spacing={2}>
         <Grid item lg={12}>
-          <QA />
+          <QA questions={["asdas","asdasd","sadasdasdasdasd"]} />
         </Grid>
       </Grid>
     </div>

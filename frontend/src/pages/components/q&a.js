@@ -1,49 +1,37 @@
-import React from "react";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import FilledInput from "@material-ui/core/FilledInput";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import Input from "@material-ui/core/Input";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
+import React, {useState} from "react";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-  },
-}));
+const alignMiddle = {
+  position: 'absolute', 
+  left: '50%', 
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+}
 
-export default function StateTextFields() {
-  const classes = useStyles();
-  const [name, setName] = React.useState("Cat in the Hat");
+function getQuestions(questionArr){
+  let arr = [];
+  for(let i = 0; i < questionArr.length; i++){
+    let question = questionArr[i];
+    arr.push(
+      <div>
+      <p>{question}</p>
+      <textarea rows="4" cols="100" style={{resize: "none"}}></textarea>
+      </div>
+    )
+  }
+  return arr;
+}
+
+export default function StateTextFields(props) {
   const handleChange = (event) => {
-    setName(event.target.value);
+    
   };
+  const [testInput1, setTestInput1] = useState("");
+
+  let qAndA =  getQuestions(props.questions).map((question) => <>{question}</>)
 
   return (
-    <form className={classes.root} noValidate autoComplete="off">
-      <div>
-        <FormControl>
-          <InputLabel htmlFor="component-simple">reflection 1</InputLabel>
-          <Input id="component-simple" value={name} onChange={handleChange} />
-        </FormControl>
-      </div>
-      <div>
-        <FormControl>
-          <InputLabel htmlFor="component-simple">reflection 2</InputLabel>
-          <Input id="component-simple" value={name} onChange={handleChange} />
-        </FormControl>
-      </div>
-      <div>
-        <FormControl>
-          <InputLabel htmlFor="component-simple">reflection 3</InputLabel>
-          <Input id="component-simple" value={name} onChange={handleChange} />
-        </FormControl>
-      </div>
-    </form>
+    <div style={alignMiddle}>
+      <>{qAndA}</>
+    </div>
   );
 }
