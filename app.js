@@ -87,6 +87,25 @@ router.route('/scenarios/initReflect')
         console.log("Got initial relfection")
     })
 
+//------------------------------------------------------------------------------------------
+//      Add put functions like the one below in the appropriate routes
+//------------------------------------------------------------------------------------------
+
+    .put(function(req, res){
+        // 
+        //
+        scenarioID = req.body.scenarioID
+        studentID = req.body.studentID
+        data = req.body.data
+        db.addInitReflect(studentID, scenarioID, data, function(result){
+            res.status(200).send(result)
+        })
+
+        console.log("Updated initial relfection")
+    })
+
+
+
 router.route('/scenarios/InitActions')
 
     .get(function(req, res){

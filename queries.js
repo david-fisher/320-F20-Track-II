@@ -53,6 +53,19 @@ function getTask(scenarioID, callback){
   })
 }
 
+
+function addInitReflect(studentID, scenarioID, data, callback){
+  console.log(studentID, scenarioID, data)
+  pool.query('UPDATE responses set initialreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error,results) => {
+    if(error){
+      throw error
+    }
+
+    callback(`Initial Reflection updated for studentID: ${studentID}`)
+  })
+}
+
+
 /*
 
 //get scenario by id
@@ -123,6 +136,7 @@ module.exports = {
     getScenarios,
     getIntro,
     getTask,
+    addInitReflect,
     // getScenraioById,
     // createScenario,
     // updateScenario,
