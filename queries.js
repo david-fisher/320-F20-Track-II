@@ -64,9 +64,9 @@ function addInitReflect(studentID, scenarioID, data, callback){
   })
 }
 
-function addStakeholder(studentID, stakeholder, scenarioID, callback){
+function addStakeholder(studentID, scenarioID, stakeholder, callback){
   console.log(studentID, stakeholder, scenarioID)
-  pool.query(/* something */ [studentID, stakeholder, scenarioID], (error, results) => {
+  pool.query('UPDATE responses set stakeholderid = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, stakeholder], (error, results) => {
     if(error){
       throw error
     }
@@ -75,9 +75,9 @@ function addStakeholder(studentID, stakeholder, scenarioID, callback){
   })
 }
 
-function addMidReflect(studentID, input, scenarioID, callback){
-  console.log(studentID, input, scenarioID)
-  pool.query(/* something */ [studentID, input, scenarioID], (error, results) => {
+function addMidReflect(studentID, scenarioID, data, callback){
+  console.log(studentID, data, scenarioID)
+  pool.query('UPDATE responses set middlereflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
     }
@@ -86,9 +86,9 @@ function addMidReflect(studentID, input, scenarioID, callback){
   })
 }
 
-function addFinalAction(studentID, data, scenerioID, callback){
+function addFinalAction(studentID, scenarioID, data, callback){
   console.log(studentID, data, scenarioID)
-  pool.query(/*something */ [studentID, data, scenarioID], (error, results) => {
+  pool.query('UPDATE responses set finalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
     }
@@ -97,9 +97,9 @@ function addFinalAction(studentID, data, scenerioID, callback){
   })
 }
 
-function addFinalReflection(studentID, input, scenarioID, callback){
-  console.log(studentID, input, scenarioID)
-  pool.query(/*something */ [studentID, input, scenarioID], (error, results) => {
+function addFinalReflection(studentID, scenarioID, data, callback){
+  console.log(studentID, data, scenarioID)
+  pool.query('UPDATE responses set finalreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
     }
@@ -180,6 +180,10 @@ module.exports = {
     getIntro,
     getTask,
     addInitReflect,
+    addMidReflect,
+    addStakeholder,
+    addFinalAction,
+    addFinalReflection,
     // getScenraioById,
     // createScenario,
     // updateScenario,

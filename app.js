@@ -139,7 +139,7 @@ router.route('/scenarios/final')
         studentID = req.body.studentID
         data = req.body.data
         scenarioID = req.body.scenarioID
-        db.addFinalAction(studentID, data, scenarioID, function(result){
+        db.addFinalAction(studentID, scenarioID, data, function(result){
             res.status(200).send(result)
         })
 
@@ -196,7 +196,7 @@ router.route('/scenarios/stakeholders')
         scenarioID = req.body.scenarioID
         stakeholder = req.body.stakeholder
         studentID = req.body.studentID
-        db.addStakeholder(studentID, stakeholder, scenarioID, function(result){
+        db.addStakeholder(studentID, scenarioID, stakeholder, function(result){
             res.status(200).send(result)
         })
 
@@ -235,9 +235,9 @@ router.route('/scenarios/midReflect')
         //
         //
         studentID = req.body.studentID
-        input = req.body.input
+        data = req.body.data
         scenarioID = req.body.scenarioID
-        db.addMidReflect(studentID, input, scenarioID, function(result){
+        db.addMidReflect(studentID, scenarioID, data, function(result){
             res.status(200).send(result)
         })
 
@@ -262,9 +262,9 @@ router.route('/scenario/finalReflection')
         //
         //
         studentID = req.body.studentID
-        input = req.body.input
+        data = req.body.data
         scenarioID = req.body.scenarioID
-        db.addFinalReflection(studentID, input, scenarioID, function(result){
+        db.addFinalReflection(studentID, scenarioID, data, function(result){
             res.status(200).send(result)
         })
 
