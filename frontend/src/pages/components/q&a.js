@@ -1,20 +1,29 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { Box, Grid, Typography , withStyles, Button } from '@material-ui/core';
 
 const alignMiddle = {
-  position: 'absolute', 
-  left: '50%', 
+  position: 'fixed',
+  left: '50%',
   top: '50%',
   transform: 'translate(-50%, -50%)',
 }
 
-function getQuestions(questionArr){
+const TextTypography = withStyles({
+  root: {
+    color: "#373a3c",
+    whiteSpace: "pre-line",
+    textAlign: 'left'
+  },
+})(Typography);
+
+function getQuestions(questionArr) {
   let arr = [];
-  for(let i = 0; i < questionArr.length; i++){
+  for (let i = 0; i < questionArr.length; i++) {
     let question = questionArr[i];
     arr.push(
       <div>
-      <p>{question}</p>
-      <textarea rows="4" cols="100" style={{resize: "none"}}></textarea>
+        <p><b>{question}</b></p>
+        <textarea rows="4" cols="90" style={{ resize: "none" }}></textarea>
       </div>
     )
   }
@@ -23,15 +32,33 @@ function getQuestions(questionArr){
 
 export default function StateTextFields(props) {
   const handleChange = (event) => {
-    
+
   };
   const [testInput1, setTestInput1] = useState("");
-
-  let qAndA =  getQuestions(props.questions).map((question) => <>{question}</>)
+  let qAndA = getQuestions(props.questions).map((question) => <>{question}</>)
+  let header = props.header;
 
   return (
-    <div style={alignMiddle}>
-      <>{qAndA}</>
-    </div>
+
+    <Grid container spacing={2}>
+      <Grid item lg={12}>
+        <TextTypography variant="body1" align="center">
+          {header}
+        </TextTypography>
+      </Grid>
+      <Grid item lg={12}>
+        <TextTypography variant="body1" align="center">
+          {qAndA}
+        </TextTypography>
+      </Grid>
+      <Grid item lg={12}>
+      <Button type="submit" variant="outlined" color="primary">
+        Submit
+    </Button>
+      </Grid>
+
+    </Grid>
+
+
   );
 }

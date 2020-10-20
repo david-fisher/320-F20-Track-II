@@ -1,28 +1,34 @@
 import React, { useState } from "react";
-import {Grid} from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import VirtualizedList from "./components/gatheredList.js";
 import Results from "./results.js";
 import Response from "./response.js";
 import Introduction from "./introduction.js";
 import ProjectAssignment from "./projectAssignment.js";
+import InitialReflection from "./initialReflection.js";
 import InitialAction from "./initialAction.js";
 import GatheredInformation from "./gatheredInformation.js";
 import Stakeholders from "./stakeholders.js";
+import MiddleReflection from "./midReflection";
 import Feedback from "./feedback.js";
+import FinalReflection from "./finalReflection.js"
 
 function SimulationWindow() {
 
   const [activePage, setActivePage] = useState("introduction");
   const [pages, setPages] = useState({
-    introduction: {visited: true, completed: true, pageNumber: 1, html: (<Introduction/>)},
-    projectAssignment: {visited: false, completed: true, pageNumber: 2, html: (<ProjectAssignment/>)},
-    initialAction: {visited: false, completed: true, pageNumber: 3, html: (<InitialAction/>)},
-    gatheredInformation: {visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation/>)},
-    stakeholders: {visited: false, completed: true, pageNumber: 5, html: (<Stakeholders/>)},
-    results: {visited: false, completed: true, pageNumber: 6, html: (<Results/>)},
-    feedback: {visited: false, completed: true, pageNumber: 7, html: (<Feedback/>)},
-    response: {visited: false, completed: true, pageNumber: 8, html: (<Response/>)}
+    introduction: { visited: true, completed: true, pageNumber: 0, html: (<Introduction />) },
+    projectAssignment: { visited: false, completed: true, pageNumber: 1, html: (<ProjectAssignment />) },
+    initialReflection: { visited: false, completed: true, pageNumber: 2, html: (<InitialReflection />) },
+    initialAction: { visited: false, completed: true, pageNumber: 3, html: (<InitialAction />) },
+    gatheredInformation: { visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation />) },
+    stakeholders: { visited: false, completed: true, pageNumber: 5, html: (<Stakeholders />) },
+    middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
+    results: { visited: false, completed: true, pageNumber: 7, html: (<Results />) },
+    feedback: { visited: false, completed: true, pageNumber: 8, html: (<Feedback />) },
+    finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
+    response: { visited: false, completed: true, pageNumber: 10, html: (<Response />) }
   });
 
   return (
@@ -34,14 +40,15 @@ function SimulationWindow() {
           <Stepper activePage={activePage} pages={pages} key={activePage} />
         </Grid>
         <Grid item lg={6} >
-            {React.cloneElement(pages[activePage].html, {
-                pages: pages,
-                setPages: setPages,
-                activePage: activePage,
-                setActivePage: setActivePage})}
+          {React.cloneElement(pages[activePage].html, {
+            pages: pages,
+            setPages: setPages,
+            activePage: activePage,
+            setActivePage: setActivePage
+          })}
         </Grid>
         <Grid item lg={3}>
-          <VirtualizedList/>
+          <VirtualizedList />
         </Grid>
       </Grid>
     </div>

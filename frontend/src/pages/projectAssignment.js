@@ -62,18 +62,17 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
     }
     setActivePage((prevPage) => "introduction");
   }
-  function goToInitialAction() {
-    if (pages.initialAction.completed) {
-      if (!pages.initialAction.visited) {
-        setPages((prevPages) => {
-          let copy = { ...prevPages };
-          copy.initialAction.visited = true;
-          return copy;
-        });
-      }
-      setActivePage((prevPage) => "initialAction");
+  function goToInitialReflection(){
+    if (!pages.initialReflection.visited) {
+      setPages(prevPages => {
+        let copy = {...prevPages};
+        copy.initialReflection.visited = true;
+        return copy;
+      });
     }
+    setActivePage(prevPage => 'initialReflection')
   }
+
 
   function getUpperText(headings, subtext) {
     let text = [];
@@ -118,7 +117,7 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
             variant="contained"
             disableElevation
             color="primary"
-            onClick={goToInitialAction}
+            onClick={goToInitialReflection}
           >
             Next
           </Button>

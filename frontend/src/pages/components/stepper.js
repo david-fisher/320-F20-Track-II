@@ -41,17 +41,6 @@ const useStyles = makeStyles((theme) => ({
   disabled: {},
 }));
 
-// const [pages, setPages] = useState({
-//   introduction: {visited: true, completed: true, pageNumber: 1, html: (<Introduction/>)},
-//   projectAssignment: {visited: false, completed: true, pageNumber: 2, html: (<ProjectAssignment/>)},
-//   initialAction: {visited: false, completed: true, pageNumber: 3, html: (<InitialAction/>)},
-//   gatheredInformation: {visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation/>)},
-//   stakeholders: {visited: false, completed: true, pageNumber: 5, html: (<Stakeholders/>)},
-//   results: {visited: false, completed: true, pageNumber: 6, html: (<Results/>)},
-//   feedback: {visited: false, completed: true, pageNumber: 7, html: (<Feedback/>)},
-//   response: {visited: false, completed: true, pageNumber: 8, html: (<Response/>)}
-// });
-
 function getSteps(pages) {
   let stepArr = [];
   let keys = Object.keys(pages);
@@ -109,9 +98,8 @@ function getStepContent(step) {
 export default function VerticalLinearStepper(props) {
   //<Stepper activePage={activePage} pages={pages} />
   const classes = useStyles();
-  let curr = getCurrentPageNum(props.activePage);
   // eslint-disable-next-line
-  const [activeStep, setActiveStep] = React.useState(curr);
+  const [activeStep, setActiveStep] = React.useState(props.pages[props.activePage].pageNumber);
   const steps = getSteps(props.pages);
 
   return (

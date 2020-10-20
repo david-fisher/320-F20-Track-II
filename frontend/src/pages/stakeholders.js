@@ -18,15 +18,16 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
     }
     setActivePage(prevPage => 'gatheredInformation')
   }
-  function goToResults(){
-    if (!pages.results.visited) {
+
+  function goToMiddleReflection(){
+    if (!pages.middleReflection.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.results.visited = true;
+        copy.middleReflection.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'results')
+    setActivePage(prevPage => 'middleReflection')
   }
   return (
     <div>
@@ -44,7 +45,7 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
 
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
 
-          <Button variant="contained" disableElevation color="primary" onClick={goToResults}>Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToMiddleReflection}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

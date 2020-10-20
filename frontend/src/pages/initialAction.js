@@ -16,15 +16,15 @@ const TextTypography = withStyles({
 })(Typography);
 
 function InitialAction({pages, setPages, activePage, setActivePage}) {
-  function goToProjectAssignment(){
-    if (!pages.projectAssignment.visited) {
+  function goToInitialReflection(){
+    if (!pages.initialReflection.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.projectAssignment.visited = true;
+        copy.initialReflection.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'projectAssignment')
+    setActivePage(prevPage => 'initialReflection')
   }
 
   function goToGatheredInformation(){
@@ -51,7 +51,7 @@ function InitialAction({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToProjectAssignment}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToInitialReflection}>Back</Button>
         </Grid>
         <Grid item style={{marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToGatheredInformation} >Next</Button>

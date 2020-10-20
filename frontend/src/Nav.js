@@ -3,7 +3,7 @@ import React from "react";
 import Results from "./pages/results";
 import App from "./App";
 import RadarTest from "./pages/chartTest";
-import InitialReflection from "./pages/initalReflection";
+import InitialReflection from "./pages/initialReflection";
 
 import {
   ThemeProvider,
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   link: {
     "&:hover": {
       color: "#000000",
-      textDecoration: "#000000",
+      textDecoration: "none",
     },
   },
 }));
@@ -64,10 +64,8 @@ function Nav() {
                   color="inherit"
                   aria-label="menu"
                 >
-                  <MenuIcon />
+                <MenuIcon />
                 </IconButton>
-                {/* Whenever you hover of buttons, underline in blue, style={{ textDecoration: 'none' }} 
-              will get placed in makeStyles when a solution is figured out */}
                 <Typography variant="h6" className={classes.title}>
                   <Link className={classes.link} to="/">
                     <Button className={classes.title} color="inherit">
@@ -87,11 +85,6 @@ function Nav() {
                   <Link className={classes.link} to="/chartTest">
                     <Button className={classes.title} color="inherit">
                       Chart
-                    </Button>
-                  </Link>
-                  <Link className={classes.link} to="/ref">
-                    <Button className={classes.title} color="inherit">
-                      Reflection
                     </Button>
                   </Link>
                 </Typography>
@@ -114,9 +107,6 @@ function Nav() {
             </Route>
             <Route path="/chartTest" exact>
               <RadarTest />
-            </Route>
-            <Route path="/ref" exact>
-              <InitialReflection />
             </Route>
           </Switch>
         </div>
