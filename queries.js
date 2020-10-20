@@ -54,7 +54,7 @@ function getTask(scenarioID, callback){
 }
 
 function addInitReflect(studentID, scenarioID, data, callback){
-  console.log(studentID, scenarioID, data)
+  // console.log(studentID, scenarioID, data)
   pool.query('UPDATE responses set initialreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error,results) => {
     if(error){
       throw error
@@ -65,7 +65,7 @@ function addInitReflect(studentID, scenarioID, data, callback){
 }
 
 function addStakeholder(studentID, scenarioID, stakeholder, callback){
-  console.log(studentID, stakeholder, scenarioID)
+  // console.log(studentID, stakeholder, scenarioID)
   pool.query('UPDATE responses set stakeholderid = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, stakeholder], (error, results) => {
     if(error){
       throw error
@@ -76,7 +76,7 @@ function addStakeholder(studentID, scenarioID, stakeholder, callback){
 }
 
 function addMidReflect(studentID, scenarioID, data, callback){
-  console.log(studentID, data, scenarioID)
+  // console.log(studentID, data, scenarioID)
   pool.query('UPDATE responses set middlereflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
@@ -87,7 +87,7 @@ function addMidReflect(studentID, scenarioID, data, callback){
 }
 
 function addFinalAction(studentID, scenarioID, data, callback){
-  console.log(studentID, data, scenarioID)
+  // console.log(studentID, data, scenarioID)
   pool.query('UPDATE responses set finalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
@@ -98,7 +98,7 @@ function addFinalAction(studentID, scenarioID, data, callback){
 }
 
 function addFinalReflection(studentID, scenarioID, data, callback){
-  console.log(studentID, data, scenarioID)
+  // console.log(studentID, data, scenarioID)
   pool.query('UPDATE responses set finalreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
