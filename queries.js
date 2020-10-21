@@ -1,11 +1,18 @@
+var env = require('node-env-file');
+env(__dirname + '/.env')
+
 const Pool = require('pg').Pool
-const pool = new Pool({
-  user: 'goon',
-  host: 'localhost',
-  database: 'api',
-  password: 'enterdb',
-  port: 5432,
-})
+
+// Pull in configs from environmental variables, set up via env()
+/*
+ * Place the following into .env and change values as required
+ * PGHOST='localhost'
+ * PGUSER=(insert POSTGRESQL user/role here)
+ * PGDATABASE="ethicssimulatordb"
+ * PGPASSWORD=(insert POSTGRESQL password for user/role here)
+ * PGPORT=5432
+ */
+const pool = new Pool();
 
 //get all scenarios
 const getScenarios = (request, response) => {
