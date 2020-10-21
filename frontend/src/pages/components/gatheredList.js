@@ -63,6 +63,11 @@ export default function InfoGatheredList({pages}) {
           {infos.filter(info => pages[info.pageId].visited).map(info => {
             return (
               <ListItem key={info.id} button onClick={() => getListContent(info).then(res => alert(res))}>
+                {(info.pageId === 'stakeholders') &&
+                  <Box mr = {1} mb = {0.75}>
+                    <PersonIcon style = {{ color: "#373a3c"}}/>
+                  </Box>
+                }
                 <ListItemText height={400} width={300}>
                   {info.name}
                 </ListItemText>
