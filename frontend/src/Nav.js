@@ -75,7 +75,6 @@ function Nav() {
               <Button color="inherit">Login</Button>
             </Toolbar>
           </AppBar>
-          </ ThemeProvider>
 
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
@@ -93,6 +92,7 @@ function Nav() {
               <RadarTest />
             </Route>
           </Switch>
+          </ThemeProvider>
         </div>
       </Router>
     </div>

@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import playerReducer from './redux/reducers';
 import './index.css';
 import Nav from './Nav';
 import * as serviceWorker from './serviceWorker';
 
+const store = createStore(playerReducer)
+
 ReactDOM.render(
   <React.StrictMode>
-    <Nav />
+    <Provider store={store}>
+      <Nav />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
