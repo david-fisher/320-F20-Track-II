@@ -81,6 +81,15 @@ CREATE TABLE "conversation_task" (
 
 );
 
+CREATE TABLE "stakeholders" (
+	"id" SERIAL primary key,
+	"name" varchar,
+	"description" varchar,
+	"conversation" varchar,
+	"scenario_id" int references scenario,
+	"conversation_task_id" int references conversation_task
+);
+
 CREATE TABLE "mcq" (
 	"page_id" int references pages primary key,
 	"content" varchar
@@ -90,6 +99,20 @@ CREATE TABLE "mcq" (
 CREATE TABLE "plain_page" (
 	"page_id" int references pages primary key,
 	"content" varchar
+);
+
+
+
+CREATE TABLE "question" (
+	"id" SERIAL primary key,
+	"question" varchar,
+	"mcq_id" int references mcq
+);
+
+CREATE TABLE "option" (
+	"id" SERIAL primary key,
+	"option" char(1) NOT NULL,
+	"question_id" int references question
 );
 
 CREATE TABLE "submissions" (
@@ -116,37 +139,18 @@ CREATE TABLE "prompt_response" (
 );
 
 CREATE TABLE "conversation_choices" (
-	"id" int references response primary key,
-	"choices" varchar
-	-- alternatively, use another table to store the choices
+	"id" int references response,
+	"stakeholder_id" int references stakeholders,
+	primary key (id, stakeholder_id)
 );
 
 CREATE TABLE "mcq_response" (
-	"id" int references response primary key,
-	"choices" varchar
-	-- alternatively, use another table to store the responses
+	"id" int references response,
+	"question_id" int references question,
+	primary key (id, question_id),
+	"choice_id" int references option
 );
 
-CREATE TABLE "stakeholders" (
-	"id" SERIAL primary key,
-	"name" varchar,
-	"description" varchar,
-	"conversation" varchar,
-	"scenario_id" int references scenario,
-	"conversation_task_id" int references conversation_task
-);
-
-CREATE TABLE "question" (
-	"id" SERIAL primary key,
-	"question" varchar,
-	"mcq_id" int references mcq
-);
-
-CREATE TABLE "option" (
-	"id" SERIAL primary key,
-	"option" char(1) NOT NULL,
-	"question_id" int references question
-);
 
 
 insert into users values(DEFAULT,'John Doe', 'johndoe@umass.edu');
