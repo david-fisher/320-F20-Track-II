@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
+import { GatheredInfoContext } from './simulationWindow';
 
 const TextTypography = withStyles({
   root: {
@@ -8,6 +9,9 @@ const TextTypography = withStyles({
 })(Typography);
 
 function Stakeholders({pages, setPages, activePage, setActivePage}) {
+
+  const [gatheredInfo, setGatheredInfo] = useContext(GatheredInfoContext);
+
   function goToGatheredInformation(){
     if (!pages.gatheredInformation.visited) {
       setPages(prevPages => {
@@ -25,6 +29,16 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
         let copy = {...prevPages};
         copy.middleReflection.visited = true;
         return copy;
+      });
+      const PAGE_ID_OF_PAGE_BEFORE_CONVERSATIONS = 'gatheredInformation' // TODO: 'gatheredInformation' is the wrong answer here!
+      setGatheredInfo(infos => {
+        let ind = infos.findIndex(info => info.pageId === PAGE_ID_OF_PAGE_BEFORE_CONVERSATIONS);
+        if (ind < 0) { ind = infos.length; }
+        let newInfos = [...infos];
+        newInfos.splice(ind, 0,
+          {name: 'Stakeholder 0', id: 's0', pageId: 'stakeholders'},
+          {name: 'Stakeholder 1', id: 's1', pageId: 'stakeholders'}); // placeholder stakeholder values
+        return newInfos;
       });
     }
     setActivePage(prevPage => 'middleReflection')

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Grid } from "@material-ui/core";
+import React, { useState, createContext, useEffect } from "react";
+import {Grid} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
-import VirtualizedList from "./components/gatheredList.js";
+import InfoGatheredList from "./components/gatheredList.js";
 import Results from "./results.js";
 import Response from "./response.js";
 import Introduction from "./introduction.js";
@@ -13,6 +13,8 @@ import Stakeholders from "./stakeholders.js";
 import MiddleReflection from "./midReflection";
 import Feedback from "./feedback.js";
 import FinalReflection from "./finalReflection.js"
+
+export const GatheredInfoContext = createContext();
 
 function SimulationWindow() {
 
@@ -31,25 +33,46 @@ function SimulationWindow() {
     response: { visited: false, completed: true, pageNumber: 10, html: (<Response />) }
   });
 
+  const infoIdsState = useState([]);
+
+  // Asynchronously initialize infoIdsState
+  useEffect(() => {
+    // placeholder async function until redux is set up
+    async function imitateGetCompleteStakeholders() { return [] };// {name: 'Stakeholder 0', id: 's0'}] }
+
+    imitateGetCompleteStakeholders().then(stakeholders => {
+      infoIdsState[1](ids => {
+        return [
+          {name: 'Introduction', pageId: 'introduction', id: 'p0'},
+          ...stakeholders.map(stakeholder => {
+            stakeholder.pageId = 'stakeholders';
+            return stakeholder;
+          })
+        ];
+      });
+    });
+  }, []) // only fire once
+
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={3}>
-          <Stepper activePage={activePage} pages={pages} key={activePage} />
-        </Grid>
-        <Grid item lg={6} >
-          {React.cloneElement(pages[activePage].html, {
-            pages: pages,
-            setPages: setPages,
-            activePage: activePage,
-            setActivePage: setActivePage
-          })}
-        </Grid>
-        <Grid item lg={3}>
-          <VirtualizedList />
-        </Grid>
+        <GatheredInfoContext.Provider value={infoIdsState}>
+          <Grid item lg={3}>
+            <Stepper activePage={activePage} pages={pages} key={activePage} />
+          </Grid>
+          <Grid item lg={6} >
+              {React.cloneElement(pages[activePage].html, {
+                  pages: pages,
+                  setPages: setPages,
+                  activePage: activePage,
+                  setActivePage: setActivePage})}
+          </Grid>
+          <Grid item lg={3}>
+            <InfoGatheredList pages={pages}/>
+          </Grid>
+        </GatheredInfoContext.Provider>
       </Grid>
     </div>
   );
