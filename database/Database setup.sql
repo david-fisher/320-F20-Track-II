@@ -15,7 +15,8 @@ drop table prompt_response cascade;
 drop table conversation_choices cascade;
 drop table mcq_response cascade;
 drop table stakeholders cascade; 
-
+drop table question cascade;
+drop table option cascade;
 
 
 
@@ -26,29 +27,27 @@ CREATE TABLE "users" (
 	"full_name" varchar NOT NULL,
 	"email" char(254) NOT NULL,
 	"demographics" varchar
-	);  
+);  
 
 CREATE TABLE "courses" (
 	"id" SERIAL PRIMARY KEY,
 	"webpage" varchar,
 	"name" varchar,
 	"semester" char(10) NOT NULL
-	);
-
+);
 
 CREATE TABLE "instructs" (
 	"instructor_id" int references users,
 	"webpage" varchar,
 	"course_id" int references courses,
 	primary key("course_id", "instructor_id")
-	);
-
+);
 
 CREATE TABLE "enrolled" (
 	"student_id" int references users,
 	"course_id" int references courses,
 	primary key("student_id", "course_id")
-	);
+);
 
 CREATE TABLE "scenario" (
 	"id" SERIAL primary key,
@@ -56,14 +55,13 @@ CREATE TABLE "scenario" (
 	"due_date" date,
 	"description" varchar,
 	"additional_data" varchar
-	); 
+); 
 
 CREATE TABLE "contains" {
 	"course_id" int references courses,
 	"scenario_id" int references scenario
 
 };
-
 
 CREATE TABLE "pages" (
 	"id" SERIAL primary key,
@@ -72,12 +70,10 @@ CREATE TABLE "pages" (
 	"scenario_id" int references scenario
 );
 
-
 CREATE TABLE "prompt" (
 	"page_id" int references pages primary key,
 	"prompt" varchar
 );
-
 
 CREATE TABLE "conversation_task" (
 	"page_id" int references pages primary key,
@@ -131,7 +127,6 @@ CREATE TABLE "mcq_response" (
 	-- alternatively, use another table to store the responses
 );
 
-
 CREATE TABLE "stakeholders" (
 	"id" SERIAL primary key,
 	"name" varchar,
@@ -139,9 +134,19 @@ CREATE TABLE "stakeholders" (
 	"conversation" varchar,
 	"scenario_id" int references scenario,
 	"conversation_task_id" int references conversation_task
-	);
+);
 
+CREATE TABLE "question" (
+	"id" SERIAL primary key,
+	"question" varchar,
+	"mcq_id" int references mcq
+);
 
+CREATE TABLE "option" (
+	"id" SERIAL primary key,
+	"option" char(1) NOT NULL,
+	"question" int references question
+);
 
 
 insert into users values(DEFAULT,'John Doe', 'johndoe@umass.edu');
