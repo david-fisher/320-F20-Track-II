@@ -179,7 +179,7 @@ router.route('/scenarios/stakeholders')
         console.log("Added stakeholder")
     })
 
-router.route('/scenarios/stakeholders/convo')
+router.route('/scenarios/stakeholders/conversation')
    
     .get(function(req, res){
         scenarioID = req.body.scenarioID
@@ -227,7 +227,7 @@ router.route('/scenarios/finalReflection')
     })
 
     .put(function(req, res){
-        studentID = req.body.studentID
+        studentID = req.body.studentID  
         data = req.body.data
         scenarioID = req.body.scenarioID
         db.addFinalReflection(studentID, scenarioID, data, function(result){
@@ -237,7 +237,7 @@ router.route('/scenarios/finalReflection')
         console.log("Updated final reflection")
     })
 
-router.route('/scenario/Conclusion')
+router.route('/scenario/conclusion')
 
     .get(function(req, res){
         scenarioID = req.body.scenarioID
