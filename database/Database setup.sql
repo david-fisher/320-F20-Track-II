@@ -145,7 +145,7 @@ CREATE TABLE "question" (
 CREATE TABLE "option" (
 	"id" SERIAL primary key,
 	"option" char(1) NOT NULL,
-	"question" int references question
+	"question_id" int references question
 );
 
 
