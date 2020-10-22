@@ -22,11 +22,12 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
     }
     setActivePage(prevPage => 'gatheredInformation')
   }
-  function goToResults(){
-    if (!pages.results.visited) {
+
+  function goToMiddleReflection(){
+    if (!pages.middleReflection.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.results.visited = true;
+        copy.middleReflection.visited = true;
         return copy;
       });
       const PAGE_ID_OF_PAGE_BEFORE_CONVERSATIONS = 'gatheredInformation' // TODO: 'gatheredInformation' is the wrong answer here!
@@ -40,7 +41,7 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
         return newInfos;
       });
     }
-    setActivePage(prevPage => 'results')
+    setActivePage(prevPage => 'middleReflection')
   }
   return (
     <div>
@@ -58,7 +59,7 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
 
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
 
-          <Button variant="contained" disableElevation color="primary" onClick={goToResults}>Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToMiddleReflection}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
