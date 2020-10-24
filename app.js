@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
 const db = require('./queries')
+const isnumber = require('is-number')
 
 
 app.use(bodyParser.json())
@@ -44,13 +45,21 @@ router.route('/scenarios')
 router.route('/scenarios/intro')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        // input = JSON.stringify(req.headers)
+        // console.log(input)
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: "Invalid scenario ID"})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
         db.getIntro(scenarioID, function(result){
             // console.log("intro-",result)
             res.status(200).json(result)
         })
-        
         console.log("Got scenario introduction")
+        }   
     })  
 
 
