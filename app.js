@@ -56,7 +56,8 @@ router.route('/scenarios/intro')
         else{
         db.getIntro(scenarioID, function(result){
             // console.log("intro-",result)
-            if(result == null){
+            console.log(result)
+            if(result.length == 0){
                 res.status(404).json({error: "No scenario found"})
             }
             else{
@@ -85,7 +86,6 @@ router.route('/scenarios/initialReflection')
 
     .get(function(req, res){
         scenarioID = req.body.scenarioID
-        //merge test
         db.getInitReflect(scenarioID, function(result){
             // console.log("Initial Reflection-", result)
             res.status(200).json(result)
