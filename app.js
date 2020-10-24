@@ -56,7 +56,12 @@ router.route('/scenarios/intro')
         else{
         db.getIntro(scenarioID, function(result){
             // console.log("intro-",result)
+            if(result == null){
+                res.status(404).json({error: "No scenario found"})
+            }
+            else{
             res.status(200).json(result)
+            }
         })
         console.log("Got scenario introduction")
         }   
