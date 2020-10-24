@@ -85,6 +85,7 @@ router.route('/scenarios/initialReflection')
 
     .get(function(req, res){
         scenarioID = req.body.scenarioID
+        //merge test
         db.getInitReflect(scenarioID, function(result){
             // console.log("Initial Reflection-", result)
             res.status(200).json(result)
