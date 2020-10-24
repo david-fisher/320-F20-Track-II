@@ -109,7 +109,7 @@ router.route('/scenarios/initialReflection')
     })
 
 router.route('/scenarios/initialAction')
-
+    //COMMENT TEST HERE
     .get(function(req, res){
         scenarioID = req.body.scenarioID
         db.getInitActions(scenarioID, function(result){
