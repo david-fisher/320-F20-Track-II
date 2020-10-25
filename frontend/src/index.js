@@ -7,7 +7,8 @@ import './index.css';
 import Nav from './Nav';
 import * as serviceWorker from './serviceWorker';
 
-const store = createStore(playerReducer)
+const store = createStore(playerReducer, undefined,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
 
 ReactDOM.render(
   <React.StrictMode>
