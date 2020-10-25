@@ -239,6 +239,7 @@ module.exports = {
     getStakeholderHistory,
     getFinalAction,
     getConsequences,
+    getConclusion,
     addInitReflect,
     addMidReflect,
     addStakeholder,
