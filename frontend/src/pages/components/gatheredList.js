@@ -25,6 +25,9 @@ export default function InfoGatheredList({pages}) {
   let listContentById = {};
   let [infos, setInfos] = useContext(GatheredInfoContext);
 
+  /*  Retrieve the content to display for a given info button.
+      If the info button onClick triggers an alert, this should be a string. If it's a modal popup, it should be html.
+  */
   async function getListContent(info) {
     if (listContentById[info.id] === undefined) {
       const mockHttpRequest = async () => { // Simulating async retrieval of data
