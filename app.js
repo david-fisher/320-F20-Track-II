@@ -60,13 +60,14 @@ router.route('/scenarios/intro')
             // console.log("intro-",result)
             //console.log(result)
             if(result.length == 0){
-                res.status(404).json({error: "No scenario found"})
+                res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got scenario introduction")
             }
         })
-        console.log("Got scenario introduction")
+        
         }   
     })  
 
@@ -88,9 +89,10 @@ router.route('/scenarios/task')
             }
             else{
                 res.status(200).json(result)
+                console.log("Got scenario task")
             }
         })     
-        console.log("Got scenario task")
+        
         }
     })  
 
@@ -146,13 +148,14 @@ router.route('/scenarios/finalAction')
         db.getFinalAction(scenarioID, function(result){
             // console.log("task-",result)
             if(result.length == 0) {
-                res.status(404).json({error: "No scenario final action page found"})
+                res.status(404).json({error: `No scenario final action page found for scenarioID: ${sce}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got scenario final action page")
             }
         })     
-        console.log("Got scenario final action page")
+        
         }
     })  
 
@@ -198,13 +201,14 @@ router.route('/scenarios/consequences')
         db.getConsequences(scenarioID, studentID, function(result){
             // console.log("task-",result)
             if(result.length == 0) {
-                res.status(404).json({error: "No consequences found"})
+                res.status(404).json({error: `No consequences found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got consequences")
             }
         })     
-        console.log("Got consequences")
+        
         }
     })  
 
@@ -224,13 +228,24 @@ router.route('/scenarios/stakeholderHistory')
 router.route('/scenarios/stakeholders')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: "Invalid scenario ID"})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
         db.getStakeholders(scenarioID, function(result){
             // console.log("Stakeholders-", result)
+            if(result.length == 0){
+                res.status(404).json({error: `No stakeholders found for scenarioID: ${scenarioID}`})
+            }
+            else{
             res.status(200).json(result)
-        })
-
-        console.log("Got all stakeholders")
+            console.log("Got all stakeholders")
+            }
+            })
+        }   
     })
 
     .put(function(req, res){
@@ -247,13 +262,26 @@ router.route('/scenarios/stakeholders')
 router.route('/scenarios/stakeholders/conversation')
    
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
-        db.getStakeholdersConvo(scenarioID, function(result){
+        scenarioID = req.get('scenarioid')
+        stakeholderID = req.get('stakeholderid')
+        if(!isnumber(scenarioID) || !isnumber(stakeholderID)){
+            res.status(404).json({error: "Invalid ID"})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
+        db.getStakeholderConvo(scenarioID, stakeholderID, function(result){
             // console.log("Stakeholders Conversation-", result)
+            if(result.length == 0){
+                res.status(404).json({error: `No conversation found for scenarioID: ${scenarioID} and stakeholderid: ${stakeholderID}`})
+            }
+            else{
             res.status(200).json(result)
+            console.log("Got stakeholder conversation")
+            }
         })
-
-        console.log("Got stakeholder conversation")
+        }
+        
     })
 
 router.route('/scenarios/middleReflection')

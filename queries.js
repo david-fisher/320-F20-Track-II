@@ -64,6 +64,24 @@ function addInitReflect(studentID, scenarioID, data, callback){
   })
 }
 
+function getStakeholders(scenarioID, callback){
+  pool.query('select stakeholderid, name, designation, bio from stakeholders where scenarioid = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getStakeholderConvo(scenarioID, stakeholderID, callback){
+  pool.query('select conversation from stakeholders where scenarioid = $1 and stakeholderid = $2', [scenarioID, stakeholderID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
 function getFinalAction(scenarioID, callback){
   pool.query('SELECT finalaction from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
@@ -199,6 +217,10 @@ module.exports = {
     getScenarios,
     getIntro,
     getTask,
+    getStakeholders,
+    getStakeholderConvo,
+    getFinalAction,
+    getConsequences,
     addInitReflect,
     addMidReflect,
     addStakeholder,
