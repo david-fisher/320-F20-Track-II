@@ -417,19 +417,31 @@ router.route('/scenarios/middleReflection')
     router.route('/scenarios/finalReflection')
 
         .get(function(req, res){
-            scenarioID = req.body.scenarioID
+            scenarioID = req.get('scenarioid')
+            if(!isnumber(scenarioID)){
+                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+                console.log("Invalid Scenario ID")
+                res.end()
+            }
+            else{
             db.getFinalReflection(scenarioID, function(result){
                 // console.log("Final Relfection-", result)
+                if(result.length == 0){
+                    res.status(404).json({error: `No final reflection found for scenarioID: ${scenarioID}`})
+                }
+                else{
                 res.status(200).json(result)
+                console.log("Got final reflection")
+                }
             })
-
-            console.log("Got final reflection")
+        }
+            
         })
 
         .put(function(req, res){
-            studentID = req.body.studentID
-            data = req.body.data
-            scenarioID = req.body.scenarioID
+            studentID = req.get('studentid')
+            data = req.get('data')
+            scenarioID = req.get('scenarioid')
     	if(!isnumber(scenarioID)){
                 res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
                 console.log("Invalid Scenario ID")
