@@ -64,6 +64,26 @@ function addInitReflect(studentID, scenarioID, data, callback){
   })
 }
 
+function getFinalAction(scenarioID, callback){
+  pool.query('SELECT finalaction from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    // console.log(scenarioID)
+    callback(results.rows)
+  })
+}
+
+function getConsequences(scenarioID, studentID, callback){
+  //How to use studentID here in query??? - Jason
+  pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
 function addStakeholder(studentID, scenarioID, stakeholder, callback){
   // console.log(studentID, stakeholder, scenarioID)
   pool.query('UPDATE responses set stakeholderid = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, stakeholder], (error, results) => {
