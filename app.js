@@ -204,15 +204,31 @@ router.route('/scenarios/finalAction')
         }
     })
 
+    //final action
     .put(function(req, res){
-        studentID = req.body.studentID
-        data = req.body.data
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        studentID = req.get('studentid')
+        data = req.get('data')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
         db.addFinalAction(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
-        })
-
-        console.log("Updated final action student decision")
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated final action")
+          }
+        })}
     })
 
 router.route('/scenarios/consequences')
@@ -362,7 +378,7 @@ router.route('/scenarios/middleReflection')
                 res.status(200).json(result)
                 console.log("Got initial reflection")
             }
-        })    
+        })
         }
     })
 
@@ -415,7 +431,7 @@ router.route('/scenarios/middleReflection')
                 }
             })
         }
-            
+
         })
 
         .put(function(req, res){

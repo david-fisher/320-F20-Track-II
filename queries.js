@@ -102,8 +102,16 @@ function getFinalAction(scenarioID, callback){
 }
 
 function getConsequences(scenarioID, callback){
-  //How to use studentID here in query??? - Jason
   pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getConclusion(scenarioID){
+  pool.query('SELECT conclusion from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
     }
@@ -240,6 +248,7 @@ module.exports = {
     getStakeholderHistory,
     getFinalAction,
     getConsequences,
+    getConclusion,
     addInitReflect,
     addMidReflect,
     addStakeholder,
