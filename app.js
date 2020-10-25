@@ -42,9 +42,9 @@ router.route('/scenarios')
             }
             res.status(200).json(result)
         })
-        
+
         console.log("Got all scenarios")
-    })  
+    })
 
 
 router.route('/scenarios/intro')
@@ -70,9 +70,9 @@ router.route('/scenarios/intro')
                 console.log("Got scenario introduction")
             }
         })
-        
-        }   
-    })  
+
+        }
+    })
 
 
 router.route('/scenarios/task')
@@ -94,10 +94,10 @@ router.route('/scenarios/task')
                 res.status(200).json(result)
                 console.log("Got scenario task")
             }
-        })     
-        
+        })
+
         }
-    })  
+    })
 
 
 router.route('/scenarios/initialReflection')
@@ -122,7 +122,7 @@ router.route('/scenarios/initialReflection')
         })
         }
 
-        
+
     })
 
 //------------------------------------------------------------------------------------------
@@ -130,14 +130,29 @@ router.route('/scenarios/initialReflection')
 //------------------------------------------------------------------------------------------
 
     .put(function(req, res){
-        scenarioID = req.body.scenarioID
-        studentID = req.body.studentID
-        data = req.body.data
+        scenarioID = req.get('scenarioid')
+        studentID = req.get('studentid')
+        data = req.get('data')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
         db.addInitReflect(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
-        })
-
-        console.log("Updated initial relfection")
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated initial reflection")
+          }
+        })}
     })
 
 router.route('/scenarios/initialAction')
@@ -162,7 +177,7 @@ router.route('/scenarios/initialAction')
         })
         }
 
-        
+
     })
 
 router.route('/scenarios/finalAction')
@@ -184,10 +199,10 @@ router.route('/scenarios/finalAction')
                 res.status(200).json(result)
                 console.log("Got scenario final action page")
             }
-        })     
-        
+        })
+
         }
-    })  
+    })
 
     .put(function(req, res){
         studentID = req.body.studentID
@@ -248,10 +263,10 @@ router.route('/scenarios/consequences')
                 res.status(200).json(result)
                 console.log("Got consequences")
             }
-        })     
-        
+        })
+
         }
-    })  
+    })
 
 router.route('/scenarios/stakeholders/history')
 
@@ -276,7 +291,7 @@ router.route('/scenarios/stakeholders/history')
         })
         }
 
-        
+
     })
 
 router.route('/scenarios/stakeholders')
@@ -299,7 +314,7 @@ router.route('/scenarios/stakeholders')
             console.log("Got all stakeholders")
             }
             })
-        }   
+        }
     })
 
     .put(function(req, res){
@@ -314,7 +329,7 @@ router.route('/scenarios/stakeholders')
     })
 
 router.route('/scenarios/stakeholders/conversation')
-   
+
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         stakeholderID = req.get('stakeholderid')
@@ -335,7 +350,7 @@ router.route('/scenarios/stakeholders/conversation')
             }
         })
         }
-        
+
     })
 
 router.route('/scenarios/middleReflection')
@@ -346,19 +361,36 @@ router.route('/scenarios/middleReflection')
             // console.log("Middle Reflection-", result)
             res.status(200).json(result)
         })
-        
+
         console.log("Got middle reflection")
     })
 
     .put(function(req, res){
-        studentID = req.body.studentID
-        data = req.body.data
-        scenarioID = req.body.scenarioID
+        studentID = req.get('studentid')
+        data = req.get('data')
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
         db.addMidReflect(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
-        })
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated middle reflection")
+          }
+        })}
 
-        console.log("Updated middle reflection")
+
     })
 
 router.route('/scenarios/finalReflection')
@@ -374,7 +406,7 @@ router.route('/scenarios/finalReflection')
     })
 
     .put(function(req, res){
-        studentID = req.body.studentID  
+        studentID = req.body.studentID
         data = req.body.data
         scenarioID = req.body.scenarioID
         db.addFinalReflection(studentID, scenarioID, data, function(result){
