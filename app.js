@@ -377,13 +377,23 @@ router.route('/scenarios/stakeholders/conversation')
 router.route('/scenarios/middleReflection')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenaioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else {
         db.getMidReflectPage(scenarioID, function(result){
-            // console.log("Middle Reflection-", result)
-            res.status(200).json(result)
-        })
-
-        console.log("Got middle reflection")
+            if(result.length == 0){
+                res.status(404).json({error: `No middle reflection found with scenarioID: ${scenarioID}`})
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got initial reflection")
+            }
+        })    
+        }
     })
 
     .put(function(req, res){
