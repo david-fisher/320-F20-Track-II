@@ -393,28 +393,44 @@ router.route('/scenarios/middleReflection')
 
     })
 
-router.route('/scenarios/finalReflection')
+    router.route('/scenarios/finalReflection')
 
-    .get(function(req, res){
-        scenarioID = req.body.scenarioID
-        db.getFinalReflection(scenarioID, function(result){
-            // console.log("Final Relfection-", result)
-            res.status(200).json(result)
+        .get(function(req, res){
+            scenarioID = req.body.scenarioID
+            db.getFinalReflection(scenarioID, function(result){
+                // console.log("Final Relfection-", result)
+                res.status(200).json(result)
+            })
+
+            console.log("Got final reflection")
         })
 
-        console.log("Got final reflection")
-    })
-
-    .put(function(req, res){
-        studentID = req.body.studentID
-        data = req.body.data
-        scenarioID = req.body.scenarioID
-        db.addFinalReflection(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
+        .put(function(req, res){
+            studentID = req.body.studentID
+            data = req.body.data
+            scenarioID = req.body.scenarioID
+    	if(!isnumber(scenarioID)){
+                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+                console.log("Invalid Scenario ID")
+                res.end()
+            }
+    	else if(!isnumber(studentID)){
+                res.status(404).json({error: `Invalid student ID: ${studentID}`})
+                console.log("Invalid Student ID")
+                res.end()
+            }
+    	else {
+    	  db.addFinalReflection(studentID, scenarioID, data, function(result){
+                if(result.length === 0){
+                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                }
+                else{
+                    res.status(200).send(result)
+                    console.log("Updated final reflection")
+                }
+            })}
+            console.log("Updated final reflection")
         })
-
-        console.log("Updated final reflection")
-    })
 
 router.route('/scenario/conclusion')
 
