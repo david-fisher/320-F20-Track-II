@@ -122,6 +122,15 @@ function addStakeholder(studentID, scenarioID, stakeholder, callback){
   })
 }
 
+function getMidReflectPage(scenarioID, callback){
+  pool.query('SELECT middlereflection from scenarios where id = $1', [scenarioID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
 function addMidReflect(studentID, scenarioID, data, callback){
   // console.log(studentID, data, scenarioID)
   pool.query('UPDATE responses set middlereflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
