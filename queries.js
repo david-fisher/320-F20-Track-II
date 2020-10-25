@@ -43,12 +43,32 @@ function getIntro(scenarioID, callback){
   })
 }
 
+function getInitReflect(scenarioID, callback){
+  pool.query('SELECT initialreflection from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    //console.log(scenarioID)
+    callback(results.rows)
+  })
+}
+
 function getTask(scenarioID, callback){
   pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
     }
     // console.log(scenarioID)
+    callback(results.rows)
+  })
+}
+
+function getInitActions(scenarioID, callback){
+  pool.query('SELECT initialactions from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    //console.log(scenarioID)
     callback(results.rows)
   })
 }
@@ -103,6 +123,15 @@ function getFinalAction(scenarioID, callback){
 
 function getConsequences(scenarioID, callback){
   pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getFinalReflection(scenarioID){
+  pool.query('SELECT finalreflection from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
     }
@@ -242,12 +271,15 @@ const deleteScenario = (request, response) => {
 module.exports = {
     getScenarios,
     getIntro,
+    getInitReflect,
     getTask,
+    getInitActions,
     getStakeholders,
     getStakeholderConvo,
     getStakeholderHistory,
     getFinalAction,
     getConsequences,
+    getFinalReflection,
     getConclusion,
     addInitReflect,
     addMidReflect,
