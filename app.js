@@ -207,16 +207,22 @@ router.route('/scenarios/finalAction')
     //final action
     .put(function(req, res){
         scenarioID = req.get('scenarioid')
+        studentID = req.get('studentid')
         data = req.get('data')
         if(!isnumber(scenarioID)){
             res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
         else{
         db.addFinalAction(studentID, scenarioID, data, function(result){
           if(result.length === 0){
-              res.status(404).json({error: `scenario ID does not exist in database`})
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
           else{
               res.status(200).send(result)
