@@ -9,15 +9,15 @@ const TextTypography = withStyles({
 })(Typography);
 
 function Response({pages, setPages, activePage, setActivePage}) {
-  function goToFeedBack(){
-    if (!pages.feedback.visited) {
+  function goToFinalReflection(){
+    if (!pages.finalReflection.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.feedback.visited = true;
+        copy.finalReflection.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'feedback')
+    setActivePage(prevPage => 'finalReflection')
   }
 
   return (
@@ -31,7 +31,7 @@ function Response({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToFeedBack}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToFinalReflection}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           {/*<Button variant="outlined">Next</Button>*/}

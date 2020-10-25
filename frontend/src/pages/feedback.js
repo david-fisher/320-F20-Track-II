@@ -19,15 +19,15 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
     setActivePage(prevPage => 'results')
   }
 
-  function goToResponse(){
-    if (!pages.response.visited) {
+  function goToFinalReflection(){
+    if (!pages.finalReflection.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.response.visited = true;
+        copy.finalReflection.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'response')
+    setActivePage(prevPage => 'finalReflection')
   }
 
   return (
@@ -44,7 +44,7 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
         <Button variant="contained" disableElevation onClick={goToResults}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation color="primary" onClick={goToResponse}>Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToFinalReflection}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

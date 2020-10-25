@@ -10,15 +10,15 @@ const TextTypography = withStyles({
 })(Typography);
 
 function Results({pages, setPages, activePage, setActivePage}) {
-  function goToStakeholders(){
-    if (!pages.stakeholders.visited) {
+  function goToMiddleReflection(){
+    if (!pages.middleReflection.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.stakeholders.visited = true;
+        copy.middleReflection.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'stakeholders');
+    setActivePage(prevPage => 'middleReflection')
   }
   function goToFeedback(){
     if (!pages.feedback.visited) {
@@ -43,7 +43,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToStakeholders}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToMiddleReflection}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToFeedback}>Next</Button>
