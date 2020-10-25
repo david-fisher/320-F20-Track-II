@@ -82,6 +82,15 @@ function getStakeholderConvo(scenarioID, stakeholderID, callback){
   })
 }
 
+function getStakeholderHistory(scenarioID, studentID, callback){
+  pool.query('select stakeholderid from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
 function getFinalAction(scenarioID, callback){
   pool.query('SELECT finalaction from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
@@ -219,6 +228,7 @@ module.exports = {
     getTask,
     getStakeholders,
     getStakeholderConvo,
+    getStakeholderHistory,
     getFinalAction,
     getConsequences,
     addInitReflect,
