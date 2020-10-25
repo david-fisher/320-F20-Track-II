@@ -35,15 +35,21 @@ router.route('/scenarios')
 
     .get(function(req, res){
         studentID = req.get('studentid')
-        db.getScenarios(studentID, function(result){
-            // console.log("scenarios-",result)
-            if(result.length == 0){
-                res.status(404).json({error: `No scenarios found for studentid: ${studentID}`})
-            }
-            res.status(200).json(result)
-        })
-
-        console.log("Got all scenarios")
+        if(!isnumber(studentid)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid student ID")
+            res.end()
+        }
+        else{
+            db.getScenarios(studentID, function(result){
+                // console.log("scenarios-",result)
+                if(result.length == 0){
+                    res.status(404).json({error: `No scenarios found for studentid: ${studentID}`})
+                }
+                res.status(200).json(result)
+            })
+            console.log("Got all scenarios")
+        }
     })
 
 
@@ -59,18 +65,17 @@ router.route('/scenarios/intro')
             res.end()
         }
         else{
-        db.getIntro(scenarioID, function(result){
-            // console.log("intro-",result)
-            //console.log(result)
-            if(result.length == 0){
-                res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
-            }
-            else{
-                res.status(200).json(result)
-                console.log("Got scenario introduction")
-            }
-        })
-
+            db.getIntro(scenarioID, function(result){
+                // console.log("intro-",result)
+                //console.log(result)
+                if(result.length == 0){
+                    res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
+                }
+                else{
+                    res.status(200).json(result)
+                    console.log("Got scenario introduction")
+                }
+            })
         }
     })
 
