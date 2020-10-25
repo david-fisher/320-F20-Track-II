@@ -318,14 +318,35 @@ router.route('/scenarios/stakeholders')
     })
 
     .put(function(req, res){
-        scenarioID = req.body.scenarioID
-        stakeholder = req.body.stakeholder
-        studentID = req.body.studentID
-        db.addStakeholder(studentID, scenarioID, stakeholder, function(result){
+        scenarioID = req.get('scenarioid')
+        stakeholderID = req.get('stakeholderid')
+        studentID = req.get('studentid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else if(!isnumber(stakeholderID)){
+            res.status(404).json({error: `Invalid stakeholder ID: ${stakeholderID}`})
+            console.log("Invalid Stakeholder ID")
+            res.end()
+        }
+        else {
+        db.addStakeholder(studentID, scenarioID, stakeholderID, function(result){
+            if(result.length === 0){
+                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+            }
+            else{
             res.status(200).send(result)
+            console.log("Added stakeholder")
+            }
         })
-
-        console.log("Added stakeholder")
+        }
     })
 
 router.route('/scenarios/stakeholders/conversation')
