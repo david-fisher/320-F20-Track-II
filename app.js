@@ -99,23 +99,12 @@ router.route('/scenarios/initialReflection')
 
     .get(function(req, res){
         scenarioID = req.body.scenarioID
-        if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
-            console.log("Invalid ID")
-            res.end()
-        }
-        else{
         db.getInitReflect(scenarioID, function(result){
             // console.log("Initial Reflection-", result)
-            if(result.length == 0) {
-                res.status(404).json({error: "No initial reflection found"})
-            }
-            else{
-                res.status(200).json(result)
-            }
+            res.status(200).json(result)
         })
+
         console.log("Got initial relfection")
-        }
     })
 
 //------------------------------------------------------------------------------------------
@@ -136,23 +125,12 @@ router.route('/scenarios/initialReflection')
 router.route('/scenarios/initialAction')
     .get(function(req, res){
         scenarioID = req.body.scenarioID
-        if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
-            console.log("Invalid ID")
-            res.end()
-        }
-        else{
         db.getInitActions(scenarioID, function(result){
             // console.log("Initial Action-", result)
-            if(result.length == 0) {
-                res.status(404).json({error: "No initial action found"})
-            }
-            else{
-                res.status(200).json(result)
-            }
+            res.status(200).json(result)
         })
+
         console.log("Got initial actions")
-        }
     })
 
 router.route('/scenarios/finalAction')
@@ -305,23 +283,12 @@ router.route('/scenarios/finalReflection')
 
     .get(function(req, res){
         scenarioID = req.body.scenarioID
-        if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
-            console.log("Invalid ID")
-            res.end()
-        }
-        else{
         db.getFinalReflection(scenarioID, function(result){
             // console.log("Final Relfection-", result)
-            if(result.length == 0) {
-                res.status(404).json({error: "No final reflection found"})
-            }
-            else{
-                res.status(200).json(result)
-            }
+            res.status(200).json(result)
         })
+
         console.log("Got final reflection")
-        }
     })
 
     .put(function(req, res){
@@ -339,23 +306,12 @@ router.route('/scenario/conclusion')
 
     .get(function(req, res){
         scenarioID = req.body.scenarioID
-        if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
-            console.log("Invalid ID")
-            res.end()
-        }
-        else{
         db.getConclusion(scenarioID, function(result){
             // console.log("Conclusion-", result)
-            if(result.length == 0) {
-                res.status(404).json({error: "No final reflection found"})
-            }
-            else{
-                res.status(200).json(result)
-            }
+            res.status(200).json(result)
         })
+
         console.log("Got Conclusion")
-        }
     })
 
 // router.route('/scenarios/scenarioName')
