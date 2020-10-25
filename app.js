@@ -456,14 +456,25 @@ router.route('/scenarios/middleReflection')
 router.route('/scenario/conclusion')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else {
         db.getConclusion(scenarioID, function(result){
-            // console.log("Conclusion-", result)
-            res.status(200).json(result)
+            if(result.length == 0) {
+                res.status(404).json({error: `No scenario found with this scenarioid: ${scenarioID}`})
+            }
+            else {
+                res.status(200).json(result)
+                console.log("Got scenario conclusion")
+            }
         })
 
-        console.log("Got Conclusion")
-    })
+        }
+})
 
 // router.route('/scenarios/scenarioName')
 //add get functions for this route
