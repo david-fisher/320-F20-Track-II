@@ -219,52 +219,22 @@ router.route('/scenarios/consequences')
 
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
-        studentID = req.get('studentid')
-        if(!isnumber(scenarioID) || !isnumber(studentID)){
-            if(!isnumber(scenarioID) && !isnumber(studentID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID} and student ID: ${studentID}`})
-            console.log("Invalid ID, Invalid student ID")
-            }
-            else if(!isnumber(scenarioID)){
-                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
-                console.log(`Invalid scenario ID: ${scenarioID}`)
-            }
-            else{
-                res.status(404).json({error: `Invalid student ID: ${studentID}`})
-                console.log("Invalid student ID")
-            }
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid scenario ID")
             res.end()
         }
-        // }
-        // if(!isnumber(scenarioID) && !isnumber(studentID)){
-        //     res.status(404).json({error: "Invalid scenario ID and student ID"})
-        //     console.log("Invalid scenario ID, Invalid student ID")
-        //     res.end()
-        // }
-        // else if(!isnumber(scenarioID)) {
-        //     res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
-        //     console.log(`Invalid scenario ID: ${scenarioID}`)
-        //     res.end()
-        // }
-        // else if(!isnumber(studentID)) {
-        //     res.status(404).json({error: "Invalid student ID"})
-        //     console.log("Invalid student ID")
-        //     res.end()
-        // }
-        //how to add an additional else if student ID actually exists in database without using the database?
-        // - Jason
         else {
-        db.getConsequences(scenarioID, studentID, function(result){
+        db.getConsequences(scenarioID, function(result){
             // console.log("task-",result)
             if(result.length == 0) {
-                res.status(404).json({error: `No consequences found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
+                res.status(404).json({error: `No consequences found for scenarioID: ${scenarioID}`})
             }
             else{
                 res.status(200).json(result)
                 console.log("Got consequences")
             }
         })
-
         }
     })
 

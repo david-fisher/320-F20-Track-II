@@ -101,7 +101,7 @@ function getFinalAction(scenarioID, callback){
   })
 }
 
-function getConsequences(scenarioID, studentID, callback){
+function getConsequences(scenarioID, callback){
   //How to use studentID here in query??? - Jason
   pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
