@@ -34,15 +34,18 @@ router.get('/', (req, res) => {
 router.route('/scenarios')
 
     .get(function(req, res){
-        studentID = req.body.studentID
+        studentID = req.get('studentid')
         db.getScenarios(studentID, function(result){
             // console.log("scenarios-",result)
+            if(result.length == 0){
+                res.status(404).json({error: `No scenarios found for studentid: ${studentID}`})
+            }
             res.status(200).json(result)
         })
-        
+
         console.log("Got all scenarios")
-    })  
-//use this code as a template
+    })
+
 
 router.route('/scenarios/intro')
 
@@ -51,7 +54,7 @@ router.route('/scenarios/intro')
         // console.log(input)
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -60,15 +63,16 @@ router.route('/scenarios/intro')
             // console.log("intro-",result)
             //console.log(result)
             if(result.length == 0){
-                res.status(404).json({error: "No scenario found"})
+                res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got scenario introduction")
             }
         })
-        console.log("Got scenario introduction")
-        }   
-    })  
+
+        }
+    })
 
 
 router.route('/scenarios/task')
@@ -76,7 +80,7 @@ router.route('/scenarios/task')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -84,27 +88,41 @@ router.route('/scenarios/task')
         db.getTask(scenarioID, function(result){
             // console.log("task-",result)
             if(result.length == 0) {
-                res.status(404).json({error: "No scenario task found"})
+                res.status(404).json({error: `No scenario task found with scenarioID: ${scenarioID}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got scenario task")
             }
-        })     
-        console.log("Got scenario task")
+        })
+
         }
-    })  
+    })
 
 
 router.route('/scenarios/initialReflection')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
         db.getInitReflect(scenarioID, function(result){
             // console.log("Initial Reflection-", result)
+            if(result.length == 0) {
+                res.status(404).json({error: `No initial reflection found with scenarioID: ${scenarioID}`})
+            }
+            else{
             res.status(200).json(result)
+            console.log("Got initial relfection")
+            }
         })
+        }
 
-        console.log("Got initial relfection")
+
     })
 
 //------------------------------------------------------------------------------------------
@@ -112,25 +130,54 @@ router.route('/scenarios/initialReflection')
 //------------------------------------------------------------------------------------------
 
     .put(function(req, res){
-        scenarioID = req.body.scenarioID
-        studentID = req.body.studentID
-        data = req.body.data
+        scenarioID = req.get('scenarioid')
+        studentID = req.get('studentid')
+        data = req.get('data')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
         db.addInitReflect(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
-        })
-
-        console.log("Updated initial relfection")
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated initial reflection")
+          }
+        })}
     })
 
 router.route('/scenarios/initialAction')
+
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
         db.getInitActions(scenarioID, function(result){
             // console.log("Initial Action-", result)
+            if(result.length == 0) {
+                res.status(404).json({error: `No initial actions found with scenarioID: ${scenarioID}`})
+            }
+            else{
             res.status(200).json(result)
+            console.log("Got initial actions")
+            }
         })
+        }
 
-        console.log("Got initial actions")
+
     })
 
 router.route('/scenarios/finalAction')
@@ -138,7 +185,7 @@ router.route('/scenarios/finalAction')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: "Invalid scenario ID"})
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -146,15 +193,16 @@ router.route('/scenarios/finalAction')
         db.getFinalAction(scenarioID, function(result){
             // console.log("task-",result)
             if(result.length == 0) {
-                res.status(404).json({error: "No scenario final action page found"})
+                res.status(404).json({error: `No scenario final action page found for scenarioID: ${scenarioID}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got scenario final action page")
             }
-        })     
-        console.log("Got scenario final action page")
+        })
+
         }
-    })  
+    })
 
     .put(function(req, res){
         studentID = req.body.studentID
@@ -171,89 +219,129 @@ router.route('/scenarios/consequences')
 
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
-        studentID = req.get('studentid')
-        if(!isnumber(scenarioID) && !isnumber(studentID)){
-            res.status(404).json({error: "Invalid scenario ID and student ID"})
-            console.log("Invalid ID, Invalid student ID")
-            res.end()
-        }
-        if(!isnumber(scenarioID) && !isnumber(studentID)){
-            res.status(404).json({error: "Invalid scenario ID and student ID"})
-            console.log("Invalid scenario ID, Invalid student ID")
-            res.end()
-        }
-        else if(!isnumber(scenarioID)) {
-            res.status(404).json({error: "Invalid scenario ID"})
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid scenario ID")
             res.end()
         }
-        else if(!isnumber(studentID)) {
-            res.status(404).json({error: "Invalid student ID"})
-            console.log("Invalid student ID")
-            res.end()
-        }
-        //how to add an additional else if student ID actually exists in database without using the database?
-        // - Jason
         else {
-        db.getConsequences(scenarioID, studentID, function(result){
+        db.getConsequences(scenarioID, function(result){
             // console.log("task-",result)
             if(result.length == 0) {
-                res.status(404).json({error: "No consequences found"})
+                res.status(404).json({error: `No consequences found for scenarioID: ${scenarioID}`})
             }
             else{
                 res.status(200).json(result)
+                console.log("Got consequences")
             }
-        })     
-        console.log("Got consequences")
+        })
         }
-    })  
+    })
 
-router.route('/scenarios/stakeholderHistory')
+router.route('/scenarios/stakeholders/history')
 
     .get(function(req, res){
-        studentID = req.body.studentID
-        data = req.body.data
-        db.getStakeholderHistory(studentID, data, function(result){
+        studentID = req.get('studentid')
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID) || !isnumber(studentID)){
+            res.status(404).json({error: "Invalid ID"})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
+        db.getStakeholderHistory(scenarioID, studentID, data, function(result){
             // console.log("Stakeholder History-", result)
-            res.status(200).json(result)
+            if(result.length == 0){
+                res.status(404).json({error: `No stakeholder history found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got stakeholder history")
+            }
         })
+        }
 
-        console.log("Got stakeholder history")
+
     })
 
 router.route('/scenarios/stakeholders')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
         db.getStakeholders(scenarioID, function(result){
             // console.log("Stakeholders-", result)
+            if(result.length == 0){
+                res.status(404).json({error: `No stakeholders found for scenarioID: ${scenarioID}`})
+            }
+            else{
             res.status(200).json(result)
-        })
-
-        console.log("Got all stakeholders")
+            console.log("Got all stakeholders")
+            }
+            })
+        }
     })
 
     .put(function(req, res){
-        scenarioID = req.body.scenarioID
-        stakeholder = req.body.stakeholder
-        studentID = req.body.studentID
-        db.addStakeholder(studentID, scenarioID, stakeholder, function(result){
+        scenarioID = req.get('scenarioid')
+        stakeholderID = req.get('stakeholderid')
+        studentID = req.get('studentid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else if(!isnumber(stakeholderID)){
+            res.status(404).json({error: `Invalid stakeholder ID: ${stakeholderID}`})
+            console.log("Invalid Stakeholder ID")
+            res.end()
+        }
+        else {
+        db.addStakeholder(studentID, scenarioID, stakeholderID, function(result){
+            if(result.length === 0){
+                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+            }
+            else{
             res.status(200).send(result)
+            console.log("Added stakeholder")
+            }
         })
-
-        console.log("Added stakeholder")
+        }
     })
 
 router.route('/scenarios/stakeholders/conversation')
-   
-    .get(function(req, res){
-        scenarioID = req.body.scenarioID
-        db.getStakeholdersConvo(scenarioID, function(result){
-            // console.log("Stakeholders Conversation-", result)
-            res.status(200).json(result)
-        })
 
-        console.log("Got stakeholder conversation")
+    .get(function(req, res){
+        scenarioID = req.get('scenarioid')
+        stakeholderID = req.get('stakeholderid')
+        if(!isnumber(scenarioID) || !isnumber(stakeholderID)){
+            res.status(404).json({error: "Invalid ID"})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else{
+        db.getStakeholderConvo(scenarioID, stakeholderID, function(result){
+            // console.log("Stakeholders Conversation-", result)
+            if(result.length == 0){
+                res.status(404).json({error: `No conversation found for scenarioID: ${scenarioID} and stakeholderid: ${stakeholderID}`})
+            }
+            else{
+            res.status(200).json(result)
+            console.log("Got stakeholder conversation")
+            }
+        })
+        }
+
     })
 
 router.route('/scenarios/middleReflection')
@@ -264,55 +352,111 @@ router.route('/scenarios/middleReflection')
             // console.log("Middle Reflection-", result)
             res.status(200).json(result)
         })
-        
+
         console.log("Got middle reflection")
     })
 
     .put(function(req, res){
-        studentID = req.body.studentID
-        data = req.body.data
-        scenarioID = req.body.scenarioID
+        studentID = req.get('studentid')
+        data = req.get('data')
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
         db.addMidReflect(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
-        })
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated middle reflection")
+          }
+        })}
 
-        console.log("Updated middle reflection")
+
     })
 
-router.route('/scenarios/finalReflection')
+    router.route('/scenarios/finalReflection')
 
-    .get(function(req, res){
-        scenarioID = req.body.scenarioID
-        db.getFinalReflection(scenarioID, function(result){
-            // console.log("Final Relfection-", result)
-            res.status(200).json(result)
+        .get(function(req, res){
+            scenarioID = req.get('scenarioid')
+            if(!isnumber(scenarioID)){
+                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+                console.log("Invalid Scenario ID")
+                res.end()
+            }
+            else{
+            db.getFinalReflection(scenarioID, function(result){
+                // console.log("Final Relfection-", result)
+                if(result.length == 0){
+                    res.status(404).json({error: `No final reflection found for scenarioID: ${scenarioID}`})
+                }
+                else{
+                res.status(200).json(result)
+                console.log("Got final reflection")
+                }
+            })
+        }
+            
         })
 
-        console.log("Got final reflection")
-    })
-
-    .put(function(req, res){
-        studentID = req.body.studentID  
-        data = req.body.data
-        scenarioID = req.body.scenarioID
-        db.addFinalReflection(studentID, scenarioID, data, function(result){
-            res.status(200).send(result)
+        .put(function(req, res){
+            studentID = req.get('studentid')
+            data = req.get('data')
+            scenarioID = req.get('scenarioid')
+    	if(!isnumber(scenarioID)){
+                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+                console.log("Invalid Scenario ID")
+                res.end()
+            }
+    	else if(!isnumber(studentID)){
+                res.status(404).json({error: `Invalid student ID: ${studentID}`})
+                console.log("Invalid Student ID")
+                res.end()
+            }
+    	else {
+    	  db.addFinalReflection(studentID, scenarioID, data, function(result){
+                if(result.length === 0){
+                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                }
+                else{
+                    res.status(200).send(result)
+                    console.log("Updated final reflection")
+                }
+            })}
+            console.log("Updated final reflection")
         })
-
-        console.log("Updated final reflection")
-    })
 
 router.route('/scenario/conclusion')
 
     .get(function(req, res){
-        scenarioID = req.body.scenarioID
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else {
         db.getConclusion(scenarioID, function(result){
-            // console.log("Conclusion-", result)
-            res.status(200).json(result)
+            if(result.length == 0) {
+                res.status(404).json({error: `No scenario found with this scenarioid: ${scenarioID}`})
+            }
+            else {
+                res.status(200).json(result)
+                console.log("Got scenario conclusion")
+            }
         })
 
-        console.log("Got Conclusion")
-    })
+        }
+})
 
 // router.route('/scenarios/scenarioName')
 //add get functions for this route

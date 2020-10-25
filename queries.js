@@ -64,6 +64,33 @@ function addInitReflect(studentID, scenarioID, data, callback){
   })
 }
 
+function getStakeholders(scenarioID, callback){
+  pool.query('select stakeholderid, name, designation, bio from stakeholders where scenarioid = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getStakeholderConvo(scenarioID, stakeholderID, callback){
+  pool.query('select conversation from stakeholders where scenarioid = $1 and stakeholderid = $2', [scenarioID, stakeholderID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getStakeholderHistory(scenarioID, studentID, callback){
+  pool.query('select stakeholderid from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
 function getFinalAction(scenarioID, callback){
   pool.query('SELECT finalaction from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
@@ -74,7 +101,7 @@ function getFinalAction(scenarioID, callback){
   })
 }
 
-function getConsequences(scenarioID, studentID, callback){
+function getConsequences(scenarioID, callback){
   //How to use studentID here in query??? - Jason
   pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
@@ -199,6 +226,11 @@ module.exports = {
     getScenarios,
     getIntro,
     getTask,
+    getStakeholders,
+    getStakeholderConvo,
+    getStakeholderHistory,
+    getFinalAction,
+    getConsequences,
     addInitReflect,
     addMidReflect,
     addStakeholder,
