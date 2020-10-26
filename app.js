@@ -378,7 +378,7 @@ router.route('/scenarios/stakeholders/conversation')
 router.route('/scenarios/middleReflection')
 
     .get(function(req, res){
-        scenarioID = req.get('scenaioid')
+        scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
             res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")

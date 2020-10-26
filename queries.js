@@ -130,7 +130,7 @@ function getConsequences(scenarioID, callback){
   })
 }
 
-function getFinalReflection(scenarioID){
+function getFinalReflection(scenarioID, callback){
   pool.query('SELECT finalreflection from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
