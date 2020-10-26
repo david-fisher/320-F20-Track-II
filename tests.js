@@ -5,15 +5,16 @@ const { createDb } = require('./queries')
 // Your unit test plans for the components, integration test plans where appropriate, and acceptance test plans for the UI components where appropriate. The form of test plans required from each team is a function of their role within their integration track. For example, Front-end UI teams would produce the acceptance test plan.
 
 // the db delegates to the pool object to execute the query.
-// when the app runs, it'll use a real pg.Pool.
-// for testing purposes, we'll stub it out with something we can inspect easily
+// when the app runs, it'll use a pg.Pool on port 5432
+// we'll use a different port when running tests
+const pool = ... // TODO
+const db = createDb(pool)
 
-function createMockPool() {
-    // TODO
-}
+// TODO: make sure jest doesn't run the tests in parallel
+// TODO: make sure the pool gets cleared after every test
 
 test('getAllScenarios works', () => {
-    const pool = createMockPool()
+    const pool = createTestPool()
     const db = createDb(pool)
     // insert 3 scenarios into pool
     // call db.getAllScenarios
@@ -21,7 +22,7 @@ test('getAllScenarios works', () => {
 })
 
 test('getScenarioById works', () => {
-    const pool = createMockPool()
+    const pool = createTestPool()
     const db = createDb(pool)
     // insert 3 scenarios into pool
     // call db.getScenarioById with the middle id
@@ -33,7 +34,7 @@ test('getScenarioById works', () => {
 // getScenarioById with more than one matching id
 
 test('createScenario works', () => {
-    const pool = createMockPool()
+    const pool = createTestPool()
     const db = createDb(pool)
     // call db.createScenario 3 times
     // ensure pool contains the 3 scenarios
@@ -44,7 +45,7 @@ test('createScenario works', () => {
 // any other requirements? eg. do name, stakeholder need to be unique?
 
 test('updateScenario works', () => {
-    const pool = createMockPool()
+    const pool = createTestPool()
     const db = createDb(pool)
     // insert 3 scenarios into pool
     // call db.updateScenario on the middle one
@@ -59,7 +60,7 @@ test('updateScenario works', () => {
 // updateScenario with non-unique name/stakeholder?
 
 test('deleteScenario works', () => {
-    const pool = createMockPool()
+    const pool = createTestPool()
     const db = createDb(pool)
     // insert 3 scenarios into pool
     // call db.deleteScenario on the middle one
