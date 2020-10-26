@@ -476,7 +476,7 @@ router.route('/scenarios/middleReflection')
             console.log("Updated final reflection")
         })
 
-router.route('/scenario/conclusion')
+router.route('/scenarios/conclusion')
 
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
@@ -488,7 +488,7 @@ router.route('/scenario/conclusion')
         else {
         db.getConclusion(scenarioID, function(result){
             if(result.length == 0) {
-                res.status(404).json({error: `No scenario found with this scenarioid: ${scenarioID}`})
+                res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
             }
             else {
                 res.status(200).json(result)

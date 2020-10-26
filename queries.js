@@ -64,7 +64,7 @@ function getTask(scenarioID, callback){
 }
 
 function getInitActions(scenarioID, callback){
-  pool.query('SELECT initialactions from scenarios where id = $1', [scenarioID], (error,results) => {
+  pool.query('SELECT initialaction from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
     }
@@ -139,7 +139,7 @@ function getFinalReflection(scenarioID, callback){
   })
 }
 
-function getConclusion(scenarioID){
+function getConclusion(scenarioID, callback){
   pool.query('SELECT conclusion from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
