@@ -1,0 +1,9 @@
+/node_modules
+/unethical-corp
+
+# .env file will contain sensitive configuration information, like passwords
+.env
+
+#misc
+.DS_Store
+
