@@ -345,9 +345,14 @@ router.route('/scenarios/stakeholders/conversation')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         stakeholderID = req.get('stakeholderid')
-        if(!isnumber(scenarioID) || !isnumber(stakeholderID)){
-            res.status(404).json({error: "Invalid ID"})
-            console.log("Invalid ID")
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid Scenario ID: ${scenarioID}`})
+            console.log("Invalid scenario ID")
+            res.end()
+        }
+        else if(!isnumber(stakeholderID)){
+            res.status(404).json({error: `Invalid Stakeholder ID: ${stakeholderID}`})
+            console.log("Invalid stakeholder ID")
             res.end()
         }
         else{

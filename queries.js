@@ -277,6 +277,7 @@ module.exports = {
     getStakeholders,
     getStakeholderConvo,
     getStakeholderHistory,
+    getMidReflectPage,
     getFinalAction,
     getConsequences,
     getFinalReflection,
