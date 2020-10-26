@@ -264,9 +264,14 @@ router.route('/scenarios/stakeholders/history')
     .get(function(req, res){
         studentID = req.get('studentid')
         scenarioID = req.get('scenarioid')
-        if(!isnumber(scenarioID) || !isnumber(studentID)){
-            res.status(404).json({error: "Invalid ID"})
-            console.log("Invalid ID")
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid student ID")
             res.end()
         }
         else{
