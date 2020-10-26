@@ -1,20 +1,30 @@
+const { createDb } = require('./queries')
+
 // tests architecture
 
 // Your unit test plans for the components, integration test plans where appropriate, and acceptance test plans for the UI components where appropriate. The form of test plans required from each team is a function of their role within their integration track. For example, Front-end UI teams would produce the acceptance test plan.
 
-// we should have an interface that is implemented by the actual pool, and a mock pool for testing purposes.
+// the db delegates to the pool object to execute the query.
+// when the app runs, it'll use a real pg.Pool.
+// for testing purposes, we'll stub it out with something we can inspect easily
+
+function createMockPool() {
+    // TODO
+}
 
 test('getAllScenarios works', () => {
-    const pool = createTestPool();
-    // insert 3 scenarios
-    // call getAllScenarios
+    const pool = createMockPool()
+    const db = createDb(pool)
+    // insert 3 scenarios into pool
+    // call db.getAllScenarios
     // ensure you get them back
 })
 
 test('getScenarioById works', () => {
-    const pool = createTestPool();
-    // insert 3 scenarios
-    // call getScenarioById with the middle id
+    const pool = createMockPool()
+    const db = createDb(pool)
+    // insert 3 scenarios into pool
+    // call db.getScenarioById with the middle id
     // ensure you get the middle one back
 })
 
@@ -23,8 +33,10 @@ test('getScenarioById works', () => {
 // getScenarioById with more than one matching id
 
 test('createScenario works', () => {
-    const pool = createTestPool();
-    // ...basically the same logic as getAllScenarios tests? but we'd be testing a different part
+    const pool = createMockPool()
+    const db = createDb(pool)
+    // call db.createScenario 3 times
+    // ensure pool contains the 3 scenarios
 })
 
 // createScenario with bad name to make sure SQL is escaped properly
@@ -32,11 +44,12 @@ test('createScenario works', () => {
 // any other requirements? eg. do name, stakeholder need to be unique?
 
 test('updateScenario works', () => {
-    const pool = createTestPool();
-    // insert 3 scenarios
-    // call updateScenario on the middle one
-    // ensure the middle one changed
-});
+    const pool = createMockPool()
+    const db = createDb(pool)
+    // insert 3 scenarios into pool
+    // call db.updateScenario on the middle one
+    // ensure the middle one changed in the pool
+})
 
 // updateScenario with an id that doesn't exist
 // updateScenario with an invalid/non-integer id
@@ -46,10 +59,11 @@ test('updateScenario works', () => {
 // updateScenario with non-unique name/stakeholder?
 
 test('deleteScenario works', () => {
-    const pool = createTestPool();
-    // insert 3 scenarios
-    // delete the middle one
-    // ensure it's deleted
+    const pool = createMockPool()
+    const db = createDb(pool)
+    // insert 3 scenarios into pool
+    // call db.deleteScenario on the middle one
+    // ensure it's deleted from the pool
 })
 
 // deleteScenario with an id that doesn't exist
