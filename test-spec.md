@@ -1,0 +1,20 @@
+- getAllScenarios works
+- getScenarioById works
+- getScenarioById with an id that doesn't exist
+- getScenarioById with an invalid/non-integer id
+- getScenarioById with more than one matching id
+- createScenario works
+- createScenario with bad name to make sure SQL is escaped properly
+- createScenario with bad stakeholder to make sure SQL is escaped properly
+- any other requirements? eg. do name, stakeholder need to be unique?
+- updateScenario works
+- updateScenario with an id that doesn't exist
+- updateScenario with an invalid/non-integer id
+- updateScenario with more than one matching id
+- updateScenario with bad name
+- updateScenario with bad stakeholder
+- updateScenario with non-unique name/stakeholder?
+- deleteScenario works
+- deleteScenario with an id that doesn't exist
+- deleteScenario with an invalid/non-integer id
+- deleteScenario with more than one matching id
