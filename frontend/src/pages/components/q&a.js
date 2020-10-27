@@ -31,35 +31,20 @@ function getQuestions(questionArr) {
 }
 
 export default function StateTextFields(props) {
-  const handleChange = (event) => {
-
-  };
   const [testInput1, setTestInput1] = useState("");
   let qAndA = getQuestions(props.questions).map((question) => <>{question}</>)
   let header = props.header;
 
-
   const [value, setValue] = React.useState('');
   const [error, setError] = React.useState(false);
-  const [helperText, setHelperText] = React.useState('Choose carefully');
-
-  const handleRadioChange = (event) => {
-    setValue(event.target.value);
-    setHelperText(' ');
-    setError(false);
-  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setHelperText('Good Answer!');
     setError(true);
     console.log(props.nextPageName)
     props.pages[props.nextPageName].completed = true;
     props.nextPage();
   };
-
-
-
 
   return (
     <form onSubmit={handleSubmit}>
