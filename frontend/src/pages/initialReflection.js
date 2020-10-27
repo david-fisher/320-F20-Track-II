@@ -99,7 +99,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-            <QA header={mainText} questions={questions} />
+            <QA header={mainText} questions={questions} nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}/>
         </Grid>
       </Grid>
     </div>
