@@ -35,7 +35,7 @@ router.route('/scenarios')
 
     .get(function(req, res){
         studentID = req.get('studentid')
-        if(!isnumber(studentid)){
+        if(!isnumber(studentID)){
             res.status(404).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid student ID")
             res.end()
@@ -46,9 +46,12 @@ router.route('/scenarios')
                 if(result.length == 0){
                     res.status(404).json({error: `No scenarios found for studentid: ${studentID}`})
                 }
+                else{
                 res.status(200).json(result)
+                console.log("Got all scenarios")
+                }
             })
-            console.log("Got all scenarios")
+            
         }
     })
 
