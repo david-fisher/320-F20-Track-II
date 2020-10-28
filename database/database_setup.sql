@@ -2,7 +2,10 @@ drop table users cascade;
 drop table courses cascade; 
 drop table instructs cascade; 
 drop table enrolled cascade; 
-drop table scenario cascade; 
+drop table scenario cascade;
+drop table issues cascade;
+drop table importance cascade;
+drop table score cascade;
 drop table partof cascade; -- contains
 drop table pages cascade;
 drop table prompt cascade;
@@ -17,6 +20,7 @@ drop table mcq_response cascade;
 drop table stakeholders cascade; 
 drop table question cascade;
 drop table mcq_option cascade; -- option
+
 
 CREATE TABLE "users" (
 	"id" SERIAL,
@@ -54,10 +58,10 @@ CREATE TABLE "scenario" (
 	"additional_data" varchar
 ); 
 
-CREATE TABLE "partof" {
+CREATE TABLE "partof" (
 	"course_id" int references courses,
 	"scenario_id" int references scenario
-};
+);
 
 CREATE TABLE "pages" (
 	"id" SERIAL primary key,
@@ -83,6 +87,26 @@ CREATE TABLE "stakeholders" (
 	"conversation" varchar,
 	"scenario_id" int references scenario,
 	"conversation_task_id" int references conversation_task
+);
+
+CREATE TABLE "issues" (
+	"id" SERIAL primary key,
+	"name" varchar,
+	"description" varchar
+);
+
+CREATE TABLE "importance" (
+	"issue_id" int references issues,
+	"scenario_id" int references scenario,
+	primary key (issue_id, scenario_id),
+	"value" int
+);
+
+CREATE TABLE "score" (
+	"stakeholder_id" int references stakeholders,
+	"issue_id" int references issues,
+	primary key (stakeholder_id, issue_id),
+	"value" int
 );
 
 CREATE TABLE "mcq" (
