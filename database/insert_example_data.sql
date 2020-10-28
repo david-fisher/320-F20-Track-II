@@ -31,6 +31,17 @@ insert into prompt values(3, 'prompt: middle reflection');
 
 insert into pages values(DEFAULT, 4, 'MCQ', 1);
 insert into mcq values(4, 'MCQ: <obj>');
+insert into question values(DEFAULT, '(S1) MCQ Question 1: <text>', 4);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (1) option A', 1);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (1) option B', 1);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (1) option C', 1);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (1) option D', 1);
+
+insert into question values(DEFAULT, '(S1) MCQ Question 2: <text>', 4);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (2) option A', 2);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (2) option B', 2);
+insert into mcq_option values(DEFAULT, '(S1) MCQ (2) option C', 2);
+
 
 insert into pages values(DEFAULT, 5, 'PRMPT', 1);
 insert into prompt values(5, 'prompt: final reflection');
@@ -50,7 +61,7 @@ insert into response values(DEFAULT, 1, 5, '2020-10-12 10:10:00');
 insert into prompt_response values(3,'John Doe''s response to final reflection');
 
 insert into response values(DEFAULT, 1, 2, '2020-10-10 10:10:00');
-insert into conversation_choices values(4, '<John''s choices>');
+-- insert into conversation_choices values(4, '<John''s choices>');
 
 
 insert into submissions values(DEFAULT, 2, 1, '2020-10-10 10:10:00');
@@ -61,7 +72,7 @@ insert into response values(DEFAULT, 2, 3, '2020-10-11 09:10:00');
 insert into prompt_response values(6, 'Jane Doe''s response to middle reflection');
 
 insert into response values(DEFAULT, 2, 4, '2020-10-11 09:10:00');
-insert into mcq_response values(7, 'MCQ: A, B, A, D, C, C, D, E');
+insert into mcq_response values(7, 1, 3);
 
 
 

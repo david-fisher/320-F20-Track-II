@@ -130,7 +130,7 @@ CREATE TABLE "question" (
 
 CREATE TABLE "mcq_option" (
 	"id" SERIAL primary key,
-	"option" char(1) NOT NULL,
+	"option" varchar NOT NULL,
 	"question_id" int references question
 );
 
