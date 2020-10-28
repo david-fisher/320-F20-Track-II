@@ -25,6 +25,7 @@ insert into prompt values(1, 'prompt: Initial reflection');
 
 insert into pages values(DEFAULT, 2, 'CONV', 1);
 insert into conversation_task values(2, 'conversation_task: <obj>');
+insert into stakeholders values(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 2);
 
 insert into pages values(DEFAULT, 3, 'PRMPT', 1);
 insert into prompt values(3, 'prompt: middle reflection');
@@ -61,7 +62,7 @@ insert into response values(DEFAULT, 1, 5, '2020-10-12 10:10:00');
 insert into prompt_response values(3,'John Doe''s response to final reflection');
 
 insert into response values(DEFAULT, 1, 2, '2020-10-10 10:10:00');
--- insert into conversation_choices values(4, '<John''s choices>');
+insert into conversation_choices values(4, 1);
 
 
 insert into submissions values(DEFAULT, 2, 1, '2020-10-10 10:10:00');
@@ -112,3 +113,10 @@ insert into prompt_response values(8, 'Jane''s response to scenario 2 initial re
 -- where submissions.id = response.submission_id
 -- and response.id = prompt_response.id
 -- and submissions.id = 2;
+
+-- select * from response, pages, conversation_task, stakeholders
+-- where response.page_num = pages.id
+-- and pages.order = 2
+-- and conversation_task.page_id = pages.id
+-- and stakeholders.scenario_id = pages.scenario_id
+-- and stakeholders.conversation_task_id = conversation_task.page_id;
