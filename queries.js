@@ -73,6 +73,17 @@ function getInitActions(scenarioID, callback){
   })
 }
 
+function addInitAction(studentID, scenarioID, data, callback){
+  // console.log(studentID, data, scenarioID)
+  pool.query('UPDATE responses set initalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
+    if(error){
+      throw error
+    }
+
+    callback(`Inital action updated for studentID: ${studentID}`)
+  })
+}
+
 function addInitReflect(studentID, scenarioID, data, callback){
   // console.log(studentID, scenarioID, data)
   pool.query('UPDATE responses set initialreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error,results) => {
@@ -274,6 +285,7 @@ module.exports = {
     getInitReflect,
     getTask,
     getInitActions,
+    addInitAction,
     getStakeholders,
     getStakeholderConvo,
     getStakeholderHistory,
