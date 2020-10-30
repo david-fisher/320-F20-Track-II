@@ -1,169 +1,167 @@
-drop table users cascade; 
-drop table courses cascade; 
-drop table instructs cascade; 
-drop table enrolled cascade; 
-drop table scenario cascade;
-drop table issues cascade;
-drop table importance cascade;
-drop table score cascade;
-drop table partof cascade; -- contains
-drop table pages cascade;
-drop table prompt cascade;
-drop table conversation_task cascade;
-drop table mcq cascade;
-drop table plain_page cascade;
-drop table submissions cascade;
-drop table response cascade;
-drop table prompt_response cascade;
-drop table conversation_choices cascade;
-drop table mcq_response cascade;
-drop table stakeholders cascade; 
-drop table question cascade;
-drop table mcq_option cascade; -- option
+DROP TABLE users CASCADE; 
+DROP TABLE courses CASCADE; 
+DROP TABLE instructs CASCADE; 
+DROP TABLE enrolled CASCADE; 
+DROP TABLE scenario CASCADE;
+DROP TABLE issues CASCADE;
+DROP TABLE importance CASCADE;
+DROP TABLE score CASCADE;
+DROP TABLE partof CASCADE; -- contains
+DROP TABLE pages CASCADE;
+DROP TABLE prompt CASCADE;
+DROP TABLE conversation_task CASCADE;
+DROP TABLE mcq CASCADE;
+DROP TABLE plain_page CASCADE;
+DROP TABLE submissions CASCADE;
+DROP TABLE response CASCADE;
+DROP TABLE prompt_response CASCADE;
+DROP TABLE conversation_choices CASCADE;
+DROP TABLE mcq_response CASCADE;
+DROP TABLE stakeholders CASCADE; 
+DROP TABLE question CASCADE;
+DROP TABLE mcq_option CASCADE; -- option
 
 
 CREATE TABLE "users" (
 	"id" SERIAL,
-	primary key (id),
-	"full_name" varchar NOT NULL,
-	"email" char(254) NOT NULL,
-	"demographics" varchar
+	PRIMARY KEY (id),
+	"full_name" VARCHAR NOT NULL,
+	"email" CHAR(254) NOT NULL,
+	"demographics" VARCHAR
 );  
 
 CREATE TABLE "courses" (
 	"id" SERIAL PRIMARY KEY,
-	"webpage" varchar,
-	"name" varchar,
-	"semester" char(10) NOT NULL
+	"webpage" VARCHAR,
+	"name" VARCHAR,
+	"semester" CHAR(10) NOT NULL
 );
 
 CREATE TABLE "instructs" (
-	"instructor_id" int references users,
-	"webpage" varchar,
-	"course_id" int references courses,
-	primary key("course_id", "instructor_id")
+	"instructor_id" INT REFERENCES users,
+	"webpage" VARCHAR,
+	"course_id" INT REFERENCES courses,
+	PRIMARY KEY("course_id", "instructor_id")
 );
 
 CREATE TABLE "enrolled" (
-	"student_id" int references users,
-	"course_id" int references courses,
-	primary key("student_id", "course_id")
+	"student_id" INT REFERENCES users,
+	"course_id" INT REFERENCES courses,
+	PRIMARY KEY("student_id", "course_id")
 );
 
 CREATE TABLE "scenario" (
-	"id" SERIAL primary key,
-	-- "course_id" int references courses NOT NULL,
-	"due_date" date,
-	"description" varchar,
-	"additional_data" varchar
+	"id" SERIAL PRIMARY KEY,
+	"due_date" TIMESTAMP,
+	"description" VARCHAR,
+	"additional_data" VARCHAR
 ); 
 
 CREATE TABLE "partof" (
-	"course_id" int references courses,
-	"scenario_id" int references scenario
+	"course_id" INT REFERENCES courses,
+	"scenario_id" INT REFERENCES scenario
 );
 
 CREATE TABLE "pages" (
-	"id" SERIAL primary key,
-	"order" int,
-	"type" char(5),
-	"scenario_id" int references scenario
+	"id" SERIAL PRIMARY KEY,
+	"order" INT,
+	"type" CHAR(5),
+	"scenario_id" INT REFERENCES scenario
 );
 
 CREATE TABLE "prompt" (
-	"page_id" int references pages primary key,
-	"prompt" varchar
+	"page_id" INT REFERENCES pages PRIMARY KEY,
+	"prompt" VARCHAR
 );
 
 CREATE TABLE "conversation_task" (
-	"page_id" int references pages primary key,
-	"content" varchar
+	"page_id" INT REFERENCES pages PRIMARY KEY,
+	"content" VARCHAR
 );
 
 CREATE TABLE "stakeholders" (
-	"id" SERIAL primary key,
-	"name" varchar,
-	"description" varchar,
-	"conversation" varchar,
-	"scenario_id" int references scenario,
-	"conversation_task_id" int references conversation_task
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR,
+	"description" VARCHAR,
+	"conversation" VARCHAR,
+	"scenario_id" INT REFERENCES scenario,
+	"conversation_task_id" INT REFERENCES conversation_task
+);
+
+CREATE TABLE "conversation" (
+	"id" SERIAL PRIMARY KEY,
+	"stakeholder_id" INT REFERENCES stakeholders,
+	"conversation_text" VARCHAR
+
 );
 
 CREATE TABLE "issues" (
-	"id" SERIAL primary key,
-	"name" varchar,
-	"description" varchar
+	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR,
+	"description" VARCHAR
 );
 
-CREATE TABLE "importance" (
-	"issue_id" int references issues,
-	"scenario_id" int references scenario,
-	primary key (issue_id, scenario_id),
-	"value" int
-);
 
 CREATE TABLE "score" (
-	"stakeholder_id" int references stakeholders,
-	"issue_id" int references issues,
-	primary key (stakeholder_id, issue_id),
-	"value" int
+	"stakeholder_id" INT REFERENCES stakeholders,
+	"issue_id" INT REFERENCES issues,
+	PRIMARY KEY (stakeholder_id, issue_id),
+	"value" INT
 );
 
 CREATE TABLE "mcq" (
-	"page_id" int references pages primary key,
-	"content" varchar
-	-- maybe create a new table to store the questions and choices?
+	"page_id" INT REFERENCES pages PRIMARY KEY,
+	"content" VARCHAR
 );
 
 CREATE TABLE "plain_page" (
-	"page_id" int references pages primary key,
-	"content" varchar
+	"page_id" INT REFERENCES pages PRIMARY KEY,
+	"content" VARCHAR
 );
 
 
 
 CREATE TABLE "question" (
-	"id" SERIAL primary key,
-	"question" varchar,
-	"mcq_id" int references mcq
+	"id" SERIAL PRIMARY KEY,
+	"question" VARCHAR,
+	"mcq_id" INT REFERENCES mcq
 );
 
 CREATE TABLE "mcq_option" (
-	"id" SERIAL primary key,
-	"option" varchar NOT NULL,
-	"question_id" int references question
+	"id" SERIAL PRIMARY KEY,
+	"option" VARCHAR NOT NULL,
+	"question_id" INT REFERENCES question
 );
 
 CREATE TABLE "submissions" (
 	"id" SERIAL PRIMARY KEY,
-	"user_id" int references users,
-	"scenario_id" int references scenario,
+	"user_id" INT REFERENCES users,
+	"scenario_id" INT REFERENCES scenario,
 	"submission_time" timestamp,
 	UNIQUE(user_id, scenario_id)
 );
 
 CREATE TABLE "response" (
 	"id" SERIAL PRIMARY KEY,
-	"submission_id" int references submissions,
-	"page_num" int,
-	-- "page_id" int references pages,
-	"time" timestamp
+	"submission_id" INT REFERENCES submissions,
+	"page_num" INT,
+	"time" TIMESTAMP
 );
 
 CREATE TABLE "prompt_response" (
-	"id" int references response primary key,
-	"response" varchar
+	"id" INT REFERENCES response PRIMARY KEY,
+	"response" VARCHAR
 );
 
 CREATE TABLE "conversation_choices" (
-	"id" int references response,
-	"stakeholder_id" int references stakeholders,
-	primary key (id, stakeholder_id)
+	"id" INT REFERENCES response,
+	"stakeholder_id" INT REFERENCES stakeholders,
+	PRIMARY KEY (id, stakeholder_id)
 );
 
 CREATE TABLE "mcq_response" (
-	"id" int references response,
-	"question_id" int references question,
-	primary key (id, question_id),
-	"choice_id" int references mcq_option
+	"id" INT REFERENCES response,
+	"question_id" INT REFERENCES question,
+	PRIMARY KEY (id, question_id),
+	"choice_id" INT REFERENCES mcq_option
 );
