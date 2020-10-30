@@ -17,7 +17,7 @@ DROP TABLE response CASCADE;
 DROP TABLE prompt_response CASCADE;
 DROP TABLE conversation_choices CASCADE;
 DROP TABLE mcq_response CASCADE;
-DROP TABLE stakeholders CASCADE; 
+DROP TABLE stakeholders CASCAE; 
 DROP TABLE question CASCADE;
 DROP TABLE mcq_option CASCADE; -- option
 
