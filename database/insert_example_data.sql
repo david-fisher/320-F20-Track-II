@@ -103,10 +103,12 @@ INSERT INTO submissions VALUES(DEFAULT, 2, 2, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 3, 1, '2020-10-10 10:10:00');
 INSERT INTO prompt_response VALUES(8, 'Jane''s response to scenario 2 initial reflection');
 
--- -- display all responses in submission 1 (John)
+-- display all responses in submission 1 (John)
 -- select * from response, submissions 
 -- where submissions.id = response.submission_id	
 -- and submissions.id = 1;
+
+-- select * from response;
 
 -- -- display all prompt responses that are in a submission
 -- select * from response, submissions, prompt_response
