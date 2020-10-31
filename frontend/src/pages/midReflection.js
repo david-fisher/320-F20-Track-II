@@ -45,6 +45,7 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
   }
 
   function goToResults(){
+    if (pages.results.completed) {
     if (!pages.results.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
@@ -54,6 +55,7 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
     }
     setActivePage(prevPage => 'results')
   }
+  }
 
   const classes = useStyles();
 
@@ -62,7 +64,7 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt={5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Reflect on Initial Information
+            Reflect on Stakeholder Information
           </TextTypography>
         </Box>
       </Grid>
@@ -77,14 +79,6 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
           </Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button
-            variant="contained"
-            disableElevation
-            color="primary"
-            onClick={goToResults}
-          >
-            Next
-          </Button>
         </Grid>
       </Grid>
 
@@ -92,7 +86,7 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-            <QA header={mainText} questions={questions} />
+          <QA header={mainText} questions={questions} nextPage={goToResults} pages={pages} nextPageName={"results"}/>
         </Grid>
       </Grid>
     </div>

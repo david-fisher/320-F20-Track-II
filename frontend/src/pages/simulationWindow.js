@@ -23,14 +23,14 @@ function SimulationWindow() {
     introduction: { visited: true, completed: true, pageNumber: 0, html: (<Introduction />) },
     projectAssignment: { visited: false, completed: true, pageNumber: 1, html: (<ProjectAssignment />) },
     initialReflection: { visited: false, completed: true, pageNumber: 2, html: (<InitialReflection />) },
-    initialAction: { visited: false, completed: true, pageNumber: 3, html: (<InitialAction />) },
+    initialAction: { visited: false, completed: false, pageNumber: 3, html: (<InitialAction />) },
     gatheredInformation: { visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation />) },
     stakeholders: { visited: false, completed: true, pageNumber: 5, html: (<Stakeholders />) },
     middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
-    results: { visited: false, completed: true, pageNumber: 7, html: (<Results />) },
+    results: { visited: false, completed: false, pageNumber: 7, html: (<Results />) },
     feedback: { visited: false, completed: true, pageNumber: 8, html: (<Feedback />) },
     finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
-    response: { visited: false, completed: true, pageNumber: 10, html: (<Response />) }
+    response: { visited: false, completed: false, pageNumber: 10, html: (<Response />) }
   });
 
   const infoIdsState = useState([]);
@@ -60,7 +60,7 @@ function SimulationWindow() {
       <Grid container spacing={2}>
         <GatheredInfoContext.Provider value={infoIdsState}>
           <Grid item lg={3}>
-            <Stepper activePage={activePage} pages={pages} key={activePage} />
+            <Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage} />
           </Grid>
           <Grid item lg={6} >
               {React.cloneElement(pages[activePage].html, {

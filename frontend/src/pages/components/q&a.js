@@ -31,15 +31,23 @@ function getQuestions(questionArr) {
 }
 
 export default function StateTextFields(props) {
-  const handleChange = (event) => {
-
-  };
   const [testInput1, setTestInput1] = useState("");
   let qAndA = getQuestions(props.questions).map((question) => <>{question}</>)
   let header = props.header;
 
-  return (
+  const [value, setValue] = React.useState('');
+  const [error, setError] = React.useState(false);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setError(true);
+    console.log(props.nextPageName)
+    props.pages[props.nextPageName].completed = true;
+    props.nextPage();
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
     <Grid container spacing={2}>
       <Grid item lg={12}>
         <TextTypography variant="body1" align="center">
@@ -52,12 +60,12 @@ export default function StateTextFields(props) {
         </TextTypography>
       </Grid>
       <Grid item lg={12}>
-      <Button type="submit" variant="outlined" color="primary">
-        Submit
-    </Button>
+        <Button type="submit" variant="outlined" color="primary">
+          Submit
+        </Button>
       </Grid>
-
     </Grid>
+    </form>
 
 
   );

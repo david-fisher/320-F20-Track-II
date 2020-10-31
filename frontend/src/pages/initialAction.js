@@ -15,23 +15,25 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-function InitialAction({pages, setPages, activePage, setActivePage}) {
-  function goToInitialReflection(){
-    if (!pages.initialReflection.visited) {
-      setPages(prevPages => {
-        let copy = {...prevPages};
-        copy.initialReflection.visited = true;
-        return copy;
-      });
+function InitialAction({ pages, setPages, activePage, setActivePage }) {
+  function goToInitialReflection() {
+    if (pages.initialReflection.completed) {
+      if (!pages.initialReflection.visited) {
+        setPages(prevPages => {
+          let copy = { ...prevPages };
+          copy.initialReflection.visited = true;
+          return copy;
+        });
+      }
+      setActivePage(prevPage => 'initialReflection')
     }
-    setActivePage(prevPage => 'initialReflection')
   }
 
-  function goToGatheredInformation(){
-    if(pages.gatheredInformation.completed){
+  function goToGatheredInformation() {
+    if (pages.gatheredInformation.completed) {
       if (!pages.gatheredInformation.visited) {
         setPages(prevPages => {
-          let copy = {...prevPages};
+          let copy = { ...prevPages };
           copy.gatheredInformation.visited = true;
           return copy;
         });
@@ -43,9 +45,9 @@ function InitialAction({pages, setPages, activePage, setActivePage}) {
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
-        <Box mt = {5}>
+        <Box mt={5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-          What should we not automate? 
+            What should we not automate?
           </TextTypography>
         </Box>
       </Grid>
@@ -53,7 +55,7 @@ function InitialAction({pages, setPages, activePage, setActivePage}) {
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation onClick={goToInitialReflection}>Back</Button>
         </Grid>
-        <Grid item style={{marginRight: "0rem", marginTop: "-3rem" }}>
+        <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToGatheredInformation} >Next</Button>
         </Grid>
       </Grid>
@@ -62,12 +64,12 @@ function InitialAction({pages, setPages, activePage, setActivePage}) {
           <Box m="2rem">
           </Box>
           <TextTypography variant="body1" align="center">
-            Should there be some occupations or parts of human life where Artificial Intelligence and the use of robots are prohibited? 
+            Should there be some occupations or parts of human life where Artificial Intelligence and the use of robots are prohibited?
           </TextTypography>
         </Grid>
         <Grid item lg={12}>
-          <Checkbox nextPage = {goToGatheredInformation} pages={pages} nextPageName={"gatheredInformation"}/>
-          </Grid>
+          <Checkbox nextPage={goToGatheredInformation} pages={pages} nextPageName={"gatheredInformation"} />
+        </Grid>
       </Grid>
     </div>
   );

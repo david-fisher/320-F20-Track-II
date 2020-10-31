@@ -29,8 +29,8 @@ const useStyles = makeStyles((theme) => ({
 const mainText = "You have been presented with a scenario about a new project that your company is developing. You have learned more about your role in its development and eventual launch and had the opportunity to gather more information about what you are being asked to do. After selecting a course of action to take, you were presented with a set of possible consequences resulting from your choices within the scenario, please provide responses to the following questions. You must write something, but you’re responses do not need to be highly polished; you should aim for a few thoughtful sentences.";
 
 const questions = [
-"Do the consequences presented match your expectations for what you thought would happen? Explain your answer.",
-"Considering these consequences, how satisfied are you with your choices? In other words, how would you approach a similar situation in the future? Be sure to explain what you might keep the same and what you would change.",
+  "Do the consequences presented match your expectations for what you thought would happen? Explain your answer.",
+  "Considering these consequences, how satisfied are you with your choices? In other words, how would you approach a similar situation in the future? Be sure to explain what you might keep the same and what you would change.",
 ];
 
 function FinalReflection({ pages, setPages, activePage, setActivePage }) {
@@ -47,14 +47,16 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
 
   function goToResponse() {
     if (pages.response.completed) {
-      if (!pages.response.visited) {
-        setPages((prevPages) => {
-          let copy = { ...prevPages };
-          copy.response.visited = true;
-          return copy;
-        });
+      if (pages.response.completed) {
+        if (!pages.response.visited) {
+          setPages((prevPages) => {
+            let copy = { ...prevPages };
+            copy.response.visited = true;
+            return copy;
+          });
+        }
+        setActivePage((prevPage) => "response");
       }
-      setActivePage((prevPage) => "response");
     }
   }
 
@@ -65,7 +67,7 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt={5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Reflect on Initial Information
+            Reflect on Final Information
           </TextTypography>
         </Box>
       </Grid>
@@ -80,14 +82,6 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
           </Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button
-            variant="contained"
-            disableElevation
-            color="primary"
-            onClick={goToResponse}
-          >
-            Next
-          </Button>
         </Grid>
       </Grid>
 
@@ -95,7 +89,7 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-            <QA header={mainText} questions={questions} />
+          <QA header={mainText} questions={questions} nextPage={goToResponse} pages={pages} nextPageName={"response"} />
         </Grid>
       </Grid>
     </div>

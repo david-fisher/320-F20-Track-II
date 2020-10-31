@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   disabled: {},
 }));
 
-function getSteps(pages) {
+function getSteps(pages, navigatePageFunc) {
   let stepArr = [];
   let keys = Object.keys(pages);
 
@@ -57,29 +57,11 @@ function getSteps(pages) {
     if (pages[keys[i]].visited === false) {
       stepArr.push(<Button disabled>{buttonName}</Button>);
     } else {
-      stepArr.push(<Button style={{ color: "#881c1c" }}>{buttonName}</Button>);
+      stepArr.push(<Button style={{ color: "#881c1c" }} onClick={() => navigatePageFunc(keys[i])} >{buttonName}</Button>);
+      
     }
   }
   return stepArr;
-}
-
-// for testing purposes
-function getCurrentPageNum(pageName) {
-  let stepNameArr = [
-    "introduction",
-    "projectAssignment",
-    "initialAction",
-    "gatheredInformation",
-    "stakeholders",
-    "results",
-    "feedback",
-    "response",
-  ];
-  for (let i = 0; i < stepNameArr.length; i++) {
-    if (pageName === stepNameArr[i]) {
-      return i;
-    }
-  }
 }
 
 function getStepContent(step) {
@@ -100,8 +82,22 @@ export default function VerticalLinearStepper(props) {
   const classes = useStyles();
   // eslint-disable-next-line
   const [activeStep, setActiveStep] = React.useState(props.pages[props.activePage].pageNumber);
-  const steps = getSteps(props.pages);
+  
 
+  function navigatePage(pageName){
+    if(props.pages[pageName].completed){
+      if (!props.pages[pageName].visited) {
+        props.setPages(prevPages => {
+          let copy = {...prevPages};
+          copy[pageName].visited = true;
+          return copy;
+        });
+      }
+      props.setActivePage(pageName)
+    }
+  }
+
+  const steps = getSteps(props.pages, navigatePage);
   return (
     <div className={classes.root}>
       <Box mt={3} ml={1}>
