@@ -51,9 +51,17 @@ export default function InfoGatheredList({pages}) {
     }
   }
 
+  //changing variables as per screensize
+  const [height, width] = useWindowSize();
+  const isSmall = width < 640;
+  const isMedium = width < 1024; //could also be 1007 instead of 1024 depending on standard used
+  const margin_left = isSmall? 1 : (isMedium ? 2 : 8);
+  const title_fontSize = isSmall? '8px' : (isMedium ? '12px' : '16px'); //use it later when making it suitable for medium and small sizes
+
+
   return (
     <div className={classes.root}>
-      <Box mt = {6} ml = {8}>
+      <Box mt = {6} ml = {'20%'}>
         <Button onClick={toggleShow} 
          color = "primary"
          style = {{ fontSize: '16px'}}
@@ -61,25 +69,39 @@ export default function InfoGatheredList({pages}) {
          >
          Gathered Information
          </Button>
-      {showList &&
-        <List>
-          {infos.filter(info => pages[info.pageId].visited).map(info => {
-            return (
-              <ListItem key={info.id} button onClick={() => getListContent(info).then(res => alert(res))}>
-                {(info.pageId === 'stakeholders') &&
-                  <Box mr = {1} mb = {0.75}>
-                    <PersonIcon style = {{ color: "#373a3c"}}/>
-                  </Box>
-                }
-                <ListItemText height={400} width={300}>
-                  {info.name}
-                </ListItemText>
-              </ListItem>
-            );
-          })}
-        </List>
-      }
+        {showList &&
+          <List>
+            {infos.filter(info => pages[info.pageId].visited).map(info => {
+              return (
+                <ListItem key={info.id} button onClick={() => getListContent(info).then(res => alert(res))}>
+                  {(info.pageId === 'stakeholders') &&
+                    <Box mr = {1} mb = {0.75}>
+                      <PersonIcon style = {{ color: "#373a3c"}}/>
+                    </Box>
+                  }
+                  <ListItemText height={400} width={300}>
+                    {info.name}
+                  </ListItemText>
+                </ListItem>
+              );
+            })}
+          </List>
+        }
      </Box> 
     </div>
   );
+}
+
+function useWindowSize(){
+  const [size, setSize] = useState([window.innerHeight, window.innerWidth]);
+  useEffect(()=> {
+    const handleResize = () =>{
+      setSize([window.innerHeight, window.innerWidth]);
+    };
+    window.addEventListener("resize", handleResize);
+    return ()=>{
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  return size;
 }

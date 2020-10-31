@@ -1,7 +1,7 @@
 import React from "react";
 
 import Results from "./pages/results";
-import App from "./App";
+import Home from "./pages/home";
 import RadarTest from "./pages/chartTest";
 import InitialReflection from "./pages/initialReflection";
 
@@ -47,6 +47,25 @@ const theme = createMuiTheme({
     },
   },
 });
+
+const menuItems = [
+  {
+    listText: "Home",
+    listPath: "/",
+  },
+  {
+    listText: "Results",
+    listPath: "/results",
+  },
+  {
+    listText: "Simulation Window",
+    listPath: "/simulation",
+  },
+  {
+    listText: "Chart",
+    listPath: "/chartTest",
+  },
+];
 
 function Nav() {
   const classes = useStyles();
@@ -96,7 +115,7 @@ function Nav() {
             renders the first one that matches the current URL. */}
           <Switch>
             <Route path="/" exact>
-              <App />
+              <Home />
             </Route>
             <Route path="/results" exact>
               <Results />

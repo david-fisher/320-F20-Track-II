@@ -47,6 +47,12 @@ export default function CustomizedMenus() {
     setAnchorEl(null);
   };
 
+  const gatheredInformation = ["Assignment", "Stakeholder 1", "Stakeholder 2"]
+
+  const menuItems = gatheredInformation.map(information => { 
+    return (<StyledMenuItem> <ListItemText primary={information}/> </StyledMenuItem>);
+})
+
   return (
     <div>
       <Button
@@ -63,15 +69,7 @@ export default function CustomizedMenus() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledMenuItem>
-          <ListItemText primary="Assignment" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemText primary="Stakeholer 1" />
-        </StyledMenuItem>
-        <StyledMenuItem>
-          <ListItemText primary="Stakeholder 2" />
-        </StyledMenuItem>
+        {menuItems}
       </StyledMenu>
     </div>
   );

@@ -59,17 +59,17 @@ function SimulationWindow() {
       </Grid>
       <Grid container spacing={2}>
         <GatheredInfoContext.Provider value={infoIdsState}>
-          <Grid item lg={3}>
+          <Grid item lg={3} md={2} sm={2}>
             <Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage} />
           </Grid>
-          <Grid item lg={6} >
+          <Grid item lg={6} md={8} sm={8}>
               {React.cloneElement(pages[activePage].html, {
                   pages: pages,
                   setPages: setPages,
                   activePage: activePage,
                   setActivePage: setActivePage})}
           </Grid>
-          <Grid item lg={3}>
+          <Grid item lg={3} md={2} sm={2}>
             <InfoGatheredList pages={pages}/>
           </Grid>
         </GatheredInfoContext.Provider>
