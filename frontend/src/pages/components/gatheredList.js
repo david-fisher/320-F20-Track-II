@@ -61,7 +61,7 @@ export default function InfoGatheredList({pages}) {
 
   return (
     <div className={classes.root}>
-      <Box mt = {6} ml = {margin_left}>
+      <Box mt = {6} ml = {'20%'}>
         <Button onClick={toggleShow} 
          color = "primary"
          style = {{ fontSize: '16px'}}
