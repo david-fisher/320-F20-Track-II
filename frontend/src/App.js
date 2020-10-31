@@ -1,16 +1,21 @@
 import React from 'react';
+import { Route } from "react-router-dom";
+import Results from "./pages/results";
+import Home from "./pages/home";
+import SimulationWindow from "./pages/simulationWindow";
+import RadarTest from "./pages/chartTest";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import './App.css';
 
 function App() {
   return (
-    <div>
-      <body>
-
-        <h1>Home Page</h1>
-        <p>Lorem Ipsum Porem Lorem Ipsum Porem</p>
-
-      </body>
-    </div>
+    <>
+      <CssBaseline />
+      <Route exact path="/" component={Home} />
+      <Route exact path="/results" component={Results}/>
+      <Route exact path="/simulation" component={SimulationWindow}/>
+      <Route exact path="/chartTest" component={RadarTest}/>
+    </>
   );
 }
 

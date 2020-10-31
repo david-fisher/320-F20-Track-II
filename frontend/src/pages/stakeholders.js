@@ -63,7 +63,7 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12}>
           <Box m="2rem">
           </Box>
           <TextTypography variant="body1" align="center">
