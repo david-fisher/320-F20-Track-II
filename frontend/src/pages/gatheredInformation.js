@@ -7,6 +7,7 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
+
 function GatheredInformation({pages, setPages, activePage, setActivePage}) {
   let goToInitialAction = ()=>{
     if(pages.initialAction.completed){
