@@ -179,6 +179,15 @@ function getMidReflectPage(scenarioID, callback){
   })
 }
 
+function getFeedback(scenarioID, studentID, callback){
+  pool.query('select stakeholdername, issue1, issue2 from feedback where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
 function addMidReflect(studentID, scenarioID, data, callback){
   // console.log(studentID, data, scenarioID)
   pool.query('UPDATE responses set middlereflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
@@ -294,6 +303,7 @@ module.exports = {
     getConsequences,
     getFinalReflection,
     getConclusion,
+    getFeedback,
     addInitReflect,
     addMidReflect,
     addStakeholder,

@@ -451,7 +451,7 @@ router.route('/scenarios/middleReflection')
 
     })
 
-    router.route('/scenarios/finalReflection')
+router.route('/scenarios/finalReflection')
 
         .get(function(req, res){
             scenarioID = req.get('scenarioid')
@@ -523,7 +523,35 @@ router.route('/scenarios/conclusion')
         })
 
         }
-})
+    })
+
+router.route('/scenarios/feedback')
+
+    .get(function(req, res){
+        scenarioID = req.get('scenarioid')
+        studentID = req.get('studentid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else {
+            db.getFeedback(scenarioID, studentID, function(result){
+                if(result.length == 0) {
+                    res.status(404).json({error: `No conversation found for scenarioID: ${scenarioID} and studentid: ${studentID}`})
+                }
+                else {
+                    res.status(200).json(result)
+                    console.log("Got student feedback")
+                }
+            })
+        }
+    })
 
 // router.route('/scenarios/scenarioName')
 //add get functions for this route
