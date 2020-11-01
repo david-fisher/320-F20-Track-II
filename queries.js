@@ -29,8 +29,8 @@ function getScenarios(studentID, callback){
     }
   // console.log(studentID)
   //console.log(results.rows)
-  callback(results.rows)  
-  })  
+  callback(results.rows)
+  })
 }
 
 function getIntro(scenarioID, callback){
@@ -55,6 +55,16 @@ function getInitReflect(scenarioID, callback){
 
 function getTask(scenarioID, callback){
   pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    // console.log(scenarioID)
+    callback(results.rows)
+  })
+}
+
+function getStartToGatherInfo(scenarioID, callback){
+  pool.query('SELECT starttogatherinfo from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
     }
@@ -227,7 +237,7 @@ function addFinalReflection(studentID, scenarioID, data, callback){
 //get scenario by id
 const getScenraioById = (request, response) => {
     const id = parseInt(request.params.id)
-  
+
     pool.query('SELECT * FROM scenarios WHERE id = $1', [id], (error, results) => {
       if (error) {
         throw error
@@ -243,7 +253,7 @@ const createScenario = (request, response) => {
     // const stakeholder = request.params.stakeholder
     // console.log(name)
     const { name, stakeholder } = request.body
-  
+
     pool.query('INSERT INTO scenarios (name, stakeholder) VALUES ($1, $2)', [name, stakeholder], (error, results) => {
       if (error) {
         throw error
@@ -258,7 +268,7 @@ const createScenario = (request, response) => {
 const updateScenario = (request, response) => {
     const id = parseInt(request.params.id)
     const { name, stakeholder } = request.body
-  
+
     pool.query(
       'UPDATE scenarios SET name = $1, stakeholder = $2 WHERE id = $3',
       [name, stakeholder, id],
@@ -275,7 +285,7 @@ const updateScenario = (request, response) => {
 //delete a scenario
 const deleteScenario = (request, response) => {
     const id = parseInt(request.params.id)
-  
+
     pool.query('DELETE FROM scenarios WHERE id = $1', [id], (error, results) => {
       if (error) {
         throw error
@@ -293,6 +303,7 @@ module.exports = {
     getIntro,
     getInitReflect,
     getTask,
+    getStartToGatherInfo,
     getInitActions,
     addInitAction,
     getStakeholders,

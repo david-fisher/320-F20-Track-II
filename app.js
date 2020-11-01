@@ -107,6 +107,28 @@ router.route('/scenarios/task')
         }
     })
 
+router.route('/scenarios/starttogatherinfo')
+
+    .get(function(req, res){
+        scenarioID = req.get('scenarioid')
+        if(!isnumber(scenarioID)){
+            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid ID")
+            res.end()
+        }
+        else {
+        db.getStartToGatherInfo(scenarioID, function(result){
+            if(result.length == 0) {
+                res.status(404).json({error: `No scenario start to gather information found with scenarioID: ${scenarioID}`})
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got start to gather information")
+            }
+        })
+
+        }
+    })
 
 router.route('/scenarios/initialReflection')
 
