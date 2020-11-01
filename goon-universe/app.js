@@ -1,7 +1,3 @@
-//William's first comment
-//Q's first comment
-
-//JASON ON ERROR-CHECK
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
@@ -20,9 +16,8 @@ app.use(
 const router = express.Router()
 
 router.use(function(req, res, next) {
-    // do logging
     console.log('API is doing something')
-    next() // make sure we go to the next routes and don't stop here
+    next() 
 });
 
 
@@ -42,7 +37,6 @@ router.route('/scenarios')
         }
         else{
             db.getScenarios(studentID, function(result){
-                // console.log("scenarios-",result)
                 if(result.length == 0){
                     res.status(404).json({error: `No scenarios found for studentid: ${studentID}`})
                 }
@@ -59,8 +53,6 @@ router.route('/scenarios')
 router.route('/scenarios/intro')
 
     .get(function(req, res){
-        // input = JSON.stringify(req.headers)
-        // console.log(input)
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
             res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
@@ -69,8 +61,6 @@ router.route('/scenarios/intro')
         }
         else{
             db.getIntro(scenarioID, function(result){
-                // console.log("intro-",result)
-                //console.log(result)
                 if(result.length == 0){
                     res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
                 }
@@ -94,7 +84,6 @@ router.route('/scenarios/task')
         }
         else {
         db.getTask(scenarioID, function(result){
-            // console.log("task-",result)
             if(result.length == 0) {
                 res.status(404).json({error: `No scenario task found with scenarioID: ${scenarioID}`})
             }
@@ -141,7 +130,6 @@ router.route('/scenarios/initialReflection')
         }
         else{
         db.getInitReflect(scenarioID, function(result){
-            // console.log("Initial Reflection-", result)
             if(result.length == 0) {
                 res.status(404).json({error: `No initial reflection found with scenarioID: ${scenarioID}`})
             }
@@ -154,10 +142,6 @@ router.route('/scenarios/initialReflection')
 
 
     })
-
-//------------------------------------------------------------------------------------------
-//      Add put functions like the one below in the appropriate routes
-//------------------------------------------------------------------------------------------
 
     .put(function(req, res){
         scenarioID = req.body.scenarioID
@@ -196,7 +180,6 @@ router.route('/scenarios/initialAction')
         }
         else{
         db.getInitActions(scenarioID, function(result){
-            // console.log("Initial Action-", result)
             if(result.length == 0) {
                 res.status(404).json({error: `No initial actions found with scenarioID: ${scenarioID}`})
             }
@@ -207,6 +190,7 @@ router.route('/scenarios/initialAction')
         })
         }
     })
+    
     .put(function(req, res){
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
@@ -244,7 +228,6 @@ router.route('/scenarios/finalAction')
         }
         else {
         db.getFinalAction(scenarioID, function(result){
-            // console.log("task-",result)
             if(result.length == 0) {
                 res.status(404).json({error: `No scenario final action page found for scenarioID: ${scenarioID}`})
             }
@@ -257,7 +240,6 @@ router.route('/scenarios/finalAction')
         }
     })
 
-    //final action
     .put(function(req, res){
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
@@ -295,7 +277,6 @@ router.route('/scenarios/consequences')
         }
         else {
         db.getConsequences(scenarioID, function(result){
-            // console.log("task-",result)
             if(result.length == 0) {
                 res.status(404).json({error: `No consequences found for scenarioID: ${scenarioID}`})
             }
@@ -324,7 +305,6 @@ router.route('/scenarios/stakeholders/history')
         }
         else{
         db.getStakeholderHistory(scenarioID, studentID, function(result){
-            // console.log("Stakeholder History-", result)
             if(result.length == 0){
                 res.status(404).json({error: `No stakeholder history found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
             }
@@ -349,7 +329,6 @@ router.route('/scenarios/stakeholders')
         }
         else{
         db.getStakeholders(scenarioID, function(result){
-            // console.log("Stakeholders-", result)
             if(result.length == 0){
                 res.status(404).json({error: `No stakeholders found for scenarioID: ${scenarioID}`})
             }
@@ -410,7 +389,6 @@ router.route('/scenarios/stakeholders/conversation')
         }
         else{
         db.getStakeholderConvo(scenarioID, stakeholderID, function(result){
-            // console.log("Stakeholders Conversation-", result)
             if(result.length == 0){
                 res.status(404).json({error: `No conversation found for scenarioID: ${scenarioID} and stakeholderid: ${stakeholderID}`})
             }
@@ -574,25 +552,6 @@ router.route('/scenarios/feedback')
             })
         }
     })
-
-// router.route('/scenarios/scenarioName')
-//add get functions for this route
-
-
-//create routes as needed
-
-
-
-
-
-
-
-
-// app.get('/scenarios', db.getScenarios)
-// app.get('/scenarios/:id', db.getScenraioById)
-// app.post('/scenarios/', db.createScenario)
-// app.put('/scenarios/:id', db.updateScenario)
-// app.delete('/scenarios/:id', db.deleteScenario)
 
 app.use('/api', router)
 
