@@ -1,0 +1,5 @@
+**/node_modules
+/unethical-corp
+.env
+#misc
+.DS_Store
