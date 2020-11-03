@@ -43,10 +43,10 @@ function Results({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToMiddleReflection}>Back</Button>
+          <Button aria-label = "go to middle reflection, back" variant="contained" disableElevation onClick={goToMiddleReflection}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation color="primary" onClick={goToFeedback}>Next</Button>
+          <Button aria-label = "go to feedback, next" variant="contained" disableElevation color="primary" onClick={goToFeedback}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

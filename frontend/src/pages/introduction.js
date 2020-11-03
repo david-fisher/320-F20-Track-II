@@ -69,6 +69,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
             disableElevation
             color="primary"
             onClick={goToProjectAssignment}
+            aria-labels = "go to project assignment next"
           >
             Next
           </Button>
@@ -77,7 +78,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
       <Grid container spacing={2}>
         <Grid item lg={12}>
           <Box p={2} className={classes.textBox}>
-            <TextTypography variant="body1">{introText}</TextTypography>
+            <TextTypography variant="body1">{introText}</TextTypography> /* aria label for textboxes*/
           </Box>
         </Grid>
       </Grid>

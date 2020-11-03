@@ -31,7 +31,7 @@ function Response({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToFinalReflection}>Back</Button>
+          <Button aria-label = "go to final action, back" variant="contained" disableElevation onClick={goToFinalReflection}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           {/*<Button variant="outlined">Next</Button>*/}

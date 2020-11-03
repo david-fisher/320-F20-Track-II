@@ -111,7 +111,7 @@ export default function VerticalLinearStepper(props) {
                 active: classes.active,
               }}
             >
-              <StepLabel
+              <StepLabel aria-label = {props.activePage}
                 StepIconProps={{
                   classes: {
                     root: classes.step,

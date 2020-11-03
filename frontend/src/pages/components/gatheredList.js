@@ -76,10 +76,10 @@ export default function InfoGatheredList({pages}) {
                 <ListItem key={info.id} button onClick={() => getListContent(info).then(res => alert(res))}>
                   {(info.pageId === 'stakeholders') &&
                     <Box mr = {1} mb = {0.75}>
-                      <PersonIcon style = {{ color: "#373a3c"}}/>
+                      <PersonIcon aria-labels = "person icon" style = {{ color: "#373a3c"}}/>
                     </Box>
                   }
-                  <ListItemText height={400} width={300}>
+                  <ListItemText aria-labels = {info.name} height={400} width={300}>
                     {info.name}
                   </ListItemText>
                 </ListItem>

@@ -54,12 +54,12 @@ function Stakeholders({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-            <Button variant="contained" disableElevation onClick={goToGatheredInformation}>Back</Button>
+            <Button aria-label = "go to gathered information, back" variant="contained" disableElevation onClick={goToGatheredInformation}>Back</Button>
         </Grid>
 
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
 
-          <Button variant="contained" disableElevation color="primary" onClick={goToMiddleReflection}>Next</Button>
+          <Button aria-label = "go to middle reflection, next" variant="contained" disableElevation color="primary" onClick={goToMiddleReflection}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>

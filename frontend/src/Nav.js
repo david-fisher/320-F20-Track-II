@@ -86,28 +86,28 @@ function Nav() {
                 <MenuIcon />
                 </IconButton>
                 <Typography variant="h6" className={classes.title}>
-                  <Link className={classes.link} to="/">
-                    <Button className={classes.title} color="inherit">
+                  <Link aria-label = "go to home" className={classes.link} to="/">
+                    <Button aria-label= "home" className={classes.title} color="inherit">
                       Home
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/results">
-                    <Button className={classes.title} color="inherit">
+                  <Link aria-label = "go to results" className={classes.link} to="/results">
+                    <Button aria-label = "results" className={classes.title} color="inherit">
                       Results
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/simulation">
-                    <Button className={classes.title} color="inherit">
+                  <Link aria-label = "go to simulation window" className={classes.link} to="/simulation">
+                    <Button aria-label = "simulation window" className={classes.title} color="inherit">
                       Simulation Window
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/chartTest">
-                    <Button className={classes.title} color="inherit">
+                  <Link aria-label = "go to chart" className={classes.link} to="/chartTest">
+                    <Button aria-label= "chart" className={classes.title} color="inherit">
                       Chart
                     </Button>
                   </Link>
                 </Typography>
-                <Button color="inherit">LogOut</Button>
+                <Button aria-label= "log out" color="inherit">LogOut</Button>
               </Toolbar>
             </AppBar>
 

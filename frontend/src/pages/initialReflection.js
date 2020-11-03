@@ -33,7 +33,7 @@ const mainText = "You have just been presented with a scenario about a new proje
 // ];
 
 const questions = [
-"What new responsibilities do you have after being asssigned to this project?",
+"What new responsibilities do you have after being assigned to this project?",
 "What aren't you sure about, or what questions are raised for you about those responsibilities?",
 ];
 
@@ -76,6 +76,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button
+            aria-label = "go to project assignment, back"
             variant="contained"
             disableElevation
             onClick={goToProjectAssignment}

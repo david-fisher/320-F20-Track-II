@@ -105,6 +105,7 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button
+            aria-label = "go to introduction, back"
             variant="contained"
             disableElevation
             onClick={goToIntroduction}
@@ -114,6 +115,7 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button
+            aria-label = "go to initial reflection, next"
             variant="contained"
             disableElevation
             color="primary"

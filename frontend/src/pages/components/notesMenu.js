@@ -56,8 +56,6 @@ export default function CustomizedMenus() {
   return (
     <div>
       <Button
-        aria-controls="customized-menu"
-        aria-haspopup="true"
         onClick={handleClick}
       >
         Gathered Info

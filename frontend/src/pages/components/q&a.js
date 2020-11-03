@@ -47,7 +47,7 @@ export default function StateTextFields(props) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form aria-label = {"add response to questions: " + props.questions} onSubmit={handleSubmit}>
     <Grid container spacing={2}>
       <Grid item lg={12}>
         <TextTypography variant="body1" align="center">
@@ -60,7 +60,7 @@ export default function StateTextFields(props) {
         </TextTypography>
       </Grid>
       <Grid item lg={12}>
-        <Button type="submit" variant="outlined" color="primary">
+        <Button aria-label = "submit" type="submit" variant="outlined" color="primary">
           Submit
         </Button>
       </Grid>

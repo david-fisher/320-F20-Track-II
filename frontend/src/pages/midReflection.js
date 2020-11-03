@@ -71,6 +71,7 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button
+            aria-label = "go to stakeholders, back"
             variant="contained"
             disableElevation
             onClick={goToStakeholders}

@@ -56,7 +56,7 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
           <Button variant="contained" disableElevation onClick={goToInitialReflection}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation color="primary" onClick={goToGatheredInformation} >Next</Button>
+          <Button aria-label = "go to gathered information, back" variant="contained" disableElevation color="primary" onClick={goToGatheredInformation} >Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
