@@ -64,7 +64,7 @@ function getInitActions(scenarioID, callback){
 }
 
 function addInitAction(studentID, scenarioID, data, callback){
-  pool.query('UPDATE responses set initalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
+  pool.query('UPDATE responses set initialaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
     }

@@ -1,5 +1,7 @@
 import React from "react";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import axios from 'axios';
 
 
 const TextTypography = withStyles({

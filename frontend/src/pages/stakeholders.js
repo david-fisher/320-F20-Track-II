@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
 import { GatheredInfoContext } from './simulationWindow';
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import axios from 'axios';
 
 const TextTypography = withStyles({
   root: {
