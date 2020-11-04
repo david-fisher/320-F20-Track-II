@@ -1,3 +1,7 @@
+.progress{  
+  transform: rotate(-90deg);
+}
+
 .App {
   text-align: center;
 }
@@ -26,6 +30,37 @@
 
 .App-link {
   color: #61dafb;
+}
+
+
+#coverage-content {
+  overflow-y: scroll;
+  max-height: 200px;
+}
+
+#coverage-plot {
+  max-width: 800px;
+  max-height: 800px;
+}
+
+#coverage-plot {
+  max-width: 800px;
+  max-height: 800px;
+}
+
+#coverage-plot {
+  max-width: 800px;
+  max-height: 800px;
+}
+
+#coverage-plot {
+  max-width: 800px;
+  max-height: 800px;
+}
+
+#coverage-plot {
+  max-width: 800px;
+  max-height: 800px;
 }
 
 @keyframes App-logo-spin {
