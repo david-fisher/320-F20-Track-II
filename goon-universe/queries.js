@@ -145,7 +145,7 @@ function addCourse(coursePage, courseName, semester, callback){
 }
 
 function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=1';
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=' + INITIAL_REFLECTION;
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -217,7 +217,7 @@ function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback
 }
 
 function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=5';
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order='+ FINAL_REFLECTION;
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -234,6 +234,7 @@ function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callba
                 if (error) {
                     throw error
                 }
+                // May not be a prompt every time
                 pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
                     if (error) {
                         throw error
