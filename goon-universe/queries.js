@@ -248,3 +248,19 @@ function cb(results){
 //getInstructorInfo(4).then(x => console.log(x[0]));
 //addCourse('New Course','CS305','F2020').then(x => console.log(x));
 //pool.end()
+
+module.exports = {
+	getIntroPage,
+	getInitReflectResponse,
+	getMidReflectResponse,
+	getFinalReflectResponse,
+	getStakeholders,
+	getName,
+	getCourseInfo,
+	getInstructorInfo,
+	addUser,
+	addCourse,
+	addInitReflectResponse,
+	addMidReflectResponse,
+	addFinalReflectResponse
+}
