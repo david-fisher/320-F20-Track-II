@@ -60,7 +60,7 @@ router.route('/scenarios/intro')
             res.end()
         }
         else{
-            db.getIntro(scenarioID, function(result){
+            db.getIntroPage(scenarioID, function(result){
                 if(result.length == 0){
                     res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
                 }
