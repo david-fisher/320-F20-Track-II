@@ -24,24 +24,24 @@ INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 1);
 INSERT INTO plain_page VALUES(1, 'plain_page');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 1);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt...')
+INSERT INTO prompt VALUES(2, 'Initial reflection prompt...');
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
-INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 2);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 3);
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 1);
 INSERT INTO prompt VALUES(4, 'prompt: middle reflection');
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 1);
-INSERT INTO mcq VALUES(5 'MCQ: <obj>');
+INSERT INTO mcq VALUES(5, 'MCQ: <obj>');
 INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 1: <text>', 5);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option A', 1);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option B', 1);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option C', 1);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 1);
 
-INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 2: <text>', 4);
+INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 2: <text>', 5);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option A', 2);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option B', 2);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 2);
@@ -54,7 +54,7 @@ INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 1);
 INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
 
 
-INSERT INTO submissions VALUES(DEFAULT, 1, 2, '2020-10-10 10:10:00');
+INSERT INTO submissions VALUES(DEFAULT, 1, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 1, 2, '2020-10-10 10:10:00');
 INSERT INTO prompt_response VALUES(1, 'John Doe''s response to initial reflection');
 
@@ -82,7 +82,8 @@ INSERT INTO mcq_response VALUES(7, 1, 3);
 
 -- test scenario 2
 INSERT INTO scenario VALUES(DEFAULT, '2020-12-18 23:59:59', 'description: sceanrio 2', '<additional_data for scenario 2>');
-
+INSERT INTO partof VALUES(2, 2);
+INSERT INTO partof VALUES(1, 2);
 INSERT INTO pages VALUES(DEFAULT, 1, 'PRMPT', 2);
 INSERT INTO prompt VALUES(7, 'prompt: s2 Initial reflection');
 
