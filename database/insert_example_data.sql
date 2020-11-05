@@ -87,25 +87,25 @@ INSERT INTO partof VALUES(2, 2);
 -- two courses have the same scenario, one student is enrolled in both
 
 INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 2);
-INSERT INTO plain_page VALUES(7, 'page: Intro page content for scenario 2');
+INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 2);
-INSERT INTO prompt VALUES(8, 'prompt: s2 Initial reflection');
+INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection');
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 2);
-INSERT INTO conversation_task VALUES(9, 's2 conversation_task: <obj>');
+INSERT INTO conversation_task VALUES(10, 's2 conversation_task: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 2);
-INSERT INTO prompt VALUES(10, 'prompt: s2 middle reflection');
+INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection');
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 2);
-INSERT INTO mcq VALUES(11, 's2 MCQ: <obj>');
+INSERT INTO mcq VALUES(12, 's2 MCQ: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 2);
-INSERT INTO prompt VALUES(12, 'prompt: s2 final reflection');
+INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection');
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 2);
-INSERT INTO plain_page VALUES(13, 'Page: s2 results will be available in one week');
+INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');
 
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 2, '2020-10-10 10:10:00');
