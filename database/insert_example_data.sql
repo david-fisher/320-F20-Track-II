@@ -20,8 +20,8 @@ INSERT INTO enrolled VALUES(4, 2);
 -- test scenario 1
 INSERT INTO scenario VALUES(DEFAULT, '2020-12-01 23:59:59', 'description: test scenario', '<additional_data>');
 
-INSERT INTO pages VALUES(DEFAULT, 1, 'PRMPT', 1);
-INSERT INTO prompt VALUES(1, 'prompt: Initial reflection');
+INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 1);
+INSERT INTO plain_page VALUES(1, 'plain_page');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'CONV', 1);
 INSERT INTO conversation_task VALUES(2, 'conversation_task: <obj>');
