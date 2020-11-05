@@ -275,18 +275,18 @@ function cb(results){
 //pool.end()
 
 module.exports = {
-	getScenarios,
-	getIntroPage,
-	getInitReflectResponse,
-	getMidReflectResponse,
-	getFinalReflectResponse,
-	getStakeholders,
-	getName,
-	getCourseInfo,
-	getInstructorInfo,
-	addUser,
-	addCourse,
-	addInitReflectResponse,
-	addMidReflectResponse,
-	addFinalReflectResponse
+    getScenarios,
+    getIntroPage,
+    getInitReflectResponse,
+    getMidReflectResponse,
+    getFinalReflectResponse,
+    getStakeholders,
+    getName,
+    getCourseInfo,
+    getInstructorInfo,
+    addUser,
+    addCourse,
+    addInitReflectResponse,
+    addMidReflectResponse,
+    addFinalReflectResponse
 }
