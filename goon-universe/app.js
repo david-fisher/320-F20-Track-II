@@ -163,7 +163,7 @@ router.route('/scenarios/initialReflection')
             res.end()
         }
         else{
-        db.addInitReflect(studentID, scenarioID, data, function(result){
+        db.addInitReflectResponse(studentID, data, scenarioID, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }

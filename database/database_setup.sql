@@ -138,7 +138,7 @@ CREATE TABLE "submissions" (
 	"id" SERIAL PRIMARY KEY,
 	"user_id" INT REFERENCES users,
 	"scenario_id" INT REFERENCES scenario,
-	"submission_time" timestamp,
+	"submission_time" timestamp DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE(user_id, scenario_id)
 );
 
@@ -146,8 +146,10 @@ CREATE TABLE "response" (
 	"id" SERIAL PRIMARY KEY,
 	"submission_id" INT REFERENCES submissions,
 	"page_num" INT,
-	"time" TIMESTAMP
+	UNIQUE(submission_id, page_num),
+	"time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- CREATE UNIQUE INDEX response_idx ON "response"(submission_id, page_num);
 
 CREATE TABLE "prompt_response" (
 	"id" INT REFERENCES response PRIMARY KEY,

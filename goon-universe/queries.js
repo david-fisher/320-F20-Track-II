@@ -149,7 +149,7 @@ function addCourse(coursePage, courseName, semester, callback){
     }) 
 }
 
-function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
+function addInitReflectResponse(studentID, input, scenarioID, callback){
     let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=' + INITIAL_REFLECTION;
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
@@ -162,8 +162,8 @@ function addInitReflectResponse(studentID, input, scenarioID, timestamp, callbac
                 throw error
             }
             let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
+            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, default) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = default'
+            pool.query(thisQuery, [submissionID, pageID], (error,results) => {
                 if (error) {
                     throw error
                 }
