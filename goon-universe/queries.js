@@ -1,226 +1,292 @@
+// const path = require('path')
+// console.log(path.join(path.dirname(),'.env'));
+
+// console.log((__dirname + '/.env').replace(/'/g, "\\'"));
+var env = require('node-env-file');
+// console.log((__dirname + '/.env').replaceAll(' ', "\\ "));
+env(__dirname + '/.env');
+
+const INTROPAGE = 1
+const INITIAL_REFLECTION = 2
+const CONVERSATION = 3
+const MIDDLE_REFLECTION = 4
+const FINAL_REFLECTION = 5
 const Pool = require('pg').Pool
-require("dotenv").config()
 
 const pool = new Pool({
-  user: 'me',
-  host: 'localhost',
-  database: 'api',
-  password: 'password',
-  port: 5432,
+    user: env.PGUSER,
+    password: env.PGPASSWORD,
+    host: env.PGHOST,
+    port: env.PGPORT,
+    database: env.PGDATABASE,
+    max: 20,
+    idleTimeoutMillis: 0,
+    connectionTimeoutMillis: 0
 })
 
 function getScenarios(studentID, callback){
-  pool.query('SELECT id, name, description FROM scenarios ORDER BY id ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-  callback(results.rows)
-  })
+    let thisQuery= 'select scenario.id from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
+    
+    pool.query(thisQuery, [studentID], (error,results) => {
+        if (error) {
+
+            throw error
+        }
+        callback(results.rows)
+    })  
 }
 
 function getIntro(scenarioID, callback){
-  pool.query('SELECT introduction from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+    let thisQuery= 'select plain_page.content from plain_page, pages where pages.id = plain_page.page_id and pages.order = ' + INTROPAGE + 'and scenario_id = $1'
+    
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+
+            throw error
+        }
+        callback(results.rows)
+    })  
 }
 
-function getInitReflect(scenarioID, callback){
-  pool.query('SELECT initialreflection from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function getInitReflectPage(scenarioID, callback){
+    let thisQuery = 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        callback(results.rows)
+    })
 }
 
-function getTask(scenarioID, callback){
-  pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function getInitReflectResponse(studentID, scenarioID, callback){
+    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
 }
 
-function getStartToGatherInfo(scenarioID, callback){
-  pool.query('SELECT starttogatherinfo from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function getMidReflectResponse(studentID, scenarioID, callback){
+    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
 }
 
-function getInitActions(scenarioID, callback){
-  pool.query('SELECT initialaction from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function getFinalReflectResponse(studentID, scenarioID, callback){
+    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
 }
 
-function addInitAction(studentID, scenarioID, data, callback){
-  pool.query('UPDATE responses set initialaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
-    if(error){
-      throw error
-    }
-
-    callback(`Inital action updated for studentID: ${studentID}`)
-  })
-}
-
-function addInitReflect(studentID, scenarioID, data, callback){
-  pool.query('UPDATE responses set initialreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error,results) => {
-    if(error){
-      throw error
-    }
-
-    callback(`Initial Reflection updated for studentID: ${studentID}`)
-  })
-}
-
+//Get the names, ids, and descriptions of each stakeholder in a scenario
 function getStakeholders(scenarioID, callback){
-  pool.query('select stakeholderid, name, designation, bio from stakeholders where scenarioid = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+    let thisQuery= 'select stakeholders.name, stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
+}
+function getName(userID, callback){
+    let thisQuery= 'select users.full_name from users where id =$1'
+    pool.query(thisQuery, [userID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
 }
 
-function getStakeholderConvo(scenarioID, stakeholderID, callback){
-  pool.query('select conversation from stakeholders where scenarioid = $1 and stakeholderid = $2', [scenarioID, stakeholderID], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function getCourseInfo(courseID, callback){
+    let thisQuery= 'select webpage, name, semester from courses where id =$1'
+    pool.query(thisQuery, [courseID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
 }
 
-function getStakeholderHistory(scenarioID, studentID, callback){
-  pool.query('select stakeholderid from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function getInstructorInfo(instructorID, callback){
+    let thisQuery= 'select full_name, email, webpage, course_id from instructs, users where instructs.instructor_id =$1 and users.id=$1'
+    pool.query(thisQuery,[instructorID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
 }
 
-function getFinalAction(scenarioID, callback){
-  pool.query('SELECT finalaction from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+//Maybe change to addStudent and addInstructor?
+function addUser(fullName, email, callback){
+    let thisQuery= 'insert into users(full_name, email) values ($1 , $2)';
+    pool.query(thisQuery, [fullName, email], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback('Success!')
+    }) 
 }
 
-function getConsequences(scenarioID, callback){
-  pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function addCourse(coursePage, courseName, semester, callback){
+    let thisQuery= 'insert into courses(webpage, name, semester) values ($1, $2, $3)';
+    pool.query(thisQuery, [coursePage, courseName, semester], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback('Success!')
+    }) 
 }
 
-function getFinalReflection(scenarioID, callback){
-  pool.query('SELECT finalreflection from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=' + INITIAL_REFLECTION;
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        let pageID=results.rows[0].id
+        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
+            if (error) {
+                throw error
+            }
+            let submissionID=results.rows[0].id
+            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
+            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
+                if (error) {
+                    throw error
+                }
+                pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
+                    if (error) {
+                        throw error
+                    }
+                    let responseID=results.rows[0].id
+                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
+                    pool.query(thisQuery, [responseID, input], (error,results) => { 
+                        if (error) {
+                            throw error
+                        }
+                        callback("Success!")
+                    })
+                })
+            })
+        })
+    }) 
 }
 
-function getConclusion(scenarioID, callback){
-  pool.query('SELECT conclusion from scenarios where id = $1', [scenarioID], (error,results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback){
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=3';
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        let pageID=results.rows[0].id
+        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
+            if (error) {
+                throw error
+            }
+            let submissionID=results.rows[0].id
+            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
+            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
+                if (error) {
+                    throw error
+                }
+                pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
+                    if (error) {
+                        throw error
+                    }
+                    let responseID=results.rows[0].id
+                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
+                    pool.query(thisQuery, [responseID, input], (error,results) => { 
+                        if (error) {
+                            throw error
+                        }
+                        callback("Success!")
+                    })
+                })
+            })
+        })
+    }) 
 }
 
-function addStakeholder(studentID, scenarioID, stakeholder, callback){
-  pool.query('UPDATE responses set stakeholderid = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, stakeholder], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(`Stakeholder updated for studentID: ${studentID}`)
-  })
+function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback){
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order='+ FINAL_REFLECTION;
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        let pageID=results.rows[0].id
+        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
+            if (error) {
+                throw error
+            }
+            let submissionID=results.rows[0].id
+            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
+            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
+                if (error) {
+                    throw error
+                }
+                // May not be a prompt every time
+                pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
+                    if (error) {
+                        throw error
+                    }
+                    let responseID=results.rows[0].id
+                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
+                    pool.query(thisQuery, [responseID, input], (error,results) => { 
+                        if (error) {
+                            throw error
+                        }
+                        callback("Success!")
+                    })
+                })
+            })
+        })
+    }) 
 }
 
-function getMidReflectPage(scenarioID, callback){
-  pool.query('SELECT middlereflection from scenarios where id = $1', [scenarioID], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
+function cb(results){
+    console.log(results)
+    pool.end()
 }
 
-function getFeedback(scenarioID, studentID, callback){
-  pool.query('select stakeholdername, issue1, issue2 from feedback where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(results.rows)
-  })
-}
+//addInitReflectResponse(1, 'John Doe\'s first scenario initial response updated', 1, '2020-10-28 11:12:13', cb)
+//addFinalReflectResponse(1, 'John Doe\'s second scenario final response', 2, '2020-10-28 11:00:00', cb)
+//addFinalReflectResponse(1, 'John Doe\'s second scenario final response updated', 2, '2020-10-29 10:12:13', cb)
 
-function addMidReflect(studentID, scenarioID, data, callback){
-  pool.query('UPDATE responses set middlereflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(`Middle reflection updated for studentID: ${studentID}`)
-  })
-}
 
-function addFinalAction(studentID, scenarioID, data, callback){
-  pool.query('UPDATE responses set finalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(`Final action updated for studentID: ${studentID}`)
-  })
-}
 
-function addFinalReflection(studentID, scenarioID, data, callback){
-  pool.query('UPDATE responses set finalreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
-    if(error){
-      throw error
-    }
-    callback(`Final reflection updated for studentID: ${studentID}`)
-  })
-}
 
-//export functions
+//getInstructorInfo(4).then(x => console.log(x[0]));
+//addCourse('New Course','CS305','F2020').then(x => console.log(x));
+//pool.end()
+
 module.exports = {
     getScenarios,
-    getIntro,
-    getInitReflect,
-    getTask,
-    getStartToGatherInfo,
-    getInitActions,
-    addInitAction,
-    getStakeholders,
-    getStakeholderConvo,
-    getStakeholderHistory,
-    getMidReflectPage,
-    getFinalAction,
-    getConsequences,
-    getFinalReflection,
-    getConclusion,
-    getFeedback,
-    addInitReflect,
-    addMidReflect,
-    addStakeholder,
-    addFinalAction,
-    addFinalReflection
+	getIntro,
+	getInitReflectResponse,
+	getMidReflectResponse,
+	getFinalReflectResponse,
+	getStakeholders,
+	getName,
+	getCourseInfo,
+	getInstructorInfo,
+	addUser,
+	addCourse,
+	addInitReflectResponse,
+	addMidReflectResponse,
+	addFinalReflectResponse
 }
