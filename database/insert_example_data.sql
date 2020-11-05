@@ -19,7 +19,7 @@ INSERT INTO enrolled VALUES(4, 2);
 
 -- test scenario 1
 INSERT INTO scenario VALUES(DEFAULT, '2020-12-01 23:59:59', 'description: test scenario', '<additional_data>');
-
+insert into partof values(1,1);
 INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 1);
 INSERT INTO plain_page VALUES(1, 'plain_page');
 
