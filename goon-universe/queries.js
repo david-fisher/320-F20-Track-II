@@ -1,11 +1,6 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
 
-const INTROPAGE = 1
-const INITIAL_REFLECTION = 2
-const CONVERSATION = 3
-const MIDDLE_REFLECTION = 4
-const FINAL_REFLECTION = 5
 const Pool = require('pg').Pool
 
 const pool = new Pool({
@@ -18,6 +13,16 @@ const pool = new Pool({
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0
 })
+
+/*
+ * These constants are concatenated into SQL queries below
+ * DO NOT REPLACE WITH STRINGS WITHOUT ALSO PATCHING CONCATENATION OUT
+ */
+const INTROPAGE = 1
+const INITIAL_REFLECTION = 2
+const CONVERSATION = 3
+const MIDDLE_REFLECTION = 4
+const FINAL_REFLECTION = 5
 
 function getScenarios(studentID, callback){
     let thisQuery= 'select scenario.id from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
@@ -270,7 +275,7 @@ function cb(results){
 //pool.end()
 
 module.exports = {
-    getScenarios,
+	getScenarios,
 	getIntroPage,
 	getInitReflectResponse,
 	getMidReflectResponse,
