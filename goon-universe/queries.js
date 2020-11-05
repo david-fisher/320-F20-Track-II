@@ -13,18 +13,32 @@ const pool = new Pool({
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0
 })
+
 /*
+ * These constants are concatenated into SQL queries below
+ * DO NOT REPLACE WITH STRINGS WITHOUT ALSO PATCHING CONCATENATION OUT
+ */
+const INTROPAGE = 1
+const INITIAL_REFLECTION = 2
+const CONVERSATION = 3
+const MIDDLE_REFLECTION = 4
+const FINAL_REFLECTION = 5
+
 function getScenarios(studentID, callback){
-  pool.query('SELECT id, name, description FROM scenarios ORDER BY id ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-  callback(results.rows)  
-  })  
+    let thisQuery= 'select scenario.id from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
+    
+    pool.query(thisQuery, [studentID], (error,results) => {
+        if (error) {
+
+            throw error
+        }
+        callback(results.rows)
+    })  
 }
-*/
+
 function getIntroPage(scenarioID, callback){
-    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = 1 and scenario_id = $1'
+    let thisQuery= 'select plain_page.content from plain_page, pages where pages.id = plain_page.page_id and pages.order = ' + INTROPAGE + 'and scenario_id = $1'
+    
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
 
@@ -34,8 +48,18 @@ function getIntroPage(scenarioID, callback){
     })  
 }
 
+function getInitReflectPage(scenarioID, callback){
+    let thisQuery = 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        callback(results.rows)
+    })
+}
+
 function getInitReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order=1 and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -45,7 +69,7 @@ function getInitReflectResponse(studentID, scenarioID, callback){
 }
 
 function getMidReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order=3 and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -55,7 +79,7 @@ function getMidReflectResponse(studentID, scenarioID, callback){
 }
 
 function getFinalReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order=5 and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -126,7 +150,7 @@ function addCourse(coursePage, courseName, semester, callback){
 }
 
 function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=1';
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=' + INITIAL_REFLECTION;
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -198,7 +222,7 @@ function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback
 }
 
 function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=5';
+    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order='+ FINAL_REFLECTION;
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -215,6 +239,7 @@ function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callba
                 if (error) {
                     throw error
                 }
+                // May not be a prompt every time
                 pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
                     if (error) {
                         throw error
@@ -250,17 +275,18 @@ function cb(results){
 //pool.end()
 
 module.exports = {
-	getIntroPage,
-	getInitReflectResponse,
-	getMidReflectResponse,
-	getFinalReflectResponse,
-	getStakeholders,
-	getName,
-	getCourseInfo,
-	getInstructorInfo,
-	addUser,
-	addCourse,
-	addInitReflectResponse,
-	addMidReflectResponse,
-	addFinalReflectResponse
+    getScenarios,
+    getIntroPage,
+    getInitReflectResponse,
+    getMidReflectResponse,
+    getFinalReflectResponse,
+    getStakeholders,
+    getName,
+    getCourseInfo,
+    getInstructorInfo,
+    addUser,
+    addCourse,
+    addInitReflectResponse,
+    addMidReflectResponse,
+    addFinalReflectResponse
 }
