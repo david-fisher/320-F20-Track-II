@@ -1,5 +1,5 @@
 INSERT INTO users VALUES(DEFAULT,'John Doe', 'johndoe@umass.edu');
-INSERT INTO users VALUES(DEFAULT, 'Jane doe', 'janedoe@umass.edu');
+INSERT INTO users VALUES(DEFAULT, 'Jane Doe', 'janedoe@umass.edu');
 INSERT INTO users VALUES(DEFAULT, 'Carl Stevens', 'cstevens@umass.edu');
 INSERT INTO users VALUES(DEFAULT, 'Aisha Kirk', 'akirk@umass.edu');
 
@@ -56,7 +56,9 @@ INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
 
 INSERT INTO submissions VALUES(DEFAULT, 1, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 1, 2, '2020-10-10 10:10:00');
-INSERT INTO prompt_response VALUES(1, 'John Doe''s response to initial reflection');
+-- INSERT INTO prompt_response VALUES(1, 'John Doe''s response to initial reflection');
+INSERT INTO prompt_response VALUES(1, '');
+
 
 INSERT INTO response VALUES(DEFAULT, 1, 4, '2020-10-11 10:10:00');
 INSERT INTO prompt_response VALUES(2, 'John Doe''s response to middle reflection');
@@ -131,3 +133,11 @@ INSERT INTO prompt_response VALUES(8, 'Jane''s response to scenario 2 initial re
 -- and conversation_task.page_id = pages.id
 -- and stakeholders.scenario_id = pages.scenario_id
 -- and stakeholders.conversation_task_id = conversation_task.page_id;
+
+-- to get fullname, initial response, scenario:
+;
+select users.full_name, prompt_response.response, submissions.scenario_id, response.time from prompt_response, response, submissions, users
+where prompt_response.id = response.id
+and response.submission_id = submissions.id
+and submissions.user_id = users.id
+and response.page_num = 2;
