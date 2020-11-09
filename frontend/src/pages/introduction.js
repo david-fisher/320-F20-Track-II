@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
+import HTMLRenderer from './components/htmlRenderer';
 
 const TextTypography = withStyles({
   root: {
@@ -91,7 +92,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
       <Grid container spacing={2}>
         <Grid item lg={12}>
           <Box p={2} className={classes.textBox}>
-            <TextTypography variant="body1">{introText}</TextTypography>
+            <HTMLRenderer html={introText}/>
           </Box>
         </Grid>
       </Grid>
