@@ -1,12 +1,15 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
 // constants for page numbers/order
+// re-order once all functions are written
 const INTROPAGE = 1
 const INITIAL_REFLECTION = 2
 const CONVERSATION = 3
 const MIDDLE_REFLECTION = 4
 const FINAL_REFLECTION = 5
 const FINAL_ACTION = 6
+const INIT_ACTION = 7
+
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
@@ -283,6 +286,36 @@ function scenarioExists(scenarioID){
 
 }
 
+// helper for createScenario
+function addScenario(name, due_date, description, additional_data){
+    let thisQuery = 'insert into scenario values(${name}, ${due_date}, ${description}, ${additional_data})'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        return results.rows
+    })
+
+}
+
+function createScenario(instructorID, name, due_date, description, additional_data){
+
+}
+
+function addScenarioToCourse(scenarioID, courseID){
+    // check course exists
+    // check scenario exists
+    
+    let thisQuery = 'insert into partof values(${courseID}, ${scenarioID})'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        return results.rows
+    })
+}
+
+
 function scenarioPageExists(order, type, scenarioID){
     // returns pageID
     let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = ${scenarioID} and pages.order = ${order} and pages.type = ${type}'
@@ -465,6 +498,29 @@ function addStakeholderConversations(stakeholderID, conversation_text_array){
         })
     }
     callback(results.rows)
+}
+
+function addInitActionPage(scenarioID, description, prompts, callback){
+    // check scenario exists
+    // upsert MCQ page
+    if (scenarioExists(scenarioID)){
+        // create page object
+        pageID = createPage(INIT_ACTION, TYPE_MCQ, scenarioID)
+        //create prompt object
+        for (i in prompts){
+            let thisQuery = 'insert into mcq values(${pageID}, ${description})'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
+        }
+    }
+    else{
+        // TODO return InvalidScenarioError
+        throw error;
+    }
 }
 
 function addFinalActionPage(scenarioID, description, prompts, callback){
