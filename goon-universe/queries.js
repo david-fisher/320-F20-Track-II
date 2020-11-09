@@ -271,11 +271,27 @@ function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callba
 }
 function scenarioExists(scenarioID){
     //returns True if scenarioID exists
+    let thisQuery = 'select scenario.id from scenario where scenario.id = ${scenarioID}'
+        pool.query(thisQuery, [], (error, results) => {
+            if (error){
+                throw error
+            }
+            // TODO return if results is not zero
+            return results
+        })
 
 }
 
 function createPage(order, type, scenarioID){
     // returns pageID
+    let thisQuery = 'insert into pages values(DEFAULT, ${order}, ${type}, ${scenarioID})'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        // TODO return pageID from results
+        return results;
+    })
 }
 
 function addIntroPage(scenarioID, text, callback){
@@ -294,6 +310,7 @@ function addIntroPage(scenarioID, text, callback){
         })
     }
     else{
+        // TODO return InvalidScenarioError
         throw error
     }
 }
@@ -315,6 +332,7 @@ function addInitReflectPagePage(scenarioID, description, prompts, callback){
         }
     }
     else{
+        // TODO return InvalidScenarioError
         throw error;
     }
 
@@ -338,6 +356,7 @@ function addMidReflectPage(scenarioID, description, prompts, callback){
         }
     }
     else{
+        // TODO return InvalidScenarioError
         throw error;
     }
 }
@@ -359,6 +378,7 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
         }
     }
     else{
+        // TODO return InvalidScenarioError
         throw error;
     }
 }
@@ -394,5 +414,9 @@ module.exports = {
     addCourse,
     addInitReflectResponse,
     addMidReflectResponse,
-    addFinalReflectResponse
+    addFinalReflectResponse,
+    addIntroPage,
+    addInitReflectPagePage,
+    addMidReflectPage,
+    addFinalReflectPage
 }

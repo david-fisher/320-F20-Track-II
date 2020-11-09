@@ -24,14 +24,14 @@ INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 1);
 INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 1);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt...');
+INSERT INTO prompt VALUES(2, 'Initial reflection prompt...', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 3);
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 1);
-INSERT INTO prompt VALUES(4, 'prompt: middle reflection');
+INSERT INTO prompt VALUES(4, 'prompt: middle reflection', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 1);
 INSERT INTO mcq VALUES(5, 'MCQ: <obj>');
@@ -48,7 +48,7 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 2);
 
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 1);
-INSERT INTO prompt VALUES(6, 'prompt: final reflection');
+INSERT INTO prompt VALUES(6, 'prompt: final reflection', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 1);
 INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
@@ -90,19 +90,19 @@ INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 2);
 INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 2);
-INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection');
+INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 2);
 INSERT INTO conversation_task VALUES(10, 's2 conversation_task: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 2);
-INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection');
+INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 2);
 INSERT INTO mcq VALUES(12, 's2 MCQ: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 2);
-INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection');
+INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection'), DEFAULT;
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 2);
 INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');
