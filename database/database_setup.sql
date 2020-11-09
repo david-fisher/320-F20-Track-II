@@ -71,8 +71,10 @@ CREATE TABLE "pages" (
 );
 
 CREATE TABLE "prompt" (
-	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"prompt" VARCHAR
+	"page_id" INT REFERENCES pages,
+	"prompt" VARCHAR,
+	"prompt_num" SERIAL,
+	PRIMARY KEY(page_id, prompt_num)
 );
 
 CREATE TABLE "conversation_task" (

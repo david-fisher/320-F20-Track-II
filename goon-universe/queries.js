@@ -1,10 +1,17 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
+// constants for page numbers/order
 const INTROPAGE = 1
 const INITIAL_REFLECTION = 2
 const CONVERSATION = 3
 const MIDDLE_REFLECTION = 4
 const FINAL_REFLECTION = 5
+
+// constants for page types
+const TYPE_PLAIN = 'PLAIN'
+const TYPE_PROMPT = 'PRMPT'
+const TYPE_MCQ = 'MCQ'
+const TYPE_CONV = 'CONV'
 
 const Pool = require('pg').Pool
 
@@ -267,10 +274,18 @@ function scenarioExists(scenarioID){
 
 }
 
+function createPage(order, type, scenarioID){
+    // returns pageID
+}
+
 function addIntroPage(scenarioID, text, callback){
+    //check scenario exists
+    // upsert intro page
     if (scenarioExists(scenarioID)){
-        // upsert intro page
-        let thisQuery = ''
+        // create page object
+        pageID = createPage(INTROPAGE, TYPE_PLAIN, scenarioID)
+        //create plain-page object
+        let thisQuery = 'insert into plain_page values(${pageID}, ${text})'
         pool.query(thisQuery, [], (error, results) => {
             if (error){
                 throw error
@@ -283,16 +298,21 @@ function addIntroPage(scenarioID, text, callback){
     }
 }
 function addInitReflectPagePage(scenarioID, description, prompts, callback){
-    if (scenarioExists(scenarioID)){
     // check scenario exists
     // upsert init reflect page
-    let thisQuery = ''
-    pool.query(thisQuery, [], (error, results) => {
-        if (error){
-            throw error;
+    if (scenarioExists(scenarioID)){
+        //create page object
+        pageID = createPage(INTROPAGE, TYPE_PROMPT, scenarioID)
+        //create prompt object
+        for (i in prompts){
+            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
         }
-        callback(results.rows)
-    })
     }
     else{
         throw error;
@@ -301,16 +321,21 @@ function addInitReflectPagePage(scenarioID, description, prompts, callback){
 }
 
 function addMidReflectPage(scenarioID, description, prompts, callback){
-    if(scenarioExists(scenarioID)){
     // check scenario exists
     // upsert mid reflect page
-    let thisQuery = ''
-    pool.query(thisQuery, [], (error, results) => {
-        if (error){
-            throw error
+    if(scenarioExists(scenarioID)){
+        // create page object
+        pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, scenarioID)
+        // create priompt object
+        for (i in prompts){
+            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
         }
-        callback(results.rows)
-    })
     }
     else{
         throw error;
@@ -320,13 +345,18 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
     // check scenario exists
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
-    let thisQuery = ''
-    pool.query(thisQuery, [], (error, results) => {
-        if (error){
-            throw error
+        // create page object
+        pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
+        //create prompt object
+        for (i in prompts){
+            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
         }
-        callback(results.rows)
-    })
     }
     else{
         throw error;
