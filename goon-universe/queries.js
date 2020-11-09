@@ -1,5 +1,10 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
+const INTROPAGE = 1
+const INITIAL_REFLECTION = 2
+const CONVERSATION = 3
+const MIDDLE_REFLECTION = 4
+const FINAL_REFLECTION = 5
 
 const Pool = require('pg').Pool
 
