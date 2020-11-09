@@ -262,6 +262,77 @@ function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callba
         })
     }) 
 }
+function scenarioExists(scenarioID){
+    //returns True if scenarioID exists
+
+}
+
+function addIntroPage(scenarioID, text, callback){
+    if (scenarioExists(scenarioID)){
+        // upsert intro page
+        let thisQuery = ''
+        pool.query(thisQuery, [], (error, results) => {
+            if (error){
+                throw error
+            }
+            callback(results.rows)
+        })
+    }
+    else{
+        throw error
+    }
+}
+function addInitReflectPagePage(scenarioID, description, prompts, callback){
+    if (scenarioExists(scenarioID)){
+    // check scenario exists
+    // upsert init reflect page
+    let thisQuery = ''
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error;
+        }
+        callback(results.rows)
+    })
+    }
+    else{
+        throw error;
+    }
+
+}
+
+function addMidReflectPage(scenarioID, description, prompts, callback){
+    if(scenarioExists(scenarioID)){
+    // check scenario exists
+    // upsert mid reflect page
+    let thisQuery = ''
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        callback(results.rows)
+    })
+    }
+    else{
+        throw error;
+    }
+}
+function addFinalReflectPage(scenarioID, description, prompts, callback){
+    // check scenario exists
+    // upsert final reflect page
+    if (scenarioExists(scenarioID)){
+    let thisQuery = ''
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error
+        }
+        callback(results.rows)
+    })
+    }
+    else{
+        throw error;
+    }
+}
+
 
 function cb(results){
     console.log(results)
