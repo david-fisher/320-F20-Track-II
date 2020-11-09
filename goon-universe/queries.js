@@ -514,6 +514,19 @@ function addMCQOption(option, question_id){
     })
 }
 
+function getStakeholderDescriptions(scenarioID){
+    // TODO check for invalid parameters
+    if (scenarioExists()){
+        let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=${scenarioID}'
+        pool.query(thisQuery, [], (error, results) => {
+            if (error){
+                throw error;
+            }
+            callback(results.rows)
+        })
+    }
+}
+
 
 function cb(results){
     console.log(results)
