@@ -6,6 +6,7 @@ const INITIAL_REFLECTION = 2
 const CONVERSATION = 3
 const MIDDLE_REFLECTION = 4
 const FINAL_REFLECTION = 5
+const FINAL_ACTION = 6
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
@@ -37,7 +38,7 @@ const MIDDLE_REFLECTION = 4
 const FINAL_REFLECTION = 5
 
 function getScenarios(studentID, callback){
-    let thisQuery= 'select scenario.id from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
+    let thisQuery= 'select scenario.id, scenario.name, scenario.description, scenario.due_date from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
     
     pool.query(thisQuery, [studentID], (error,results) => {
         if (error) {
@@ -282,9 +283,9 @@ function scenarioExists(scenarioID){
 
 }
 
-function createPage(order, type, scenarioID){
+function scenarioPageExists(order, type, scenarioID){
     // returns pageID
-    let thisQuery = 'insert into pages values(DEFAULT, ${order}, ${type}, ${scenarioID})'
+    let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = ${scenarioID} and pages.order = ${order} and pages.type = ${type}'
     pool.query(thisQuery, [], (error, results) => {
         if (error){
             throw error
@@ -293,6 +294,23 @@ function createPage(order, type, scenarioID){
         return results;
     })
 }
+
+function createPage(order, type, scenarioID){
+    // returns pageID if exists, else creates new
+    pageID = scenarioPageExists(order, type, scenarioID)
+    if(pageID === null){
+        let thisQuery = 'insert into pages values(DEFAULT, ${order}, ${type}, ${scenarioID})'
+        pool.query(thisQuery, [], (error, results) => {
+            if (error){
+                throw error
+            }
+            // TODO return pageID from results
+            return results;
+        })
+    }
+    return pageID
+}
+
 
 function addIntroPage(scenarioID, text, callback){
     //check scenario exists
@@ -383,6 +401,119 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
     }
 }
 
+function addConvTaskPage(scenarioID, description, callback){
+    // check scenario exists
+    // upsert final reflect page
+    if (scenarioExists(scenarioID)){
+        // create page object
+        pageID = createPage(CONVERSATION, TYPE_CONV, scenarioID)
+        //create prompt object
+        for (i in prompts){
+            let thisQuery = 'insert into conversation_task values(${pageID}, ${description})'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
+        }
+    }
+    else{
+        // TODO return InvalidScenarioError
+        throw error;
+    }
+}
+
+
+
+
+function addStakeholder(scenarioID, name, description, conversations, callback){
+    // check scenario exists
+    // check conversation task page exists (create if does not exist?)
+    // insert stakeholder
+    if (scenarioExists(scenarioID)){
+        // create page object
+        pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
+        //create prompt object
+        for (i in prompts){
+            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
+        }
+    }
+    else{
+        // TODO return InvalidScenarioError
+        throw error;
+    }
+}
+
+function addStakeholderConversations(stakeholderID, conversation_text_array){
+    // TODO check stakeholder exists
+
+
+    // insert conversations from array
+    for(conv in conversation_text_array){    
+        let thisQuery = 'insert into conversation values(DEFAULT, ${stakeholderID}, ${conv})'
+        pool.query(thisQuery, [], (error, results) => {
+            if (error){
+                throw error
+            }            
+        })
+    }
+    callback(results.rows)
+}
+
+function addFinalActionPage(scenarioID, description, prompts, callback){
+    // check scenario exists
+    // upsert MCQ page
+    if (scenarioExists(scenarioID)){
+        // create page object
+        pageID = createPage(FINAL_ACTION, TYPE_MCQ, scenarioID)
+        //create prompt object
+        for (i in prompts){
+            let thisQuery = 'insert into mcq values(${pageID}, ${description})'
+            pool.query(thisQuery, [], (error, results) => {
+                if (error){
+                    throw error;
+                }
+                callback(results.rows)
+            })
+        }
+    }
+    else{
+        // TODO return InvalidScenarioError
+        throw error;
+    }
+}
+
+// may be used as a helper
+function addMCQQuestion(question, mcq_id){
+    // TODO check for invalid parameters
+    let thisQuery = 'insert into question values(DEFAULT, ${question}, ${mcq_id}'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error;
+        }
+        callback(results.rows)
+    })
+}
+
+// may be used as a helper
+function addMCQOption(option, question_id){
+    // TODO check for invalid parameters
+    let thisQuery = 'insert into mcq_option values(DEFAULT, ${option}, ${question_id}'
+    pool.query(thisQuery, [], (error, results) => {
+        if (error){
+            throw error;
+        }
+        callback(results.rows)
+    })
+}
+
 
 function cb(results){
     console.log(results)
@@ -418,5 +549,8 @@ module.exports = {
     addIntroPage,
     addInitReflectPagePage,
     addMidReflectPage,
-    addFinalReflectPage
+    addFinalReflectPage,
+    addStakeholder,
+    addStakeholderConversations,
+    addFinalActionPage
 }

@@ -18,7 +18,7 @@ INSERT INTO enrolled VALUES(2, 2);
 INSERT INTO enrolled VALUES(4, 2);
 
 -- test scenario 1
-INSERT INTO scenario VALUES(DEFAULT, '2020-12-01 23:59:59', 'description: test scenario', '<additional_data>');
+INSERT INTO scenario VALUES(DEFAULT, 'Sceanrio 1', '2020-12-01 23:59:59', 'description: test scenario', '<additional_data>');
 insert into partof values(1,1);
 INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 1);
 INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
@@ -81,7 +81,7 @@ INSERT INTO mcq_response VALUES(7, 1, 3);
 
 
 -- test scenario 2
-INSERT INTO scenario VALUES(DEFAULT, '2020-12-18 23:59:59', 'description: sceanrio 2', '<additional_data for scenario 2>');
+INSERT INTO scenario VALUES(DEFAULT, 'Scenario 2', '2020-12-18 23:59:59', 'description: sceanrio 2', '<additional_data for scenario 2>');
 INSERT INTO partof VALUES(2, 2);
 -- INSERT INTO partof VALUES(1, 2); 
 -- two courses have the same scenario, one student is enrolled in both
@@ -102,7 +102,7 @@ INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 2);
 INSERT INTO mcq VALUES(12, 's2 MCQ: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 2);
-INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection'), DEFAULT;
+INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 2);
 INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');

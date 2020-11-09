@@ -53,6 +53,7 @@ CREATE TABLE "enrolled" (
 
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
+	"name" VARCHAR,
 	"due_date" TIMESTAMP,
 	"description" VARCHAR,
 	"additional_data" VARCHAR
