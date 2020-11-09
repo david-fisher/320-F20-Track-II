@@ -114,90 +114,152 @@ function getInstructorInfo(instructorID, callback){
 }
 
 function addUser(fullName, email, callback){
-    let thisQuery= 'insert into users(full_name, email) values ($1 , $2)';
-    pool.query(thisQuery, [fullName, email], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback('Success')
-    }) 
-}
-
-function addCourse(coursePage, courseName, semester, callback){
-    let thisQuery= 'insert into courses(webpage, name, semester) values ($1, $2, $3)';
-    pool.query(thisQuery, [coursePage, courseName, semester], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
-}
-
-function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=1';
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        let pageID=results.rows[0].id
-        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
-            if (error) {
-                throw error
-            }
-            let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
-                if (error) {
-                    throw error
-                }
-                pool.query('select id from response where submission_id=$1 and page_id=$2',[submissionID, pageID], (error,results) => {
-                    if (error) {
-                        throw error
+    pool.connect((err, client, done) => {
+        const shouldAbort = err => {
+            if (err) {
+                console.error('Error in transaction', err.stack)
+                client.query('ROLLBACK', err => {
+                    if (err) {
+                    console.error('Error rolling back client', err.stack)
                     }
-                    let responseID=results.rows[0].id
-                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
-                    pool.query(thisQuery, [responseID, input], (error,results) => { 
-                        if (error) {
-                            throw error
-                        }
-                        callback("Success!")
-                    })
+                    // release the client back to the pool
+                    done()
+                })
+            }
+            return !!err
+        }
+        client.query('BEGIN', err => {
+            if (shouldAbort(err)) return
+            let thisQuery= 'insert into users(full_name, email) values ($1 , $2)';
+            client.query(thisQuery,[fullName,email], (err, res) => {
+                if (shouldAbort(err)) throw error
+                client.query('COMMIT', err => {
+                    if (err) {
+                        console.error('Error committing transaction', err.stack)
+                    }
+                    callback("Success")
                 })
             })
         })
-    }) 
+    })
+}
+
+function addCourse(coursePage, courseName, semester, callback){
+    pool.connect((err, client, done) => {
+        const shouldAbort = err => {
+            if (err) {
+                console.error('Error in transaction', err.stack)
+                client.query('ROLLBACK', err => {
+                    if (err) {
+                    console.error('Error rolling back client', err.stack)
+                    }
+                    // release the client back to the pool
+                    done()
+                })
+            }
+            return !!err
+        }
+        client.query('BEGIN', err => {
+            if (shouldAbort(err)) return
+            let thisQuery= 'insert into courses(webpage, name, semester) values ($1, $2, $3)';
+            pool.query(thisQuery, [coursePage, courseName, semester], (error,results) => {
+                if (shouldAbort(err)) return
+                client.query('COMMIT', err => {
+                    if (err) {
+                        console.error('Error committing transaction', err.stack)
+                    }
+                })
+                callback(results.rows)
+            })
+        })
+    })
+}
+
+function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
+    pool.connect((err, client, done) => {
+        const shouldAbort = err => {
+            if (err) {
+                console.error('Error in transaction', err.stack)
+                client.query('ROLLBACK', err => {
+                    if (err) {
+                    console.error('Error rolling back client', err.stack)
+                    }
+                    // release the client back to the pool
+                    done()
+                })
+            }
+            return !!err
+        }
+        client.query('BEGIN',err=>{
+            let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=1';
+            client.query(thisQuery, [scenarioID], (err,results) => {
+                if(shouldAbort(err)) return
+                let pageID=results.rows[0].id
+                let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+                client.query(thisQuery, [scenarioID, studentID], (err,results) => {
+                    if(shouldAbort(err)) return
+                    let submissionID=results.rows[0].id
+                    let thisQuery='insert into response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET time = $3'
+                    client.query(thisQuery, [submissionID, pageID, timestamp], (err,results) => {
+                        if(shouldAbort(err)) return
+                        client.query('select id from response where submission_id=$1 and page_id=$2',[submissionID, pageID], (err,results) => {
+                            if(shouldAbort(err)) return
+                            let responseID=results.rows[0].id
+                            let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
+                            client.query(thisQuery, [responseID, input], (err,results) => { 
+                                if(shouldAbort(err)) return
+                                client.query('COMMIT', err => {
+                                    if(err){
+                                        console.error('Error committing transaction', err.stack)
+                                    }
+                                    callback("Success!")
+                                })
+                            })
+                        })
+                    })
+                })
+            }) 
+        })
+    })
 }
 
 function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=3';
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        let pageID=results.rows[0].id
-        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
-            if (error) {
-                throw error
-            }
-            let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
-                if (error) {
-                    throw error
-                }
-                pool.query('select id from response where submission_id=$1 and page_id=$2',[submissionID, pageID], (error,results) => {
-                    if (error) {
-                        throw error
+    pool.connect((err, client, done) => {
+        const shouldAbort = err => {
+            if (err) {
+                console.error('Error in transaction', err.stack)
+                client.query('ROLLBACK', err => {
+                    if (err) {
+                    console.error('Error rolling back client', err.stack)
                     }
-                    let responseID=results.rows[0].id
-                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
-                    pool.query(thisQuery, [responseID, input], (error,results) => { 
-                        if (error) {
-                            throw error
-                        }
-                        callback("Success!")
+                    // release the client back to the pool
+                    done()
+                })
+            }
+            return !!err
+        }
+        client.query('BEGIN',err=>{
+            if(shouldAbort(err)) return
+            let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=3';
+            client.query(thisQuery, [scenarioID], (error,results) => {
+                if(shouldAbort(error)) return
+                let pageID=results.rows[0].id
+                let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+                client.query(thisQuery, [scenarioID, studentID], (error,results) => {
+                    if(shouldAbort(error)) return
+                    let submissionID=results.rows[0].id
+                    let thisQuery='insert into response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET time = $3'
+                    client.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
+                        if(shouldAbort(error)) return
+                        client.query('select id from response where submission_id=$1 and page_id=$2',[submissionID, pageID], (error,results) => {
+                            if(shouldAbort(error)) return
+                            let responseID=results.rows[0].id
+                            let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
+                            client.query(thisQuery, [responseID, input], (error,results) => { 
+                                if(shouldAbort(error)) return
+                                callback("Success!")
+                            })
+                        })
                     })
                 })
             })
@@ -206,39 +268,47 @@ function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback
 }
 
 function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=5';
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        let pageID=results.rows[0].id
-        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
-            if (error) {
-                throw error
-            }
-            let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
-                if (error) {
-                    throw error
-                }
-                pool.query('select id from response where submission_id=$1 and page_id=$2',[submissionID, pageID], (error,results) => {
-                    if (error) {
-                        throw error
+    pool.connect((err, client, done) => {
+        const shouldAbort = err => {
+            if (err) {
+                console.error('Error in transaction', err.stack)
+                client.query('ROLLBACK', err => {
+                    if (err) {
+                    console.error('Error rolling back client', err.stack)
                     }
-                    let responseID=results.rows[0].id
-                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
-                    pool.query(thisQuery, [responseID, input], (error,results) => { 
-                        if (error) {
-                            throw error
-                        }
-                        callback("Success!")
+                    // release the client back to the pool
+                    done()
+                })
+            }
+            return !!err
+        }
+        client.query('BEGIN',err=>{
+            if(shouldAbort(err)) return
+            let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=5';
+            client.query(thisQuery, [scenarioID], (error,results) => {
+                if(shouldAbort(error)) return
+                let pageID=results.rows[0].id
+                let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+                client.query(thisQuery, [scenarioID, studentID], (error,results) => {
+                    if(shouldAbort(error)) return
+                    let submissionID=results.rows[0].id
+                    let thisQuery='insert into response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET time = $3'
+                    client.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
+                        if(shouldAbort(error)) return
+                        client.query('select id from response where submission_id=$1 and page_id=$2',[submissionID, pageID], (error,results) => {
+                            if(shouldAbort(error)) return
+                            let responseID=results.rows[0].id
+                            let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
+                            client.query(thisQuery, [responseID, input], (error,results) => { 
+                                if(shouldAbort(error)) return
+                                callback("Success!")
+                            })
+                        })
                     })
                 })
-            })
+            }) 
         })
-    }) 
+    })
 }
 
 function cb(results){
