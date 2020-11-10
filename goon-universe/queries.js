@@ -197,8 +197,8 @@ function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callba
 
 function scenarioExists(scenarioID){
     //returns True if scenarioID exists
-    let thisQuery = 'select scenario.id from scenario where scenario.id = ${scenarioID}'
-        pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'select scenario.id from scenario where scenario.id = $1'
+        pool.query(thisQuery, [scenarioID], (error, results) => {
             if (error){
                 throw error
             }
@@ -210,8 +210,8 @@ function scenarioExists(scenarioID){
 
 // helper for createScenario
 function addScenario(name, due_date, description, additional_data){
-    let thisQuery = 'insert into scenario values(${name}, ${due_date}, ${description}, ${additional_data})'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'insert into scenario values($1, $2, $3, $4)'
+    pool.query(thisQuery, [name, due_date, description, additional_data], (error, results) => {
         if (error){
             throw error
         }
@@ -228,8 +228,8 @@ function addScenarioToCourse(scenarioID, courseID){
     // check course exists
     // check scenario exists
     
-    let thisQuery = 'insert into partof values(${courseID}, ${scenarioID})'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'insert into partof values($1, $2)'
+    pool.query(thisQuery, [courseID, scenarioID], (error, results) => {
         if (error){
             throw error
         }
@@ -240,8 +240,8 @@ function addScenarioToCourse(scenarioID, courseID){
 
 function scenarioPageExists(order, type, scenarioID){
     // returns pageID
-    let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = ${scenarioID} and pages.order = ${order} and pages.type = ${type}'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = $1 and pages.order = $2 and pages.type = $3'
+    pool.query(thisQuery, [scenarioID, order, type], (error, results) => {
         if (error){
             throw error
         }
@@ -254,8 +254,8 @@ function createPage(order, type, scenarioID){
     // returns pageID if exists, else creates new
     pageID = scenarioPageExists(order, type, scenarioID)
     if(pageID === null){
-        let thisQuery = 'insert into pages values(DEFAULT, ${order}, ${type}, ${scenarioID})'
-        pool.query(thisQuery, [], (error, results) => {
+        let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3)'
+        pool.query(thisQuery, [order, type, scenarioID], (error, results) => {
             if (error){
                 throw error
             }
@@ -274,8 +274,8 @@ function addIntroPage(scenarioID, text, callback){
         // create page object
         pageID = createPage(INTROPAGE, TYPE_PLAIN, scenarioID)
         //create plain-page object
-        let thisQuery = 'insert into plain_page values(${pageID}, ${text})'
-        pool.query(thisQuery, [], (error, results) => {
+        let thisQuery = 'insert into plain_page values($1, $2)'
+        pool.query(thisQuery, [pageID, text], (error, results) => {
             if (error){
                 throw error
             }
