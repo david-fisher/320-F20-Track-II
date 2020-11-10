@@ -543,8 +543,8 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
 // may be used as a helper
 function addMCQQuestion(question, mcq_id){
     // TODO check for invalid parameters
-    let thisQuery = 'insert into question values(DEFAULT, ${question}, ${mcq_id}'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'insert into question values(DEFAULT, $1, $2)'
+    pool.query(thisQuery, [question, mcq_id], (error, results) => {
         if (error){
             throw error;
         }
@@ -555,8 +555,8 @@ function addMCQQuestion(question, mcq_id){
 // may be used as a helper
 function addMCQOption(option, question_id){
     // TODO check for invalid parameters
-    let thisQuery = 'insert into mcq_option values(DEFAULT, ${option}, ${question_id}'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'insert into mcq_option values(DEFAULT, $1, $2)'
+    pool.query(thisQuery, [option, question_id], (error, results) => {
         if (error){
             throw error;
         }
@@ -567,8 +567,8 @@ function addMCQOption(option, question_id){
 function getStakeholderDescriptions(scenarioID){
     // TODO check for invalid parameters
     if (scenarioExists()){
-        let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=${scenarioID}'
-        pool.query(thisQuery, [], (error, results) => {
+        let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=$1'
+        pool.query(thisQuery, [scenarioID], (error, results) => {
             if (error){
                 throw error;
             }
