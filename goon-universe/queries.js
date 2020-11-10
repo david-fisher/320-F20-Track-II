@@ -346,7 +346,7 @@ function addIntroPage(scenarioID, text, callback){
         // create page object
         pageID = createPage(INTROPAGE, TYPE_PLAIN, scenarioID)
         //create plain-page object
-        let thisQuery = 'insert into plain_page values($1, $2)'
+        let thisQuery = 'insert into plain_page values($1, $2) ON CONFLICT (id) DO UPDATE SET content = $2'
         pool.query(thisQuery, [pageID, text], (error, results) => {
             if (error){
                 throw error
@@ -387,7 +387,7 @@ function addMidReflectPage(scenarioID, description, prompts, callback){
     // check scenario exists
     // upsert mid reflect page
     if(scenarioExists(scenarioID)){
-        // create page object
+        // create page object (checks or conflicts)
         pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, scenarioID)
         // create priompt object
         for (p in prompts){
@@ -409,7 +409,7 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
     // check scenario exists
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
-        // create page object
+        // create page object (checks for conflicts)
         pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
         //create prompt object
         for (p in prompts){
@@ -432,18 +432,17 @@ function addConvTaskPage(scenarioID, description, callback){
     // check scenario exists
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
-        // create page object
+        // create page object (checks for conflicts)
         pageID = createPage(CONVERSATION, TYPE_CONV, scenarioID)
         //create prompt object
-        for (i in prompts){
-            let thisQuery = 'insert into conversation_task values($1, $2)'
-            pool.query(thisQuery, [pageID, description], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
-        }
+        let thisQuery = 'insert into conversation_task values($1, $2)'
+        pool.query(thisQuery, [pageID, description], (error, results) => {
+            if (error){
+                throw error;
+            }
+            callback(results.rows)
+        })
+        
     }
     else{
         // TODO return InvalidScenarioError
@@ -458,19 +457,20 @@ function addStakeholder(scenarioID, name, description, conversations, callback){
     // check scenario exists
     // check conversation task page exists (create if does not exist?)
     // insert stakeholder
+    
     if (scenarioExists(scenarioID)){
-        // create page object
-        pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
-        //create prompt object
-        for (p in prompts){
-            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
-            pool.query(thisQuery, [pageID, p], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
-        }
+        // create page object (checks for c)
+        pageID = createPage(CONVERSATION, TYPE_CONV, scenarioID)
+        //create conversation_task object
+        let thisQuery = 'insert into stakeholders values(DEFAULT, $1, $2, NULL, $4, $5) returning id;'
+        pool.query(thisQuery, [name, description, scenarioID, pageID], (error, results) => {
+            if (error){
+                throw error;
+            }
+            addStakeholderConversations(results.rows[0].id, conversations)
+            callback(results.rows)
+        })       
+        
     }
     else{
         // TODO return InvalidScenarioError
@@ -478,9 +478,9 @@ function addStakeholder(scenarioID, name, description, conversations, callback){
     }
 }
 
+// helper function for addStakeholder
 function addStakeholderConversations(stakeholderID, conversation_text_array){
     // TODO check stakeholder exists
-
 
     // insert conversations from array
     for(conv in conversation_text_array){    
@@ -488,10 +488,11 @@ function addStakeholderConversations(stakeholderID, conversation_text_array){
         pool.query(thisQuery, [stakeholderID, conv], (error, results) => {
             if (error){
                 throw error
-            }            
+            }
         })
     }
-    callback(results.rows)
+
+    
 }
 
 function addInitActionPage(scenarioID, description, prompts, callback){
