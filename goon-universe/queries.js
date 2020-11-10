@@ -366,9 +366,9 @@ function addInitReflectPagePage(scenarioID, description, prompts, callback){
         //create page object
         pageID = createPage(INTROPAGE, TYPE_PROMPT, scenarioID)
         //create prompt object
-        for (i in prompts){
-            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
-            pool.query(thisQuery, [], (error, results) => {
+        for (p in prompts){
+            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
+            pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
                     throw error;
                 }
@@ -390,9 +390,9 @@ function addMidReflectPage(scenarioID, description, prompts, callback){
         // create page object
         pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, scenarioID)
         // create priompt object
-        for (i in prompts){
-            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
-            pool.query(thisQuery, [], (error, results) => {
+        for (p in prompts){
+            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
+            pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
                     throw error;
                 }
@@ -412,9 +412,9 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
         // create page object
         pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
         //create prompt object
-        for (i in prompts){
-            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
-            pool.query(thisQuery, [], (error, results) => {
+        for (p in prompts){
+            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
+            pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
                     throw error;
                 }
@@ -436,8 +436,8 @@ function addConvTaskPage(scenarioID, description, callback){
         pageID = createPage(CONVERSATION, TYPE_CONV, scenarioID)
         //create prompt object
         for (i in prompts){
-            let thisQuery = 'insert into conversation_task values(${pageID}, ${description})'
-            pool.query(thisQuery, [], (error, results) => {
+            let thisQuery = 'insert into conversation_task values($1, $2)'
+            pool.query(thisQuery, [pageID, description], (error, results) => {
                 if (error){
                     throw error;
                 }
@@ -462,9 +462,9 @@ function addStakeholder(scenarioID, name, description, conversations, callback){
         // create page object
         pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
         //create prompt object
-        for (i in prompts){
-            let thisQuery = 'insert into prompt values(${pageID}, ${prompt}, DEFAULT)'
-            pool.query(thisQuery, [], (error, results) => {
+        for (p in prompts){
+            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
+            pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
                     throw error;
                 }
@@ -484,8 +484,8 @@ function addStakeholderConversations(stakeholderID, conversation_text_array){
 
     // insert conversations from array
     for(conv in conversation_text_array){    
-        let thisQuery = 'insert into conversation values(DEFAULT, ${stakeholderID}, ${conv})'
-        pool.query(thisQuery, [], (error, results) => {
+        let thisQuery = 'insert into conversation values(DEFAULT, $1, $2)'
+        pool.query(thisQuery, [stakeholderID, conv], (error, results) => {
             if (error){
                 throw error
             }            
@@ -502,8 +502,8 @@ function addInitActionPage(scenarioID, description, prompts, callback){
         pageID = createPage(INIT_ACTION, TYPE_MCQ, scenarioID)
         //create prompt object
         for (i in prompts){
-            let thisQuery = 'insert into mcq values(${pageID}, ${description})'
-            pool.query(thisQuery, [], (error, results) => {
+            let thisQuery = 'insert into mcq values($1, $2)'
+            pool.query(thisQuery, [pageID, description], (error, results) => {
                 if (error){
                     throw error;
                 }
@@ -525,8 +525,8 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
         pageID = createPage(FINAL_ACTION, TYPE_MCQ, scenarioID)
         //create prompt object
         for (i in prompts){
-            let thisQuery = 'insert into mcq values(${pageID}, ${description})'
-            pool.query(thisQuery, [], (error, results) => {
+            let thisQuery = 'insert into mcq values($1, $2)'
+            pool.query(thisQuery, [pageID, description], (error, results) => {
                 if (error){
                     throw error;
                 }
