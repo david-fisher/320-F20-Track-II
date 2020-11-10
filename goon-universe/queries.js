@@ -1,5 +1,10 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
+
+/*
+ * These constants are concatenated into SQL queries below, so be careful
+ * WHEN IN DOUBT, PATCH CONCATENATION OUT
+ */
 // constants for page numbers/order
 // re-order once all functions are written
 const INTROPAGE = 1
@@ -9,7 +14,6 @@ const MIDDLE_REFLECTION = 4
 const FINAL_REFLECTION = 5
 const FINAL_ACTION = 6
 const INIT_ACTION = 7
-
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
@@ -29,16 +33,6 @@ const pool = new Pool({
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0
 })
-
-/*
- * These constants are concatenated into SQL queries below
- * DO NOT REPLACE WITH STRINGS WITHOUT ALSO PATCHING CONCATENATION OUT
- */
-const INTROPAGE = 1
-const INITIAL_REFLECTION = 2
-const CONVERSATION = 3
-const MIDDLE_REFLECTION = 4
-const FINAL_REFLECTION = 5
 
 function getScenarios(studentID, callback){
     let thisQuery= 'select scenario.id, scenario.name, scenario.description, scenario.due_date from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
