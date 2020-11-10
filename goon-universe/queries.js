@@ -583,6 +583,36 @@ function getStakeholderDescriptions(scenarioID){
     }
 }
 
+function getInitReflectPage(scenarioID, callback){
+    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+function getMidReflectPage(scenarioID, callback){
+    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ MIDDLE_REFLECTION +' and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+function getFinalReflectPage(scenarioID, callback){
+    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
 
 function cb(results){
     console.log(results)
@@ -621,5 +651,8 @@ module.exports = {
     addFinalReflectPage,
     addStakeholder,
     addStakeholderConversations,
-    addFinalActionPage
+    addFinalActionPage,
+    getInitReflectPage,
+    getMidReflectPage,
+    getFinalReflectPage
 }
