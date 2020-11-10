@@ -1,5 +1,10 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
+
+/*
+ * These constants are concatenated into SQL queries below, so be careful
+ * WHEN IN DOUBT, PATCH CONCATENATION OUT
+ */
 // constants for page numbers/order
 // re-order once all functions are written
 const INTROPAGE = 1
@@ -9,7 +14,6 @@ const MIDDLE_REFLECTION = 4
 const FINAL_REFLECTION = 5
 const FINAL_ACTION = 6
 const INIT_ACTION = 7
-
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
@@ -29,16 +33,6 @@ const pool = new Pool({
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0
 })
-
-/*
- * These constants are concatenated into SQL queries below
- * DO NOT REPLACE WITH STRINGS WITHOUT ALSO PATCHING CONCATENATION OUT
- */
-const INTROPAGE = 1
-const INITIAL_REFLECTION = 2
-const CONVERSATION = 3
-const MIDDLE_REFLECTION = 4
-const FINAL_REFLECTION = 5
 
 function getScenarios(studentID, callback){
     let thisQuery= 'select scenario.id, scenario.name, scenario.description, scenario.due_date from scenario, partof, enrolled where enrolled.student_id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id '
@@ -549,8 +543,8 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
 // may be used as a helper
 function addMCQQuestion(question, mcq_id){
     // TODO check for invalid parameters
-    let thisQuery = 'insert into question values(DEFAULT, ${question}, ${mcq_id}'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'insert into question values(DEFAULT, $1, $2)'
+    pool.query(thisQuery, [question, mcq_id], (error, results) => {
         if (error){
             throw error;
         }
@@ -561,8 +555,8 @@ function addMCQQuestion(question, mcq_id){
 // may be used as a helper
 function addMCQOption(option, question_id){
     // TODO check for invalid parameters
-    let thisQuery = 'insert into mcq_option values(DEFAULT, ${option}, ${question_id}'
-    pool.query(thisQuery, [], (error, results) => {
+    let thisQuery = 'insert into mcq_option values(DEFAULT, $1, $2)'
+    pool.query(thisQuery, [option, question_id], (error, results) => {
         if (error){
             throw error;
         }
@@ -573,8 +567,8 @@ function addMCQOption(option, question_id){
 function getStakeholderDescriptions(scenarioID){
     // TODO check for invalid parameters
     if (scenarioExists()){
-        let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=${scenarioID}'
-        pool.query(thisQuery, [], (error, results) => {
+        let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=$1'
+        pool.query(thisQuery, [scenarioID], (error, results) => {
             if (error){
                 throw error;
             }
