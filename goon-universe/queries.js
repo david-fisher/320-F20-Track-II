@@ -317,8 +317,8 @@ function scenarioPageExists(order, type, scenarioID){
         if (error){
             throw error
         }
-        // TODO return pageID from results
-        return results;
+        // return pageID from results
+        return results.rows[0].id;
     })
 }
 
@@ -331,8 +331,8 @@ function createPage(order, type, scenarioID){
             if (error){
                 throw error
             }
-            // TODO return pageID from results
-            return results;
+            // return pageID
+            return scenarioPageExists(order, type, sceanrioID);
         })
     }
     return pageID
