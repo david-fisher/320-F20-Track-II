@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { makeStyles, withStyles, Typography, Box, Grid, Button,
   Card, CardContent, Modal, Dialog, DialogContent, DialogContentText } from "@material-ui/core";
+import { useTheme } from "@material-ui/core/styles";
 import { GatheredInfoContext } from './simulationWindow';
 
 const TextTypography = withStyles({
@@ -9,28 +10,47 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-const cardStyles = makeStyles({
-  root: {
-    minWidth: 275,
-  },
-  title: {
-    fontSize: 14,
-  }
-});
-
 const introText = "Please select the Stakeholder you would like to interact with...";
 const stakeholders = [
-  { name: 'a', description: 'I am stakeholder a' , id: 0, background: 'really cool background for stakeholder A this is not placeholder data'},
-  { name: 'b', description: 'I am stakeholder b' , id: 1, background: 'really cool background for stakeholder B this is not placeholder data'},
+  { name: 'Bob Smith', description: 'I am Bob Smith' , id: 0, background: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+  { name: 'b', description: 'I am stakeholder b' , id: 1, background: 'really cool background for stakeholder B this is not placeholder data'.repeat(2)},
   { name: 'c', description: 'I am stakeholder c' , id: 2, background: 'really cool background for stakeholder C this is not placeholder data'},
   { name: 'd', description: 'I am stakeholder d' , id: 3, background: 'really cool background for stakeholder D this is not placeholder data'},
   { name: 'e', description: 'I am stakeholder e' , id: 4, background: 'really cool background for stakeholder E this is not placeholder data'},
   { name: 'f', description: 'I am stakeholder f' , id: 5, background: 'really cool background for stakeholder F this is not placeholder data'},
   { name: 'g', description: 'I am stakeholder g' , id: 6, background: 'really cool background for stakeholder G this is not placeholder data'},
-  { name: 'h', description: 'I am stakeholder h' , id: 7, background: 'really cool background for stakeholder H this is not placeholder data'}
+  { name: 'h', description: 'I am stakeholder h' , id: 7, background: 'abc'}
   ];
 
+function ellipses(str, cutoff) {
+  let newStr = str;
+  if (str.length >= cutoff) {
+    newStr = str.substring(0, cutoff - 1) + '…';
+    let lastSpace = newStr.lastIndexOf(' ');
+    if (lastSpace !== -1) {
+      newStr = newStr.substring(0, lastSpace) + '…';
+    }
+  }
+  return newStr;
+}
+
 function Stakeholders({ pages, setPages, activePage, setActivePage }) {
+
+  const theme = useTheme();
+
+  const cardStyles = makeStyles({
+    root: {
+      width: 275,
+      height: 156,
+      wordBreak: 'break-word'
+    },
+    name: {
+      color: theme.palette.primary.main
+    },
+    background: {
+      color: '#444e58'
+    }
+  });
 
   const [modalOpenToggles, setModalOpenToggles] = React.useState(
     stakeholders.reduce((obj, stakeholder) => {
@@ -45,18 +65,21 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
     const card = cardStyles();
     return (
       <>
-        <Button onClick={() => setModalOpenToggles(prev => {
+        <Button  style={{textTransform: 'none'}} onClick={() => setModalOpenToggles(prev => {
           let newToggles = {...prev};
           newToggles[id] = true;
           return newToggles;
         })}>
           <Card className={card.root}>
             <CardContent>
-              <Typography variant="h5" component="h2">
+              <Typography variant="h5" component="h2" align='left' className={card.name}>
                 {name}
               </Typography>
-              <Typography variant="body2" component="p">
+              <Typography variant="body1" component="p" align='left'>
                 {description}
+              </Typography>
+              <Typography variant="body2" component="p" align='left' className={card.background}>
+                {ellipses(background, 87)}
               </Typography>
             </CardContent>
           </Card>
@@ -71,7 +94,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
           maxWidth = {'md'}
           >
           <DialogContent>
-            <DialogContentText>{background}</DialogContentText>
+            <DialogContentText color = "#000000">{background}</DialogContentText>
             <Button variant="contained">Continue</Button>
           </DialogContent>
         </Dialog>

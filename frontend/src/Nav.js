@@ -46,6 +46,9 @@ const theme = createMuiTheme({
       main: "#881c1c",
     },
   },
+  background: {
+    color: '#444e58'
+  }
 });
 
 const menuItems = [
