@@ -159,114 +159,42 @@ function addCourse(coursePage, courseName, semester, callback){
     }) 
 }
 
-function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=' + INITIAL_REFLECTION;
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        let pageID=results.rows[0].id
-        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
-            if (error) {
-                throw error
-            }
-            let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
-                if (error) {
-                    throw error
-                }
-                pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
-                    if (error) {
-                        throw error
-                    }
-                    let responseID=results.rows[0].id
-                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
-                    pool.query(thisQuery, [responseID, input], (error,results) => { 
-                        if (error) {
-                            throw error
-                        }
-                        callback("Success!")
-                    })
-                })
-            })
-        })
-    }) 
+async function addReflectionResponse(studentID, input, scenarioID, timestamp, page_order) {
+	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+	const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
+	const insertPromptResponseQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2';
+
+	const client = await pool.connect();
+	try {
+		await client.query("BEGIN");
+		const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
+		let pageID = pageSelection.rows[0].id;
+		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+		let submissionID = submissionSelection.rows[0].id;
+		// RETURNING clause returns ID at the same time
+		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
+		let responseID = responseCreation.rows[0].id;
+		await client.query(insertPromptResponseQuery, [responseID, input]);
+		await client.query("COMMIT");
+	} catch (e) {
+		await client.query("ROLLBACK");
+		throw e;
+	} finally {
+		client.release();
+	}
 }
 
-function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order=3';
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        let pageID=results.rows[0].id
-        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
-            if (error) {
-                throw error
-            }
-            let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
-                if (error) {
-                    throw error
-                }
-                pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
-                    if (error) {
-                        throw error
-                    }
-                    let responseID=results.rows[0].id
-                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
-                    pool.query(thisQuery, [responseID, input], (error,results) => { 
-                        if (error) {
-                            throw error
-                        }
-                        callback("Success!")
-                    })
-                })
-            })
-        })
-    }) 
+function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback) {
+	addReflectionResponse(studentID, input, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
+}
+function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback) {
+	addReflectionResponse(studentID, input, scenarioID, timestamp, MIDDLE_REFLECTION).then(() => callback("Success!"));
+}
+function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback) {
+	addReflectionResponse(studentID, input, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
 }
 
-function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback){
-    let thisQuery= 'select id from pages where pages.scenario_id=$1 and pages.order='+ FINAL_REFLECTION;
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        let pageID=results.rows[0].id
-        let thisQuery= 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-        pool.query(thisQuery, [scenarioID, studentID], (error,results) => {
-            if (error) {
-                throw error
-            }
-            let submissionID=results.rows[0].id
-            let thisQuery='insert into response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET time = $3'
-            pool.query(thisQuery, [submissionID, pageID, timestamp], (error,results) => {
-                if (error) {
-                    throw error
-                }
-                // May not be a prompt every time
-                pool.query('select id from response where submission_id=$1 and page_num=$2',[submissionID, pageID], (error,results) => {
-                    if (error) {
-                        throw error
-                    }
-                    let responseID=results.rows[0].id
-                    let thisQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2'
-                    pool.query(thisQuery, [responseID, input], (error,results) => { 
-                        if (error) {
-                            throw error
-                        }
-                        callback("Success!")
-                    })
-                })
-            })
-        })
-    }) 
-}
 function scenarioExists(scenarioID){
     //returns True if scenarioID exists
     let thisQuery = 'select scenario.id from scenario where scenario.id = $1'
