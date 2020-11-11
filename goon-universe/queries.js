@@ -608,6 +608,47 @@ function getFinalReflectPage(scenarioID, callback){
     })  
 }
 
+//Returns question IDs as well for getChoices functions
+function getInitActionPageQuestions(scenarioID, callback){
+    let thisQuery= 'select question.question, question.id from pages, mcq, question where pages.id = mcq.page_id and mcq.page_id=question.mcq_id and pages.order ='+ INIT_ACTION +'and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+
+function getInitActionPageChoices(scenarioID, questionId, callback){
+    let thisQuery= 'select mcq_option.option from pages, mcq, mcq_option, question where mcq_option.question_id= $1 and mcq_option.question_id = question.id and pages.id = mcq.page_id and mcq.page_id=question.mcq_id and pages.order ='+ INIT_ACTION +'and scenario_id = $2'
+    pool.query(thisQuery, [questionId, scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+function getFinalActionPageQuestions(scenarioID, callback){
+    let thisQuery= 'select question.question from pages, mcq, question where pages.id = mcq.page_id and mcq.page_id=question.mcq_id and pages.order ='+ FINAL_ACTION +'and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+function getFinalActionPageChoices(scenarioID, questionId, callback){
+    let thisQuery= 'select mcq_option.option from pages, mcq, mcq_option, question where mcq_option.question_id= $1 and mcq_option.question_id = question.id and pages.id = mcq.page_id and mcq.page_id=question.mcq_id and pages.order ='+ FINAL_ACTION +'and scenario_id = $2'
+    pool.query(thisQuery, [questionId, scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
 
 function cb(results){
     console.log(results)
@@ -649,5 +690,9 @@ module.exports = {
     addFinalActionPage,
     getInitReflectPage,
     getMidReflectPage,
-    getFinalReflectPage
+    getFinalReflectPage,
+    getInitActionPageQuestions,
+    getInitActionPageChoices,
+    getFinalActionPageQuestions,
+    getFinalActionPageChoices
 }
