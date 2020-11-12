@@ -18,7 +18,7 @@ function getScenarios(studentID, callback){
   })
 }
 
-function getIntro(scenarioID, callback){
+function getIntroPage(scenarioID, callback){
   pool.query('SELECT introduction from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -27,7 +27,7 @@ function getIntro(scenarioID, callback){
   })
 }
 
-function getInitReflect(scenarioID, callback){
+function getInitReflectPage(scenarioID, callback){
   pool.query('SELECT initialreflection from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -36,7 +36,7 @@ function getInitReflect(scenarioID, callback){
   })
 }
 
-function getTask(scenarioID, callback){
+function getTaskPage(scenarioID, callback){
   pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -73,7 +73,7 @@ function addInitAction(studentID, scenarioID, data, callback){
   })
 }
 
-function addInitReflect(studentID, scenarioID, data, callback){
+function addInitReflectResponse(studentID, scenarioID, data, callback){
   pool.query('UPDATE responses set initialreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error,results) => {
     if(error){
       throw error
@@ -119,7 +119,7 @@ function getFinalAction(scenarioID, callback){
   })
 }
 
-function getConsequences(scenarioID, callback){
+function getConsequencesPage(scenarioID, callback){
   pool.query('SELECT consequences from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -137,7 +137,7 @@ function getFinalReflection(scenarioID, callback){
   })
 }
 
-function getConclusion(scenarioID, callback){
+function getConclusionPage(scenarioID, callback){
   pool.query('SELECT conclusion from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -146,7 +146,7 @@ function getConclusion(scenarioID, callback){
   })
 }
 
-function addStakeholder(studentID, scenarioID, stakeholder, callback){
+function addStakeholderChoice(studentID, scenarioID, stakeholder, callback){
   pool.query('UPDATE responses set stakeholderid = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, stakeholder], (error, results) => {
     if(error){
       throw error
@@ -173,7 +173,7 @@ function getFeedback(scenarioID, studentID, callback){
   })
 }
 
-function addMidReflect(studentID, scenarioID, data, callback){
+function addMidReflectResponse(studentID, scenarioID, data, callback){
   pool.query('UPDATE responses set middlereflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
@@ -182,7 +182,7 @@ function addMidReflect(studentID, scenarioID, data, callback){
   })
 }
 
-function addFinalAction(studentID, scenarioID, data, callback){
+function addFinalActionChoice(studentID, scenarioID, data, callback){
   pool.query('UPDATE responses set finalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
