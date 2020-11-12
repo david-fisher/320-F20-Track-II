@@ -86,6 +86,7 @@ CREATE TABLE "conversation_task" (
 CREATE TABLE "stakeholders" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR,
+	"designation" VARCHAR,
 	"description" VARCHAR,
 	"conversation" VARCHAR,
 	"scenario_id" INT REFERENCES scenario,
@@ -95,6 +96,7 @@ CREATE TABLE "stakeholders" (
 CREATE TABLE "conversation" (
 	"id" SERIAL PRIMARY KEY,
 	"stakeholder_id" INT REFERENCES stakeholders,
+	"question" varchar,
 	"conversation_text" VARCHAR
 
 );
