@@ -24,11 +24,12 @@ INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'page: Intro page content for scen
 --INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 1);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt...', DEFAULT);
+INSERT INTO prompt VALUES(2, 'Initial reflection prompt (a)...', DEFAULT);
+INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation task', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
-INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 3);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 3);
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 1);
 INSERT INTO prompt VALUES(4, 'prompt: middle reflection', DEFAULT);
@@ -56,13 +57,14 @@ INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: results will be available i
 
 INSERT INTO submissions VALUES(DEFAULT, 1, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 1, 2, '2020-10-10 10:10:00');
-INSERT INTO prompt_response VALUES(1, 'John Doe''s response to initial reflection');
+INSERT INTO prompt_response VALUES(1, 1, 'John Doe''s response to initial reflection (a)');
+INSERT INTO prompt_response VALUES(1, 2, 'John Doe''s response to initial reflection (b)');
 
 INSERT INTO response VALUES(DEFAULT, 1, 4, '2020-10-11 10:10:00');
-INSERT INTO prompt_response VALUES(2, 'John Doe''s response to middle reflection');
+INSERT INTO prompt_response VALUES(2, 1, 'John Doe''s response to middle reflection');
 
 INSERT INTO response VALUES(DEFAULT, 1, 6, '2020-10-12 10:10:00');
-INSERT INTO prompt_response VALUES(3,'John Doe''s response to final reflection');
+INSERT INTO prompt_response VALUES(3, 1, 'John Doe''s response to final reflection');
 
 INSERT INTO response VALUES(DEFAULT, 1, 3, '2020-10-10 10:10:00');
 INSERT INTO conversation_choices VALUES(4, 1);
@@ -70,10 +72,12 @@ INSERT INTO conversation_choices VALUES(4, 1);
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 2, 2, '2020-10-11 09:10:00');
-INSERT INTO prompt_response VALUES(5, 'Jane Doe''s response to Initial reflection');
+INSERT INTO prompt_response VALUES(5, 1, 'Jane Doe''s response to Initial reflection (a)');
+INSERT INTO prompt_response VALUES(5, 2, 'Jane Doe''s response to Initial reflection (b)');
+
 
 INSERT INTO response VALUES(DEFAULT, 2, 4, '2020-10-11 09:10:00');
-INSERT INTO prompt_response VALUES(6, 'Jane Doe''s response to middle reflection');
+INSERT INTO prompt_response VALUES(6, 1, 'Jane Doe''s response to middle reflection');
 
 INSERT INTO response VALUES(DEFAULT, 2, 5, '2020-10-11 09:10:00');
 INSERT INTO mcq_response VALUES(7, 1, 3);
@@ -109,8 +113,8 @@ INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: s2 results will be availabl
 
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 2, '2020-10-10 10:10:00');
-INSERT INTO response VALUES(DEFAULT, 3, 2, '2020-10-10 10:10:00');
-INSERT INTO prompt_response VALUES(8, 'Jane''s response to scenario 2 initial reflection');
+INSERT INTO response VALUES(DEFAULT, 3, 2, DEFAULT);
+INSERT INTO prompt_response VALUES(8, 1, 'Jane''s response to scenario 2 initial reflection');
 
 -- display all responses in submission 1 (John)
 -- select * from response, submissions 

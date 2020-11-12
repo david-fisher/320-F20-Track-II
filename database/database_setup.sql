@@ -87,6 +87,7 @@ CREATE TABLE "conversation_task" (
 CREATE TABLE "stakeholders" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR,
+	"designation" VARCHAR,
 	"description" VARCHAR,
 	"conversation" VARCHAR,
 	"scenario_id" INT REFERENCES scenario,
@@ -96,6 +97,7 @@ CREATE TABLE "stakeholders" (
 CREATE TABLE "conversation" (
 	"id" SERIAL PRIMARY KEY,
 	"stakeholder_id" INT REFERENCES stakeholders,
+	"question" varchar,
 	"conversation_text" VARCHAR
 
 );
@@ -106,7 +108,7 @@ CREATE TABLE "issues" (
 	"description" VARCHAR
 );
 
-
+	
 CREATE TABLE "score" (
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"issue_id" INT REFERENCES issues,
@@ -136,7 +138,7 @@ CREATE TABLE "submissions" (
 	"id" SERIAL PRIMARY KEY,
 	"user_id" INT REFERENCES users,
 	"scenario_id" INT REFERENCES scenario,
-	"submission_time" timestamp,
+	"submission_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE(user_id, scenario_id)
 );
 
@@ -144,17 +146,19 @@ CREATE TABLE "response" (
 	"id" SERIAL PRIMARY KEY,
 	"submission_id" INT REFERENCES submissions,
 	"page_num" INT,
-	"time" TIMESTAMP
+	"time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "prompt_response" (
-	"id" INT REFERENCES response PRIMARY KEY,
-	"response" VARCHAR
+	"id" INT REFERENCES response,
+	"prompt_num" INT,
+	"response" VARCHAR,
+	PRIMARY KEY (id, prompt_num)
 );
 
 CREATE TABLE "conversation_choices" (
 	"id" INT REFERENCES response,
-	"stakeholder_id" INT REFERENCES stakeholders,
+	"conversation_id" INT REFERENCES conversation,
 	PRIMARY KEY (id, stakeholder_id)
 );
 
