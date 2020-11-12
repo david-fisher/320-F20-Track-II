@@ -36,7 +36,16 @@ function getInitReflectPage(scenarioID, callback){
   })
 }
 
-function getTaskPage(scenarioID, callback){
+function getInitReflectResponse(studentID, scenarioID, callback){
+  pool.query('SELECT initialreflectionresponse from scenarios where scenarioid = $1 and studentid = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getTask(scenarioID, callback){
   pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -223,6 +232,7 @@ module.exports = {
     getScenarios,
     getIntro,
     getInitReflect,
+    getInitReflectResponse,
     getTask,
     getStartToGatherInfo,
     getInitActions,
