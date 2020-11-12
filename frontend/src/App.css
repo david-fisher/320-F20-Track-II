@@ -1,4 +1,4 @@
-.progress{  
+.progress {
   transform: rotate(-90deg);
 }
 
@@ -31,7 +31,6 @@
 .App-link {
   color: #61dafb;
 }
-
 
 #coverage-content {
   overflow-y: scroll;
