@@ -105,7 +105,7 @@ CREATE TABLE "issues" (
 	"description" VARCHAR
 );
 
-
+	
 CREATE TABLE "score" (
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"issue_id" INT REFERENCES issues,
@@ -153,8 +153,10 @@ CREATE TABLE "response" (
 );
 
 CREATE TABLE "prompt_response" (
-	"id" INT REFERENCES response PRIMARY KEY,
-	"response" VARCHAR
+	"id" INT REFERENCES response,
+	"prompt_num" INT,
+	"response" VARCHAR,
+	PRIMARY KEY (id, prompt_num)
 );
 
 CREATE TABLE "conversation_choices" (
