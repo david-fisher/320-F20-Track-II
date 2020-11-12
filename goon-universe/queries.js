@@ -37,7 +37,7 @@ function getInitReflectPage(scenarioID, callback){
 }
 
 function getInitReflectResponse(studentID, scenarioID, callback){
-  pool.query('SELECT initialreflectionresponse from scenarios where scenarioid = $1 and studentid = $1', [scenarioID], (error,results) => {
+  pool.query('SELECT initialreflection from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error,results) => {
     if(error){
       throw error
     }

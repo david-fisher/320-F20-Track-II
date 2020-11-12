@@ -179,7 +179,7 @@ router.route('/scenarios/initialReflection/response')
             console.log("Invalid ID")
             res.end()
         }
-        if(!isnumber(stuentID)){
+        if(!isnumber(studentID)){
             res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid ID")
             res.end()
