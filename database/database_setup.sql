@@ -141,7 +141,7 @@ CREATE TABLE "submissions" (
 	"id" SERIAL PRIMARY KEY,
 	"user_id" INT REFERENCES users,
 	"scenario_id" INT REFERENCES scenario,
-	"submission_time" timestamp,
+	"submission_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE(user_id, scenario_id)
 );
 
@@ -149,7 +149,7 @@ CREATE TABLE "response" (
 	"id" SERIAL PRIMARY KEY,
 	"submission_id" INT REFERENCES submissions,
 	"page_num" INT,
-	"time" TIMESTAMP
+	"time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "prompt_response" (
