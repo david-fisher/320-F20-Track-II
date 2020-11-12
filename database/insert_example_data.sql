@@ -56,13 +56,13 @@ INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
 
 INSERT INTO submissions VALUES(DEFAULT, 1, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 1, 2, '2020-10-10 10:10:00');
-INSERT INTO prompt_response VALUES(1, 'John Doe''s response to initial reflection');
+INSERT INTO prompt_response VALUES(1, 1, 'John Doe''s response to initial reflection');
 
 INSERT INTO response VALUES(DEFAULT, 1, 4, '2020-10-11 10:10:00');
-INSERT INTO prompt_response VALUES(2, 'John Doe''s response to middle reflection');
+INSERT INTO prompt_response VALUES(2, 1, 'John Doe''s response to middle reflection');
 
 INSERT INTO response VALUES(DEFAULT, 1, 6, '2020-10-12 10:10:00');
-INSERT INTO prompt_response VALUES(3,'John Doe''s response to final reflection');
+INSERT INTO prompt_response VALUES(3, 1, 'John Doe''s response to final reflection');
 
 INSERT INTO response VALUES(DEFAULT, 1, 3, '2020-10-10 10:10:00');
 INSERT INTO conversation_choices VALUES(4, 1);
@@ -70,10 +70,10 @@ INSERT INTO conversation_choices VALUES(4, 1);
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 2, 2, '2020-10-11 09:10:00');
-INSERT INTO prompt_response VALUES(5, 'Jane Doe''s response to Initial reflection');
+INSERT INTO prompt_response VALUES(5, 1, 'Jane Doe''s response to Initial reflection');
 
 INSERT INTO response VALUES(DEFAULT, 2, 4, '2020-10-11 09:10:00');
-INSERT INTO prompt_response VALUES(6, 'Jane Doe''s response to middle reflection');
+INSERT INTO prompt_response VALUES(6, 1, 'Jane Doe''s response to middle reflection');
 
 INSERT INTO response VALUES(DEFAULT, 2, 5, '2020-10-11 09:10:00');
 INSERT INTO mcq_response VALUES(7, 1, 3);
@@ -110,7 +110,7 @@ INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one wee
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 2, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 3, 2, '2020-10-10 10:10:00');
-INSERT INTO prompt_response VALUES(8, 'Jane''s response to scenario 2 initial reflection');
+INSERT INTO prompt_response VALUES(8, 1, 'Jane''s response to scenario 2 initial reflection');
 
 -- display all responses in submission 1 (John)
 -- select * from response, submissions 
