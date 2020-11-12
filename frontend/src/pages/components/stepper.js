@@ -58,7 +58,6 @@ function getSteps(pages, navigatePageFunc) {
       stepArr.push(<Button disabled>{buttonName}</Button>);
     } else {
       stepArr.push(<Button style={{ color: "#881c1c" }} onClick={() => navigatePageFunc(keys[i])} >{buttonName}</Button>);
-      
     }
   }
   return stepArr;
