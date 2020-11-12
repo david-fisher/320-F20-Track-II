@@ -60,7 +60,7 @@ router.route('/scenarios/intro')
             res.end()
         }
         else{
-            db.getIntro(scenarioID, function(result){
+            db.getIntroPage(scenarioID, function(result){
                 if(result.length == 0){
                     res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
                 }
@@ -129,7 +129,7 @@ router.route('/scenarios/initialReflection')
             res.end()
         }
         else{
-        db.getInitReflect(scenarioID, function(result){
+        db.getInitReflectPage(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No initial reflection found with scenarioID: ${scenarioID}`})
             }
@@ -158,7 +158,7 @@ router.route('/scenarios/initialReflection')
             res.end()
         }
         else{
-        db.addInitReflect(studentID, scenarioID, data, function(result){
+        db.addInitReflectResponse(studentID, scenarioID, data, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
@@ -197,31 +197,31 @@ router.route('/scenarios/initialReflection/response')
         }
     })
 
-    .put(function(req, res){
-        scenarioID = req.body.scenarioID
-        studentID = req.body.studentID
-        data = req.body.data
-        if(!isnumber(scenarioID)){
-            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
-            console.log("Invalid Scenario ID")
-            res.end()
-        }
-        else if(!isnumber(studentID)){
-            res.status(400).json({error: `Invalid student ID: ${studentID}`})
-            console.log("Invalid Student ID")
-            res.end()
-        }
-        else{
-        db.addInitReflectResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated initial reflection response")
-          }
-        })}
-    })
+    // .put(function(req, res){
+    //     scenarioID = req.body.scenarioID
+    //     studentID = req.body.studentID
+    //     data = req.body.data
+    //     if(!isnumber(scenarioID)){
+    //         res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
+    //         console.log("Invalid Scenario ID")
+    //         res.end()
+    //     }
+    //     else if(!isnumber(studentID)){
+    //         res.status(400).json({error: `Invalid student ID: ${studentID}`})
+    //         console.log("Invalid Student ID")
+    //         res.end()
+    //     }
+    //     else{
+    //     db.addInitReflectResponse(studentID, scenarioID, data, function(result){
+    //       if(result.length === 0){
+    //           res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+    //       }
+    //       else{
+    //           res.status(200).send(result)
+    //           console.log("Updated initial reflection response")
+    //       }
+    //     })}
+    // })
     
 router.route('/scenarios/initialAction')
 
@@ -309,7 +309,7 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else{
-        db.addFinalAction(studentID, scenarioID, data, function(result){
+        db.addFinalActionChoice(studentID, scenarioID, data, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
@@ -330,7 +330,7 @@ router.route('/scenarios/consequences')
             res.end()
         }
         else {
-        db.getConsequences(scenarioID, function(result){
+        db.getConsequencesPage(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No consequences found for scenarioID: ${scenarioID}`})
             }
@@ -414,7 +414,7 @@ router.route('/scenarios/stakeholders')
             res.end()
         }
         else {
-        db.addStakeholder(studentID, scenarioID, stakeholderID, function(result){
+        db.addStakeholderChoice(studentID, scenarioID, stakeholderID, function(result){
             if(result.length === 0){
                 res.status(404).json({error: `student ID or scenario ID does not exist in database`})
             }
@@ -492,7 +492,7 @@ router.route('/scenarios/middleReflection')
             res.end()
         }
         else{
-        db.addMidReflect(studentID, scenarioID, data, function(result){
+        db.addMidReflectResponse(studentID, scenarioID, data, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
@@ -566,7 +566,7 @@ router.route('/scenarios/conclusion')
             res.end()
         }
         else {
-        db.getConclusion(scenarioID, function(result){
+        db.getConclusionPage(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
             }
