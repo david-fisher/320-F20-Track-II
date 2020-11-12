@@ -9,6 +9,7 @@ import {
   Button,
   makeStyles,
 } from "@material-ui/core";
+import HTMLRenderer from './components/htmlRenderer';
 
 const TextTypography = withStyles({
   root: {
@@ -146,7 +147,7 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
           <Box p={2} className={classes.textBox}>
             {/* <TextTypography variant="body1">{upperText}</TextTypography> */}
             {/* <>{textList}</> */}
-            <TextTypography variant="body1">{task}</TextTypography>
+            <HTMLRenderer html={task}/>
           </Box>
         </Grid>
       </Grid>
