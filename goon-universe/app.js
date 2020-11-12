@@ -17,7 +17,7 @@ const router = express.Router()
 
 router.use(function(req, res, next) {
     console.log('API is doing something')
-    next() 
+    next()
 });
 
 
@@ -31,7 +31,7 @@ router.route('/scenarios')
     .get(function(req, res){
         studentID = req.get('studentid')
         if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid student ID")
             res.end()
         }
@@ -55,7 +55,7 @@ router.route('/scenarios/intro')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -78,7 +78,7 @@ router.route('/scenarios/task')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -101,7 +101,7 @@ router.route('/scenarios/starttogatherinfo')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -124,7 +124,7 @@ router.route('/scenarios/initialReflection')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -148,12 +148,12 @@ router.route('/scenarios/initialReflection')
         studentID = req.body.studentID
         data = req.body.data
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
@@ -174,7 +174,7 @@ router.route('/scenarios/initialAction')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -190,18 +190,18 @@ router.route('/scenarios/initialAction')
         })
         }
     })
-    
+
     .put(function(req, res){
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
@@ -222,7 +222,7 @@ router.route('/scenarios/finalAction')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -245,12 +245,12 @@ router.route('/scenarios/finalAction')
         studentID = req.body.studentID
         data = req.body.data
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
@@ -271,7 +271,7 @@ router.route('/scenarios/consequences')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid scenario ID")
             res.end()
         }
@@ -294,12 +294,12 @@ router.route('/scenarios/stakeholders/history')
         studentID = req.get('studentid')
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid student ID")
             res.end()
         }
@@ -323,7 +323,7 @@ router.route('/scenarios/stakeholders')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -345,17 +345,17 @@ router.route('/scenarios/stakeholders')
         studentID = req.body.studentID
         data = req.body.data
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
         else if(!isnumber(stakeholderID)){
-            res.status(404).json({error: `Invalid stakeholder ID: ${stakeholderID}`})
+            res.status(400).json({error: `Invalid stakeholder ID: ${stakeholderID}`})
             console.log("Invalid Stakeholder ID")
             res.end()
         }
@@ -378,12 +378,12 @@ router.route('/scenarios/stakeholders/conversation')
         scenarioID = req.get('scenarioid')
         stakeholderID = req.get('stakeholderid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid Scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid Scenario ID: ${scenarioID}`})
             console.log("Invalid scenario ID")
             res.end()
         }
         else if(!isnumber(stakeholderID)){
-            res.status(404).json({error: `Invalid Stakeholder ID: ${stakeholderID}`})
+            res.status(400).json({error: `Invalid Stakeholder ID: ${stakeholderID}`})
             console.log("Invalid stakeholder ID")
             res.end()
         }
@@ -406,7 +406,7 @@ router.route('/scenarios/middleReflection')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -428,12 +428,12 @@ router.route('/scenarios/middleReflection')
         studentID = req.body.studentID
         data = req.body.data
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
@@ -456,7 +456,7 @@ router.route('/scenarios/finalReflection')
         .get(function(req, res){
             scenarioID = req.get('scenarioid')
             if(!isnumber(scenarioID)){
-                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+                res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
                 console.log("Invalid Scenario ID")
                 res.end()
             }
@@ -480,12 +480,12 @@ router.route('/scenarios/finalReflection')
             studentID = req.body.studentID
             data = req.body.data
     	if(!isnumber(scenarioID)){
-                res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+                res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
                 console.log("Invalid Scenario ID")
                 res.end()
             }
     	else if(!isnumber(studentID)){
-                res.status(404).json({error: `Invalid student ID: ${studentID}`})
+                res.status(400).json({error: `Invalid student ID: ${studentID}`})
                 console.log("Invalid Student ID")
                 res.end()
             }
@@ -507,7 +507,7 @@ router.route('/scenarios/conclusion')
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid ID")
             res.end()
         }
@@ -531,12 +531,12 @@ router.route('/scenarios/feedback')
         scenarioID = req.get('scenarioid')
         studentID = req.get('studentid')
         if(!isnumber(scenarioID)){
-            res.status(404).json({error: `Invalid scenario ID: ${scenarioID}`})
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
         else if(!isnumber(studentID)){
-            res.status(404).json({error: `Invalid student ID: ${studentID}`})
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
