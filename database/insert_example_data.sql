@@ -29,7 +29,7 @@ INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', DEFAULT);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
-INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 3);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 3);
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 1);
 INSERT INTO prompt VALUES(4, 'prompt: middle reflection', DEFAULT);
