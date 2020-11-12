@@ -159,7 +159,7 @@ CREATE TABLE "prompt_response" (
 CREATE TABLE "conversation_choices" (
 	"id" INT REFERENCES response,
 	"conversation_id" INT REFERENCES conversation,
-	PRIMARY KEY (id, stakeholder_id)
+	PRIMARY KEY (id, conversation_id)
 );
 
 CREATE TABLE "mcq_response" (
