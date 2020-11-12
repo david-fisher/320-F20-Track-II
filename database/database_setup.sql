@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS pages CASCADE;
 DROP TABLE IF EXISTS prompt CASCADE;
 DROP TABLE IF EXISTS conversation_task CASCADE;
 DROP TABLE IF EXISTS mcq CASCADE;
-DROP TABLE IF EXISTS plain_page CASCADE;
 DROP TABLE IF EXISTS submissions CASCADE;
 DROP TABLE IF EXISTS response CASCADE;
 DROP TABLE IF EXISTS prompt_response CASCADE;
@@ -64,10 +63,12 @@ CREATE TABLE "partof" (
 	"scenario_id" INT REFERENCES scenario
 );
 
+-- TODO: make type below an ENUM
 CREATE TABLE "pages" (
 	"id" SERIAL PRIMARY KEY,
 	"order" INT,
 	"type" CHAR(5),
+	"body_text" VARCHAR,
 	"scenario_id" INT REFERENCES scenario
 );
 
@@ -117,12 +118,6 @@ CREATE TABLE "mcq" (
 	"page_id" INT REFERENCES pages PRIMARY KEY,
 	"content" VARCHAR
 );
-
-CREATE TABLE "plain_page" (
-	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"content" VARCHAR
-);
-
 
 
 CREATE TABLE "question" (

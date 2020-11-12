@@ -20,20 +20,20 @@ INSERT INTO enrolled VALUES(4, 2);
 -- test scenario 1
 INSERT INTO scenario VALUES(DEFAULT, 'Sceanrio 1', '2020-12-01 23:59:59', 'description: test scenario', '<additional_data>');
 insert into partof values(1,1);
-INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 1);
-INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
+INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'page: Intro page content for scenario 1', 1);
+--INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
 
-INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 1);
+INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 1);
 INSERT INTO prompt VALUES(2, 'Initial reflection prompt...', DEFAULT);
 
-INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 1);
+INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation task', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<conversation text>', 1, 3);
 
-INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 1);
+INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 1);
 INSERT INTO prompt VALUES(4, 'prompt: middle reflection', DEFAULT);
 
-INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 1);
+INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 'Body text before multiple choice question objects', 1);
 INSERT INTO mcq VALUES(5, 'MCQ: <obj>');
 INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 1: <text>', 5);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option A', 1);
@@ -47,11 +47,11 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option B', 2);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 2);
 
 
-INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 1);
+INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 'Body text before final reflection', 1);
 INSERT INTO prompt VALUES(6, 'prompt: final reflection', DEFAULT);
 
-INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 1);
-INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
+INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: results will be available in one week', 1);
+--INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
 
 
 INSERT INTO submissions VALUES(DEFAULT, 1, 1, '2020-10-10 10:10:00');
@@ -86,26 +86,26 @@ INSERT INTO partof VALUES(2, 2);
 -- INSERT INTO partof VALUES(1, 2); 
 -- two courses have the same scenario, one student is enrolled in both
 
-INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 2);
-INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
+INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 'page: Intro page content for scenario 2', 2);
+--INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
 
-INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 2);
+INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 2);
 INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection', DEFAULT);
 
-INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 2);
+INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation', 2);
 INSERT INTO conversation_task VALUES(10, 's2 conversation_task: <obj>');
 
-INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 2);
+INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 2);
 INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection', DEFAULT);
 
-INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 2);
+INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 'Body text before multiple choice question', 2);
 INSERT INTO mcq VALUES(12, 's2 MCQ: <obj>');
 
-INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 2);
+INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 'Body text before final reflection', 2);
 INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection', DEFAULT);
 
-INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 2);
-INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');
+INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: s2 results will be available in one week', 2);
+--INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');
 
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 2, '2020-10-10 10:10:00');
