@@ -200,6 +200,24 @@ function addFinalReflection(studentID, scenarioID, data, callback){
   })
 }
 
+function getLastPage(scenarioID, studentID, callback){
+  pool.query('select lastpage from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function addLastPage(studentID, scenarioID, data, callback){
+  pool.query('UPDATE responses set lastpage = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(`Last Page updated for studentID: ${studentID}`)
+  })
+}
+
 //export functions
 module.exports = {
     getScenarios,
@@ -222,5 +240,7 @@ module.exports = {
     addMidReflect,
     addStakeholder,
     addFinalAction,
-    addFinalReflection
+    addFinalReflection,
+    getLastPage,
+    addLastPage
 }

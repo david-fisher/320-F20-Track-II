@@ -553,6 +553,60 @@ router.route('/scenarios/feedback')
         }
     })
 
+router.route('/scenarios/lastPage')
+
+    .get(function(req, res){
+        scenarioID = req.get('scenarioid')
+        studentID = req.get('studentid')
+        if(!isnumber(scenarioID)){
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else {
+            db.getLastPage(scenarioID, studentID, function(result){
+                if(result.length == 0) {
+                    res.status(404).json({error: `No Last Page found for scenarioID: ${scenarioID} and studentid: ${studentID}`})
+                }
+                else {
+                    res.status(200).json(result)
+                    console.log("Got Last Page")
+                }
+            })
+        }
+    })
+
+    .put(function(req, res){
+        scenarioID = req.body.scenarioID
+        studentID = req.body.studentID
+        data = req.body.data
+        if(!isnumber(scenarioID)){
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
+        db.addLastPage(studentID, scenarioID, data, function(result){
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated Last Page")
+          }
+        })}
+    })
+
 app.use('/api', router)
 
 app.listen(port, () => {
