@@ -163,7 +163,7 @@ CREATE TABLE "prompt_response" (
 
 CREATE TABLE "conversation_choices" (
 	"id" INT REFERENCES response,
-	"stakeholder_id" INT REFERENCES stakeholders,
+	"conversation_id" INT REFERENCES conversation,
 	PRIMARY KEY (id, stakeholder_id)
 );
 
