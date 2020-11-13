@@ -67,7 +67,7 @@ INSERT INTO response VALUES(DEFAULT, 1, 6, '2020-10-12 10:10:00');
 INSERT INTO prompt_response VALUES(3, 1, 'John Doe''s response to final reflection');
 
 INSERT INTO response VALUES(DEFAULT, 1, 3, '2020-10-10 10:10:00');
-INSERT INTO conversation_choices VALUES(4, 1);
+--INSERT INTO conversation_choices VALUES(4, 1);
 
 
 INSERT INTO submissions VALUES(DEFAULT, 2, 1, '2020-10-10 10:10:00');
