@@ -137,8 +137,17 @@ function getConsequencesPage(scenarioID, callback){
   })
 }
 
-function getFinalReflection(scenarioID, callback){
+function getFinalReflectPage(scenarioID, callback){
   pool.query('SELECT finalreflection from scenarios where id = $1', [scenarioID], (error,results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getFinalReflectResponse(studentID, scenarioID, callback){
+  pool.query('SELECT finalreflection from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error,results) => {
     if(error){
       throw error
     }
@@ -166,6 +175,15 @@ function addStakeholderChoice(studentID, scenarioID, stakeholder, callback){
 
 function getMidReflectPage(scenarioID, callback){
   pool.query('SELECT middlereflection from scenarios where id = $1', [scenarioID], (error, results) => {
+    if(error){
+      throw error
+    }
+    callback(results.rows)
+  })
+}
+
+function getMidReflectResponse(studentID, scenarioID, callback){
+  pool.query('SELECT middlereflection from responses where scenarioid = $1 and studentid = $2', [scenarioID, studentID], (error,results) => {
     if(error){
       throw error
     }
@@ -241,9 +259,11 @@ module.exports = {
     getStakeholderConvo,
     getStakeholderHistory,
     getMidReflectPage,
+    getMidReflectResponse,
     getFinalAction,
     getConsequencesPage,
-    getFinalReflection,
+    getFinalReflectPage,
+    getFinalReflectResponse,
     getConclusionPage,
     getFeedback,
     addInitReflectResponse,
