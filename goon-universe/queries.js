@@ -58,6 +58,16 @@ function getIntroPage(scenarioID, callback){
     })  
 }
 
+function getTaskPage(scenarioID, callback){
+    let thisQuery= 'select page_id from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    }) 
+}
+
 function getInitReflectPage(scenarioID, callback){
     let thisQuery = 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [], (error, results) => {
@@ -66,6 +76,28 @@ function getInitReflectPage(scenarioID, callback){
         }
         callback(results.rows)
     })
+}
+
+function getAuthenticatedInstructorDashboardSummary(instructorID, callback){
+    let thisQuery= 'select scenario.id, scenario.name, scenario.description, scenario.due_date from scenario, partof, instructs where instructs.instructor_id = $1 and instructs.course_id = partof.course_id and partof.scenario_id = scenario.id '
+    
+    pool.query(thisQuery, [instructorID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+function getStudentsSummary(scenarioID, callback){
+    let thisQuery = 'select enrolled.student_id, submission.id from scenario, partof, enrolled, submissions where scenario.id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id and submissions.scenario_id = scenario.id and submissions.user_id = enrolled.student_id'
+
+    pool.query(thisQuery, [instructorID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
 }
 
 function getInitReflectResponse(studentID, scenarioID, callback){
@@ -597,6 +629,9 @@ function cb(results){
 module.exports = {
     getScenarios,
     getIntroPage,
+    getTaskPage,
+    getAuthenticatedInstructorDashboardSummary,
+    getStudentsSummary,
     getInitReflectResponse,
     getMidReflectResponse,
     getFinalReflectResponse,
