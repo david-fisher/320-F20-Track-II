@@ -49,7 +49,7 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 2);
 
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 'Body text before final reflection', 1);
-INSERT INTO prompt VALUES(6, 'prompt: final reflection', DEFAULT);
+INSERT INTO prompt VALUES(6, 'prompt: final reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: results will be available in one week', 1);
 --INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
