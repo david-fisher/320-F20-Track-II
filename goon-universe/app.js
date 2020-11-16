@@ -83,7 +83,7 @@ router.route('/scenarios/task')
             res.end()
         }
         else {
-        db.getTask(scenarioID, function(result){
+        db.getTaskPage(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No scenario task found with scenarioID: ${scenarioID}`})
             }
@@ -106,7 +106,7 @@ router.route('/scenarios/starttogatherinfo')
             res.end()
         }
         else {
-        db.getStartToGatherInfo(scenarioID, function(result){
+        db.getInitActionSubsequentPage(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No scenario start to gather information found with scenarioID: ${scenarioID}`})
             }
@@ -198,7 +198,7 @@ router.route('/scenarios/initialReflection/response')
     })
 
 
-    
+
 router.route('/scenarios/initialAction')
 
     .get(function(req, res){
@@ -236,7 +236,7 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.addInitAction(studentID, scenarioID, data, function(result){
+        db.addInitActionChoice(studentID, scenarioID, data, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
@@ -548,7 +548,7 @@ router.route('/scenarios/finalReflection')
             res.end()
         }
     	else {
-    	  db.addFinalReflection(studentID, scenarioID, data, function(result){
+    	  db.addFinalReflectResponse(studentID, scenarioID, data, function(result){
                 if(result.length === 0){
                     res.status(404).json({error: `student ID or scenario ID does not exist in database`})
                 }
@@ -558,7 +558,7 @@ router.route('/scenarios/finalReflection')
                 }
             })}
             console.log("Updated final reflection")
-    })    
+    })
 
 
 router.route('/scenarios/finalReflection/response')

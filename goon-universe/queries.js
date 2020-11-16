@@ -45,7 +45,7 @@ function getInitReflectResponse(studentID, scenarioID, callback){
   })
 }
 
-function getTask(scenarioID, callback){
+function getTaskPage(scenarioID, callback){
   pool.query('SELECT task from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -54,7 +54,7 @@ function getTask(scenarioID, callback){
   })
 }
 
-function getStartToGatherInfo(scenarioID, callback){
+function getInitActionSubsequentPage(scenarioID, callback){
   pool.query('SELECT starttogatherinfo from scenarios where id = $1', [scenarioID], (error,results) => {
     if(error){
       throw error
@@ -72,7 +72,7 @@ function getInitActions(scenarioID, callback){
   })
 }
 
-function addInitAction(studentID, scenarioID, data, callback){
+function addInitActionChoice(studentID, scenarioID, data, callback){
   pool.query('UPDATE responses set initalaction = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
@@ -218,7 +218,7 @@ function addFinalActionChoice(studentID, scenarioID, data, callback){
   })
 }
 
-function addFinalReflection(studentID, scenarioID, data, callback){
+function addFinalReflectResponse(studentID, scenarioID, data, callback){
   pool.query('UPDATE responses set finalreflection = $3 where studentid = $1 and scenarioid = $2', [studentID, scenarioID, data], (error, results) => {
     if(error){
       throw error
@@ -251,10 +251,10 @@ module.exports = {
     getIntroPage,
     getInitReflectPage,
     getInitReflectResponse,
-    getTask,
-    getStartToGatherInfo,
+    getTaskPage,
+    getInitActionSubsequentPage,
     getInitActions,
-    addInitAction,
+    addInitActionChoice,
     getStakeholders,
     getStakeholderConvo,
     getStakeholderHistory,
@@ -270,7 +270,7 @@ module.exports = {
     addMidReflectResponse,
     addStakeholderChoice,
     addFinalActionChoice,
-    addFinalReflection,
+    addFinalReflectResponse,
     getLastPage,
     addLastPage
 }
