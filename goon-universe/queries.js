@@ -409,7 +409,19 @@ function addConvTaskPage(scenarioID, description, callback){
     }
 }
 
-
+function addConclusionPage(scenarioID, text, callback){
+    //check scenario exists
+    // upsert intro page
+    if (scenarioExists(scenarioID)){
+        // create page object - plain-page when no prompt linked
+        pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
+        callback('Success!')
+    }
+    else{
+        // TODO return InvalidScenarioError
+        throw error
+    }
+}
 
 
 function addStakeholder(scenarioID, name, description, conversations, callback){
@@ -650,6 +662,7 @@ module.exports = {
     addStakeholder,
     addStakeholderConversations,
     addFinalActionPage,
+    addConclusionPage,
     getInitReflectPage,
     getMidReflectPage,
     getFinalReflectPage,
