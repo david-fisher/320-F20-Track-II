@@ -24,15 +24,15 @@ INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'page: Intro page content for scen
 --INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 1);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt (a)...', DEFAULT);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', DEFAULT);
+INSERT INTO prompt VALUES(2, 'Initial reflection prompt (a)...', 1);
+INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', 2);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation task', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 3);
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 1);
-INSERT INTO prompt VALUES(4, 'prompt: middle reflection', DEFAULT);
+INSERT INTO prompt VALUES(4, 'prompt: middle reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 'Body text before multiple choice question objects', 1);
 INSERT INTO mcq VALUES(5, 'MCQ: <obj>');
@@ -94,19 +94,19 @@ INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 'page: Intro page content for sce
 --INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 2);
-INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection', DEFAULT);
+INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation', 2);
 INSERT INTO conversation_task VALUES(10, 's2 conversation_task: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 2);
-INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection', DEFAULT);
+INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 'Body text before multiple choice question', 2);
 INSERT INTO mcq VALUES(12, 's2 MCQ: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 'Body text before final reflection', 2);
-INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection', DEFAULT);
+INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: s2 results will be available in one week', 2);
 --INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');

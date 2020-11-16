@@ -75,7 +75,7 @@ CREATE TABLE "pages" (
 CREATE TABLE "prompt" (
 	"page_id" INT REFERENCES pages,
 	"prompt" VARCHAR,
-	"prompt_num" SERIAL,
+	"prompt_num" INT,
 	PRIMARY KEY(page_id, prompt_num)
 );
 
