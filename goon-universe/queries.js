@@ -57,7 +57,6 @@ function getIntroPage(scenarioID, callback){
     
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
-
             throw error
         }
         callback(results.rows)
@@ -291,6 +290,7 @@ function scenarioPageExists(order, type, scenarioID){
 function createPage(order, type, body_text, scenarioID){
     // returns pageID if exists, else creates new
     pageID = scenarioPageExists(order, type, scenarioID)
+    // TODO: handle page already existing in a better way?
     if(pageID === null){
         let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4)'
         pool.query(thisQuery, [order, type, body_text, scenarioID], (error, results) => {
@@ -304,21 +304,13 @@ function createPage(order, type, body_text, scenarioID){
     return pageID
 }
 
-// TODO: replace with a single call to createPage
 function addIntroPage(scenarioID, text, callback){
     //check scenario exists
     // upsert intro page
     if (scenarioExists(scenarioID)){
-        // create page object
+        // create page object - plain-page when no prompt linked
         pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
-        //create plain-page object
-        let thisQuery = 'insert into plain_page values($1, $2) ON CONFLICT (id) DO UPDATE SET content = $2'
-        pool.query(thisQuery, [pageID, text], (error, results) => {
-            if (error){
-                throw error
-            }
-            callback(results.rows)
-        })
+        callback('Success!')
     }
     else{
         // TODO return InvalidScenarioError
