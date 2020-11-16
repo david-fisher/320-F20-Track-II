@@ -74,7 +74,7 @@ CREATE TABLE "pages" (
 CREATE TABLE "prompt" (
 	"page_id" INT REFERENCES pages,
 	"prompt" VARCHAR,
-	"prompt_num" SERIAL,
+	"prompt_num" INT,
 	PRIMARY KEY(page_id, prompt_num)
 );
 
@@ -164,7 +164,7 @@ CREATE TABLE "prompt_response" (
 CREATE TABLE "conversation_choices" (
 	"id" INT REFERENCES response,
 	"conversation_id" INT REFERENCES conversation,
-	PRIMARY KEY (id, stakeholder_id)
+	PRIMARY KEY (id, conversation_id)
 );
 
 CREATE TABLE "mcq_response" (
