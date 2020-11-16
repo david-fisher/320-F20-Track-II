@@ -16,7 +16,10 @@ const INIT_ACTION_SUBSEQUENT = 5
 const CONVERSATION = 6
 const MIDDLE_REFLECTION = 7
 const FINAL_ACTION = 8
-const FINAL_REFLECTION = 9
+const SUMMARY_PAGE = 9
+const FEEDBACK_PAGE = 10
+const FINAL_REFLECTION = 11
+const CONCLUSIONPAGE = 12
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
