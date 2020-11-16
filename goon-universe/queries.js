@@ -7,13 +7,16 @@ env(__dirname + '/.env');
  */
 // constants for page numbers/order
 // re-order once all functions are written
+
 const INTROPAGE = 1
-const INITIAL_REFLECTION = 2
-const CONVERSATION = 3
-const MIDDLE_REFLECTION = 4
-const FINAL_REFLECTION = 5
-const FINAL_ACTION = 6
-const INIT_ACTION = 7
+const TASKPAGE = 2
+const INITIAL_REFLECTION = 3
+const INIT_ACTION = 4
+const INIT_ACTION_SUBSEQUENT = 5
+const CONVERSATION = 6
+const MIDDLE_REFLECTION = 7
+const FINAL_ACTION = 8
+const FINAL_REFLECTION = 9
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
