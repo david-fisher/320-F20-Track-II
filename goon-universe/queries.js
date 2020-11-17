@@ -30,11 +30,11 @@ const TYPE_CONV = 'CONV'
 const Pool = require('pg').Pool
 
 const pool = new Pool({
-    user: env.PGUSER,
-    password: env.PGPASSWORD,
-    host: env.PGHOST,
-    port: env.PGPORT,
-    database: env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    database: process.env.PGDATABASE,
     max: 20,
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0
