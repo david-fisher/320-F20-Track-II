@@ -317,7 +317,7 @@ function addIntroPage(scenarioID, text, callback){
         throw error
     }
 }
-function addInitReflectPagePage(scenarioID, description, prompts, callback){
+function addInitReflectPage(scenarioID, description, prompts, callback){
     // check scenario exists
     // upsert init reflect page
     if (scenarioExists(scenarioID)){
@@ -688,7 +688,7 @@ module.exports = {
     addMidReflectResponse,
     addFinalReflectResponse,
     addIntroPage,
-    addInitReflectPagePage,
+    addInitReflectPage,
     addMidReflectPage,
     addFinalReflectPage,
     addStakeholder,
