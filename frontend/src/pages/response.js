@@ -1,5 +1,6 @@
 import React from "react";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
+import QA from "./components/q&a";
 
 
 const TextTypography = withStyles({
@@ -7,6 +8,10 @@ const TextTypography = withStyles({
     color: "#373a3c"
   }
 })(Typography);
+
+const bodyText = 'Although current AI offers us few ethical issues that are not already present in the design of cars or power plants, the approach of AI algorithms toward more humanlike thought portends predictable complications. Social roles may be filled by AI algorithms, implying new design requirements like transparency and predictability. Sufficiently general AI algorithms may no longer execute in predictable contexts, requiring new kinds of safety assurance and the engineering of artificial ethical considerations. AIs with sufficiently advanced mental states, or the right kind of states, will have moral status, and some may count as persons—though perhaps persons very much unlike the sort that exist now, perhaps governed by different rules. And finally, the prospect of AIs with superhuman intelligence and superhuman abilities presents us with the extraordinary challenge of stating an algorithm that outputs superethical behavior. These challenges may seem visionary, but it seems predictable that we will encounter them; and they are not devoid of suggestions for present-day research directions.';
+
+const questions = ["We would appreciate receiving any comments that you have on this online ethics simulation: "];
 
 function Response({pages, setPages, activePage, setActivePage}) {
   function goToFinalReflection(){
@@ -41,13 +46,8 @@ function Response({pages, setPages, activePage, setActivePage}) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <TextTypography variant="body1" align="center">
-            Some Response.
-          </TextTypography>
+          <QA header={bodyText} questions={questions} pages={pages} nextPageName={"response"} />
         </Grid>
-        {/* <Grid item lg={12}>
-          next button here if needed
-        </Grid>   */}
       </Grid>
     </div>
   );
