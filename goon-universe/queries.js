@@ -106,7 +106,7 @@ function getStudentsSummary(scenarioID, callback){
 }
 
 function getInitReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -116,7 +116,7 @@ function getInitReflectResponse(studentID, scenarioID, callback){
 }
 
 function getMidReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -126,7 +126,7 @@ function getMidReflectResponse(studentID, scenarioID, callback){
 }
 
 function getFinalReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -196,12 +196,11 @@ function addCourse(coursePage, courseName, semester, callback){
     }) 
 }
 
-async function addReflectionResponse(studentID, input, scenarioID, timestamp, page_order) {
+async function addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, page_order) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
 	const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
-	const insertPromptResponseQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2';
-
+	const insertPromptResponseQuery='insert into prompt_response(id, prompt_num, response) VALUES ($1, $2, $3) ON CONFLICT (id, prompt_num) DO UPDATE SET response = $3';
 	const client = await pool.connect();
 	try {
 		await client.query("BEGIN");
@@ -212,7 +211,7 @@ async function addReflectionResponse(studentID, input, scenarioID, timestamp, pa
 		// RETURNING clause returns ID at the same time
 		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
 		let responseID = responseCreation.rows[0].id;
-		await client.query(insertPromptResponseQuery, [responseID, input]);
+		await client.query(insertPromptResponseQuery, [responseID, promptNum, input]);
 		await client.query("COMMIT");
 	} catch (e) {
 		await client.query("ROLLBACK");
@@ -221,6 +220,7 @@ async function addReflectionResponse(studentID, input, scenarioID, timestamp, pa
 		client.release();
 	}
 }
+
 
 function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback) {
 	addReflectionResponse(studentID, input, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
@@ -621,6 +621,38 @@ function getFinalActionPageChoices(scenarioID, questionId, callback){
     })  
 }
 
+async function addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, page_order){
+    const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+	const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 returning id';
+	const insertMCQResponseQuery='INSERT INTO mcq_response(id, question_id, choice_id) VALUES($1, $2, $3) ON CONFLICT (id, question_id) DO UPDATE SET choice_id=$3;';
+	const client = await pool.connect();
+	try {
+		await client.query("BEGIN");
+		const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
+		let pageID = pageSelection.rows[0].id;
+		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+		let submissionID = submissionSelection.rows[0].id;
+		// RETURNING clause returns ID at the same time
+		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
+		let responseID = responseCreation.rows[0].id;
+		await client.query(insertMCQResponseQuery, [responseID, questionID, choiceID]);
+		await client.query("COMMIT");
+	} catch (e) {
+		await client.query("ROLLBACK");
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
+function addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, INIT_ACTION).then(() => callback("Success!"));
+}
+function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then(() => callback("Success!"));
+}
+
 function cb(results){
     console.log(results)
     pool.end()
@@ -669,5 +701,8 @@ module.exports = {
     getInitActionPageQuestions,
     getInitActionPageChoices,
     getFinalActionPageQuestions,
-    getFinalActionPageChoices
+    getFinalActionPageChoices,
+    addMCQResponse,
+    addInitActionResponse,
+    addFinalActionResponse
 }
