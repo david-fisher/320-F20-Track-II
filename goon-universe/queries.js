@@ -73,16 +73,6 @@ function getTaskPage(scenarioID, callback){
     }) 
 }
 
-function getInitReflectPage(scenarioID, callback){
-    let thisQuery = 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
-    pool.query(thisQuery, [], (error, results) => {
-        if (error){
-            throw error
-        }
-        callback(results.rows)
-    })
-}
-
 function getAuthenticatedInstructorDashboardSummary(instructorID, callback){
     let thisQuery= 'select scenario.id, scenario.name, scenario.description, scenario.due_date from scenario, partof, instructs where instructs.instructor_id = $1 and instructs.course_id = partof.course_id and partof.scenario_id = scenario.id '
     
