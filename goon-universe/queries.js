@@ -237,8 +237,8 @@ function scenarioExists(scenarioID){
 
 // helper for createScenario
 function addScenario(name, due_date, description, additional_data){
-    let thisQuery = 'insert into scenario values($1, $2, $3, $4)'
-    pool.query(thisQuery, [name, due_date, description, additional_data], (error, results) => {
+    let thisQuery = 'insert into scenario values($1, $2, $3, $5, $4)'
+    pool.query(thisQuery, [name, due_date, description, additional_data, "DRAFT"], (error, results) => {
         if (error){
             throw error
         }

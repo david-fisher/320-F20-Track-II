@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS conversation CASCADE;
 DROP TABLE IF EXISTS question CASCADE;
 DROP TABLE IF EXISTS mcq_option CASCADE; -- option
 
+DROP TYPE IF EXISTS simulation_status CASCADE;
 
 CREATE TABLE "users" (
 	"id" SERIAL,
@@ -50,11 +51,13 @@ CREATE TABLE "enrolled" (
 	PRIMARY KEY("student_id", "course_id")
 );
 
+CREATE TYPE simulation_status AS ENUM ("DRAFT", "PUBLISHED", "CLOSED");
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR,
 	"due_date" TIMESTAMP,
 	"description" VARCHAR,
+	"status" simulation_status DEFAULT "DRAFT",
 	"additional_data" VARCHAR
 ); 
 
