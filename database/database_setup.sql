@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS pages CASCADE;
 DROP TABLE IF EXISTS prompt CASCADE;
 DROP TABLE IF EXISTS conversation_task CASCADE;
 DROP TABLE IF EXISTS mcq CASCADE;
-DROP TABLE IF EXISTS plain_page CASCADE;
 DROP TABLE IF EXISTS submissions CASCADE;
 DROP TABLE IF EXISTS response CASCADE;
 DROP TABLE IF EXISTS prompt_response CASCADE;
@@ -22,6 +21,7 @@ DROP TABLE IF EXISTS conversation CASCADE;
 DROP TABLE IF EXISTS question CASCADE;
 DROP TABLE IF EXISTS mcq_option CASCADE; -- option
 
+DROP TYPE IF EXISTS simulation_status CASCADE;
 
 CREATE TABLE "users" (
 	"id" SERIAL,
@@ -51,11 +51,13 @@ CREATE TABLE "enrolled" (
 	PRIMARY KEY("student_id", "course_id")
 );
 
+CREATE TYPE simulation_status AS ENUM ("DRAFT", "PUBLISHED", "CLOSED");
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR,
 	"due_date" TIMESTAMP,
 	"description" VARCHAR,
+	"status" simulation_status DEFAULT "DRAFT",
 	"additional_data" VARCHAR
 ); 
 
@@ -64,17 +66,19 @@ CREATE TABLE "partof" (
 	"scenario_id" INT REFERENCES scenario
 );
 
+-- TODO: make type below an ENUM
 CREATE TABLE "pages" (
 	"id" SERIAL PRIMARY KEY,
 	"order" INT,
 	"type" CHAR(5),
+	"body_text" VARCHAR,
 	"scenario_id" INT REFERENCES scenario
 );
 
 CREATE TABLE "prompt" (
 	"page_id" INT REFERENCES pages,
 	"prompt" VARCHAR,
-	"prompt_num" SERIAL,
+	"prompt_num" INT,
 	PRIMARY KEY(page_id, prompt_num)
 );
 
@@ -119,12 +123,6 @@ CREATE TABLE "mcq" (
 	"page_id" INT REFERENCES pages PRIMARY KEY,
 	"content" VARCHAR
 );
-
-CREATE TABLE "plain_page" (
-	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"content" VARCHAR
-);
-
 
 
 CREATE TABLE "question" (

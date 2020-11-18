@@ -7,13 +7,19 @@ env(__dirname + '/.env');
  */
 // constants for page numbers/order
 // re-order once all functions are written
+
 const INTROPAGE = 1
-const INITIAL_REFLECTION = 2
-const CONVERSATION = 3
-const MIDDLE_REFLECTION = 4
-const FINAL_REFLECTION = 5
-const FINAL_ACTION = 6
-const INIT_ACTION = 7
+const TASKPAGE = 2
+const INITIAL_REFLECTION = 3
+const INIT_ACTION = 4
+const INIT_ACTION_SUBSEQUENT = 5
+const CONVERSATION = 6
+const MIDDLE_REFLECTION = 7
+const FINAL_ACTION = 8
+const SUMMARY_PAGE = 9
+const FEEDBACK_PAGE = 10
+const FINAL_REFLECTION = 11
+const CONCLUSIONPAGE = 12
 
 // constants for page types
 const TYPE_PLAIN = 'PLAIN'
@@ -24,11 +30,11 @@ const TYPE_CONV = 'CONV'
 const Pool = require('pg').Pool
 
 const pool = new Pool({
-    user: env.PGUSER,
-    password: env.PGPASSWORD,
-    host: env.PGHOST,
-    port: env.PGPORT,
-    database: env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    database: process.env.PGDATABASE,
     max: 20,
     idleTimeoutMillis: 0,
     connectionTimeoutMillis: 0
@@ -47,29 +53,50 @@ function getScenarios(studentID, callback){
 }
 
 function getIntroPage(scenarioID, callback){
-    let thisQuery= 'select plain_page.content from plain_page, pages where pages.id = plain_page.page_id and pages.order = ' + INTROPAGE + 'and scenario_id = $1'
+    let thisQuery= 'select pages.body_text from pages where pages.order = ' + INTROPAGE + 'and scenario_id = $1'
     
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
-
             throw error
         }
         callback(results.rows)
     })  
 }
 
-function getInitReflectPage(scenarioID, callback){
-    let thisQuery = 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
-    pool.query(thisQuery, [], (error, results) => {
-        if (error){
+function getTaskPage(scenarioID, callback){
+    let thisQuery= 'select page_id from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
             throw error
         }
         callback(results.rows)
-    })
+    }) 
+}
+
+function getAuthenticatedInstructorDashboardSummary(instructorID, callback){
+    let thisQuery= 'select scenario.id, scenario.name, scenario.description, scenario.due_date from scenario, partof, instructs where instructs.instructor_id = $1 and instructs.course_id = partof.course_id and partof.scenario_id = scenario.id '
+    
+    pool.query(thisQuery, [instructorID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
+}
+
+function getStudentsSummary(scenarioID, callback){
+    let thisQuery = 'select enrolled.student_id, submission.id from scenario, partof, enrolled, submissions where scenario.id = $1 and enrolled.course_id = partof.course_id and partof.scenario_id = scenario.id and submissions.scenario_id = scenario.id and submissions.user_id = enrolled.student_id'
+
+    pool.query(thisQuery, [instructorID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })  
 }
 
 function getInitReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -79,7 +106,7 @@ function getInitReflectResponse(studentID, scenarioID, callback){
 }
 
 function getMidReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -89,7 +116,7 @@ function getMidReflectResponse(studentID, scenarioID, callback){
 }
 
 function getFinalReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -159,40 +186,40 @@ function addCourse(coursePage, courseName, semester, callback){
     }) 
 }
 
-async function addReflectionResponse(studentID, input, scenarioID, timestamp, page_order) {
-	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
-	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-	const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
-	const insertPromptResponseQuery='insert into prompt_response(id, response) VALUES ($1, $2) ON CONFLICT (id) DO UPDATE SET response = $2';
-
-	const client = await pool.connect();
-	try {
-		await client.query("BEGIN");
-		const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
-		let pageID = pageSelection.rows[0].id;
-		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
-		let submissionID = submissionSelection.rows[0].id;
-		// RETURNING clause returns ID at the same time
-		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
-		let responseID = responseCreation.rows[0].id;
-		await client.query(insertPromptResponseQuery, [responseID, input]);
-		await client.query("COMMIT");
-	} catch (e) {
-		await client.query("ROLLBACK");
-		throw e;
-	} finally {
-		client.release();
-	}
+async function addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, page_order) {
+    const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+    const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
+    const insertPromptResponseQuery='insert into prompt_response(id, prompt_num, response) VALUES ($1, $2, $3) ON CONFLICT (id, prompt_num) DO UPDATE SET response = $3';
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
+        let pageID = pageSelection.rows[0].id;
+        const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        let submissionID = submissionSelection.rows[0].id;
+        // RETURNING clause returns ID at the same time
+        const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
+        let responseID = responseCreation.rows[0].id;
+        await client.query(insertPromptResponseQuery, [responseID, promptNum, input]);
+        await client.query("COMMIT");
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+    } finally {
+        client.release();
+    }
 }
+
 
 function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback) {
-	addReflectionResponse(studentID, input, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
+    addReflectionResponse(studentID, input, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
 }
 function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback) {
-	addReflectionResponse(studentID, input, scenarioID, timestamp, MIDDLE_REFLECTION).then(() => callback("Success!"));
+    addReflectionResponse(studentID, input, scenarioID, timestamp, MIDDLE_REFLECTION).then(() => callback("Success!"));
 }
 function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback) {
-	addReflectionResponse(studentID, input, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
+    addReflectionResponse(studentID, input, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
 }
 
 function scenarioExists(scenarioID){
@@ -210,8 +237,8 @@ function scenarioExists(scenarioID){
 
 // helper for createScenario
 function addScenario(name, due_date, description, additional_data){
-    let thisQuery = 'insert into scenario values($1, $2, $3, $4)'
-    pool.query(thisQuery, [name, due_date, description, additional_data], (error, results) => {
+    let thisQuery = 'insert into scenario values($1, $2, $3, $5, $4)'
+    pool.query(thisQuery, [name, due_date, description, additional_data, "DRAFT"], (error, results) => {
         if (error){
             throw error
         }
@@ -250,12 +277,13 @@ function scenarioPageExists(order, type, scenarioID){
     })
 }
 
-function createPage(order, type, scenarioID){
+function createPage(order, type, body_text, scenarioID){
     // returns pageID if exists, else creates new
     pageID = scenarioPageExists(order, type, scenarioID)
+    // TODO: handle page already existing in a better way?
     if(pageID === null){
-        let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3)'
-        pool.query(thisQuery, [order, type, scenarioID], (error, results) => {
+        let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4)'
+        pool.query(thisQuery, [order, type, body_text, scenarioID], (error, results) => {
             if (error){
                 throw error
             }
@@ -266,33 +294,25 @@ function createPage(order, type, scenarioID){
     return pageID
 }
 
-
 function addIntroPage(scenarioID, text, callback){
     //check scenario exists
     // upsert intro page
     if (scenarioExists(scenarioID)){
-        // create page object
-        pageID = createPage(INTROPAGE, TYPE_PLAIN, scenarioID)
-        //create plain-page object
-        let thisQuery = 'insert into plain_page values($1, $2) ON CONFLICT (id) DO UPDATE SET content = $2'
-        pool.query(thisQuery, [pageID, text], (error, results) => {
-            if (error){
-                throw error
-            }
-            callback(results.rows)
-        })
+        // create page object - plain-page when no prompt linked
+        pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+        callback('Success!')
     }
     else{
         // TODO return InvalidScenarioError
         throw error
     }
 }
-function addInitReflectPagePage(scenarioID, description, prompts, callback){
+function addInitReflectPage(scenarioID, description, prompts, callback){
     // check scenario exists
     // upsert init reflect page
     if (scenarioExists(scenarioID)){
         //create page object
-        pageID = createPage(INTROPAGE, TYPE_PROMPT, scenarioID)
+        pageID = createPage(INTROPAGE, TYPE_PROMPT, description, scenarioID)
         //create prompt object
         for (p in prompts){
             let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
@@ -316,7 +336,7 @@ function addMidReflectPage(scenarioID, description, prompts, callback){
     // upsert mid reflect page
     if(scenarioExists(scenarioID)){
         // create page object (checks or conflicts)
-        pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, scenarioID)
+        pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, description, scenarioID)
         // create priompt object
         for (p in prompts){
             let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
@@ -338,7 +358,7 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
         // create page object (checks for conflicts)
-        pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, scenarioID)
+        pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, description, scenarioID)
         //create prompt object
         for (p in prompts){
             let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
@@ -356,12 +376,13 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
     }
 }
 
+// TODO: add body text argument to functions below?
 function addConvTaskPage(scenarioID, description, callback){
     // check scenario exists
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
         // create page object (checks for conflicts)
-        pageID = createPage(CONVERSATION, TYPE_CONV, scenarioID)
+        pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
         //create prompt object
         let thisQuery = 'insert into conversation_task values($1, $2)'
         pool.query(thisQuery, [pageID, description], (error, results) => {
@@ -378,7 +399,19 @@ function addConvTaskPage(scenarioID, description, callback){
     }
 }
 
-
+function addConclusionPage(scenarioID, text, callback){
+    //check scenario exists
+    // upsert intro page
+    if (scenarioExists(scenarioID)){
+        // create page object - plain-page when no prompt linked
+        pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
+        callback('Success!')
+    }
+    else{
+        // TODO return InvalidScenarioError
+        throw error
+    }
+}
 
 
 function addStakeholder(scenarioID, name, description, conversations, callback){
@@ -388,7 +421,7 @@ function addStakeholder(scenarioID, name, description, conversations, callback){
     
     if (scenarioExists(scenarioID)){
         // create page object (checks for c)
-        pageID = createPage(CONVERSATION, TYPE_CONV, scenarioID)
+        pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
         //create conversation_task object
         let thisQuery = 'insert into stakeholders values(DEFAULT, $1, $2, NULL, $4, $5) returning id;'
         pool.query(thisQuery, [name, description, scenarioID, pageID], (error, results) => {
@@ -428,7 +461,7 @@ function addInitActionPage(scenarioID, description, prompts, callback){
     // upsert MCQ page
     if (scenarioExists(scenarioID)){
         // create page object
-        pageID = createPage(INIT_ACTION, TYPE_MCQ, scenarioID)
+        pageID = createPage(INIT_ACTION, TYPE_MCQ, "", scenarioID)
         //create prompt object
         for (i in prompts){
             let thisQuery = 'insert into mcq values($1, $2)'
@@ -451,7 +484,7 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
     // upsert MCQ page
     if (scenarioExists(scenarioID)){
         // create page object
-        pageID = createPage(FINAL_ACTION, TYPE_MCQ, scenarioID)
+        pageID = createPage(FINAL_ACTION, TYPE_MCQ, "", scenarioID)
         //create prompt object
         for (i in prompts){
             let thisQuery = 'insert into mcq values($1, $2)'
@@ -578,6 +611,38 @@ function getFinalActionPageChoices(scenarioID, questionId, callback){
     })  
 }
 
+async function addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, page_order){
+    const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+    const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 returning id';
+    const insertMCQResponseQuery='INSERT INTO mcq_response(id, question_id, choice_id) VALUES($1, $2, $3) ON CONFLICT (id, question_id) DO UPDATE SET choice_id=$3;';
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
+        let pageID = pageSelection.rows[0].id;
+        const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        let submissionID = submissionSelection.rows[0].id;
+        // RETURNING clause returns ID at the same time
+        const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
+        let responseID = responseCreation.rows[0].id;
+        await client.query(insertMCQResponseQuery, [responseID, questionID, choiceID]);
+        await client.query("COMMIT");
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+    } finally {
+        client.release();
+    }
+}
+
+function addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, INIT_ACTION).then(() => callback("Success!"));
+}
+function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then(() => callback("Success!"));
+}
+
 function cb(results){
     console.log(results)
     pool.end()
@@ -597,6 +662,9 @@ function cb(results){
 module.exports = {
     getScenarios,
     getIntroPage,
+    getTaskPage,
+    getAuthenticatedInstructorDashboardSummary,
+    getStudentsSummary,
     getInitReflectResponse,
     getMidReflectResponse,
     getFinalReflectResponse,
@@ -610,17 +678,21 @@ module.exports = {
     addMidReflectResponse,
     addFinalReflectResponse,
     addIntroPage,
-    addInitReflectPagePage,
+    addInitReflectPage,
     addMidReflectPage,
     addFinalReflectPage,
-    addStakeholder,
-    addStakeholderConversations,
-    addFinalActionPage,
     getInitReflectPage,
     getMidReflectPage,
     getFinalReflectPage,
+    addStakeholder,
+    addStakeholderConversations,
+    addFinalActionPage,
+    addConclusionPage,
     getInitActionPageQuestions,
     getInitActionPageChoices,
     getFinalActionPageQuestions,
-    getFinalActionPageChoices
+    getFinalActionPageChoices,
+    addMCQResponse,
+    addInitActionResponse,
+    addFinalActionResponse
 }
