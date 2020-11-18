@@ -7,6 +7,9 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
+const introText = "Instructions to chosing Stakeholder";
+
+
 function GatheredInformation({pages, setPages, activePage, setActivePage}) {
   let goToInitialAction = ()=>{
     if(pages.initialAction.completed){
@@ -52,9 +55,7 @@ function GatheredInformation({pages, setPages, activePage, setActivePage}) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <TextTypography variant="body1" align="center">
-          Gathered Information
-          </TextTypography>
+            <TextTypography variant="body1" align="center">{introText}</TextTypography>
         </Grid>
       </Grid>
     </div>
