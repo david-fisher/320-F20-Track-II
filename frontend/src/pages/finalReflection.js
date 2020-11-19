@@ -8,6 +8,8 @@ import {
   Button,
   makeStyles,
 } from "@material-ui/core";
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import axios from 'axios';
 
 const TextTypography = withStyles({
   root: {
@@ -60,6 +62,18 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
     }
   }
 
+  async function handleResponse(data) {
+    await axios({
+      url: BASE_URL + '/scenarios/finalReflection',
+      method: 'put',
+      data: {
+        scenarioID: SCENARIO_ID,
+        studentID: STUDENT_ID,
+        data: data
+      }
+    });
+  }
+
   const classes = useStyles();
 
   return (
@@ -89,7 +103,7 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <QA header={mainText} questions={questions} nextPage={goToResponse} pages={pages} nextPageName={"response"} />
+          <QA header={mainText} questions={questions} handleResponse={handleResponse} nextPage={goToResponse} pages={pages} nextPageName={"response"} />
         </Grid>
       </Grid>
     </div>

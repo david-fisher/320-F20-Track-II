@@ -1,6 +1,8 @@
 import React from "react";
 import { makeStyles, withStyles, Typography, Box, Button, Grid } from "@material-ui/core";
 import Checkbox from "./components/checkbox";
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import axios from 'axios';
 
 // const useStyles = makeStyles((theme) => ({
 //   root: {
@@ -42,6 +44,18 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
     }
   }
 
+  async function handleResponse(data) {
+    await axios({
+      url: BASE_URL + '/scenarios/initialAction',
+      method: 'put',
+      data: {
+        scenarioID: SCENARIO_ID,
+        studentID: STUDENT_ID,
+        data: data
+      }
+    });
+  }
+
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
@@ -68,7 +82,7 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
           </TextTypography>
         </Grid>
         <Grid item lg={12}>
-          <Checkbox nextPage={goToGatheredInformation} pages={pages} nextPageName={"gatheredInformation"} />
+          <Checkbox nextPage={goToGatheredInformation} handleResponse={handleResponse} pages={pages} nextPageName={"gatheredInformation"} />
         </Grid>
       </Grid>
     </div>

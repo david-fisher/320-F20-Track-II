@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import playerReducer from './redux/reducers';
 import './index.css';
+import './pages/components/suneditor.min.css';
 import Nav from './Nav';
 import * as serviceWorker from './serviceWorker';
 

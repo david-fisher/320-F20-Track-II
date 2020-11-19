@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Grid, Typography , withStyles, Button } from '@material-ui/core';
+import { Box, Grid, Typography , withStyles, Button, FormHelperText } from '@material-ui/core';
 
 const alignMiddle = {
   position: 'fixed',
@@ -16,14 +16,26 @@ const TextTypography = withStyles({
   },
 })(Typography);
 
-function getQuestions(questionArr) {
+// onChange={(event) => {
+//   setTestInput3(event.target.value);
+
+function getQuestions(questionArr, responses, setResponses) {
   let arr = [];
   for (let i = 0; i < questionArr.length; i++) {
     let question = questionArr[i];
+    let textboxId = 'textBox' + i;
     arr.push(
       <div>
         <p><b>{question}</b></p>
-        <textarea rows="4" cols="90" style={{ resize: "none" }}></textarea>
+        <textarea id={textboxId} value={responses[i]} onChange={event => {
+          const target = event.target
+          setResponses((reses) => {
+            let newList = [...reses];
+            newList[i] = target.value;
+            return newList;
+          });
+        }}
+          rows="4" cols="90" style={{ resize: "none" }}></textarea>
       </div>
     )
   }
@@ -31,40 +43,46 @@ function getQuestions(questionArr) {
 }
 
 export default function StateTextFields(props) {
-  const [testInput1, setTestInput1] = useState("");
-  let qAndA = getQuestions(props.questions).map((question) => <>{question}</>)
-  let header = props.header;
+  
+  const [responses, setResponses] = React.useState(props.questions.map(question => ''));
 
-  const [value, setValue] = React.useState('');
-  const [error, setError] = React.useState(false);
+  let qAndA = getQuestions(props.questions, responses, setResponses).map((question) => <>{question}</>)
+  let header = props.header;
+  const [helperText, setHelperText] = React.useState('');
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setError(true);
-    console.log(props.nextPageName)
-    props.pages[props.nextPageName].completed = true;
-    props.nextPage();
+    if(!responses.includes('')){
+      props.handleResponse(responses).then(res => {
+        props.pages[props.nextPageName].completed = true;
+        props.nextPage();
+      }).catch(err => alert(err))
+    }else{
+      setHelperText('Please provide a response.');
+    }
   };
-
+  
   return (
     <form onSubmit={handleSubmit}>
-    <Grid container spacing={2}>
-      <Grid item lg={12}>
-        <TextTypography variant="body1" align="center">
-          {header}
-        </TextTypography>
+      <Grid container spacing={2}>
+        <Grid item lg={12}>
+          <TextTypography variant="body1" align="center">
+            {header}
+          </TextTypography>
+        </Grid>
+        <Grid item lg={12}>
+          <TextTypography variant="body1" align="center">
+            {qAndA}
+          </TextTypography>
+        </Grid>
+        <Grid item lg={12}>
+        <FormHelperText>{helperText}</FormHelperText>
+          <Button type="submit" variant="outlined" color="primary">
+            Submit
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item lg={12}>
-        <TextTypography variant="body1" align="center">
-          {qAndA}
-        </TextTypography>
-      </Grid>
-      <Grid item lg={12}>
-        <Button type="submit" variant="outlined" color="primary">
-          Submit
-        </Button>
-      </Grid>
-    </Grid>
     </form>
 
 
