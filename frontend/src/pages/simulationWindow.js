@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
-import {Grid, Typography, Box} from "@material-ui/core";
+import {Grid, Typography, Box, Button} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import InfoGatheredList from "./components/gatheredList.js";
 import Results from "./results.js";
@@ -15,7 +15,7 @@ import Feedback from "./feedback.js";
 import FinalReflection from "./finalReflection.js"
 import { ScenariosContext } from "../Nav.js";
 import axios from "axios";
-import {BASE_URL, STUDENT_ID, DEV_MODE} from "../constants/config";
+import {BASE_URL, STUDENT_ID, DEV_MODE, SCENARIO_ID} from "../constants/config";
 
 export const GatheredInfoContext = createContext();
 
@@ -56,21 +56,24 @@ function SimulationWindow() {
       });
     });
 
-    axios({
-      method: 'get',
-      url: BASE_URL + '/scenarios',
-      headers: {
-        studentID: STUDENT_ID,
-      }
-    }).then(response => {
-      setScenarios(prev => {
-        return {
-          scenarioList: response.data
+    if (DEV_MODE) {
+      axios({
+        method: 'get',
+        url: BASE_URL + '/scenarios',
+        headers: {
+          studentID: STUDENT_ID,
         }
+      }).then(response => {
+        setScenarios(prev => {
+          return {
+            scenarioList: response.data,
+            currentScenarioID: response.data[0].id
+          }
+        });
+      }).catch(err => {
+        console.error(err);
       });
-    }).catch(err => {
-      console.error(err);
-    });
+    }
   }, []) // only fire once
 
   return (
@@ -96,6 +99,14 @@ function SimulationWindow() {
                 {scenarios.scenarioList && scenarios.scenarioList.map(scenario => {
                   return (<>
                     {Object.keys(scenario).map(key => ((<>{key}: {scenario[key]}<br/></>)))}
+                    <Button variant="contained" disableElevation
+                    onClick={() => setScenarios(scenarios => {
+                      let newScenarios = {...scenarios};
+                      newScenarios.currentScenarioID = scenario.id;
+                      return newScenarios;
+                    })}>
+                      set as current scenario
+                    </Button>
                     <br/> <br/>
                   </>)
                 })}

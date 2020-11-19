@@ -10,6 +10,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import HTMLRenderer from './components/htmlRenderer';
+import { ScenariosContext } from "../Nav";
 
 const TextTypography = withStyles({
   root: {
@@ -55,15 +56,19 @@ const mainText =
   "Part of your assignment is to identify specific companies who would be willing to provide data and also make recommendations for further data to collect, in order to refine the above list. Once the data is in hand, you will use it to improve the existing predictive model for cognitive decline, by incorporating new training features as appropriate.";
 
 function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
+
   const [task, setTask] = React.useState("");
-  axios({
-    method: "get",
-    url: BASE_URL + "/scenarios/task",
-    headers: {
-      scenarioID: SCENARIO_ID,
-      studentID: STUDENT_ID,
-    },
-  })
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
+
+  React.useEffect(() => {
+    axios({
+      method: "get",
+      url: BASE_URL + "/scenarios/task",
+      headers: {
+        scenarioID: scenarios.currentScenarioID,
+        studentID: STUDENT_ID,
+      },
+    })
     .then((response) => {
       setTask((text) => response.data[0].body_text);
     })
@@ -71,6 +76,8 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
       console.log("err", err);
       alert(err);
     });
+  }, [scenarios])
+
   const classes = useStyles();
   function goToIntroduction() {
     if (!pages.introduction.visited) {

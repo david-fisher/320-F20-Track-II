@@ -23,11 +23,11 @@ insert into partof values(1,1);
 INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'page: Intro page content for scenario 1', 1);
 --INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
 
-INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 1);
+INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflection', 1);
 INSERT INTO prompt VALUES(2, 'Initial reflection prompt (a)...', 1);
 INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', 2);
 
-INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation task', 1);
+INSERT INTO pages VALUES(DEFAULT, 2, 'CONV', 'Body text before conversation task', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 3);
 

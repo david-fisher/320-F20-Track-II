@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { BASE_URL, STUDENT_ID, SCENARIO_ID }from "../constants/config";
 import axios from 'axios';
+import { ScenariosContext } from "../Nav";
 
 const TextTypography = withStyles({
   root: {
@@ -66,6 +67,27 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
 
   const classes = useStyles();
 
+  const [bodyText, setBodyText] = React.useState('');
+  const [prompts, setPrompts] = React.useState([]);
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
+
+  React.useEffect(() => {
+    axios({
+      method: 'get',
+      url: BASE_URL + '/scenarios/initialReflection',
+      headers: {
+        scenarioID: SCENARIO_ID,
+        studentID: STUDENT_ID
+      }
+    }).then(response => {
+      setBodyText(response.data.body_text);
+      setPrompts(prev => response.data.prompts);
+    }).catch(err => {
+      console.log(err);
+      alert(err);
+    })
+  }, [scenarios])
+
   async function handleResponse(data) {
     await axios({
       url: BASE_URL + '/scenarios/initialReflection',
@@ -75,7 +97,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
         studentID: STUDENT_ID,
         data: data
       }
-    });
+    })
   }
 
   return (
@@ -105,7 +127,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-            <QA header={mainText} questions={questions} handleResponse={handleResponse} nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}/>
+            <QA header={bodyText} questions={prompts.map(res => res.text)} handleResponse={handleResponse} nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}/>
         </Grid>
       </Grid>
     </div>
