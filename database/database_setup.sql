@@ -51,7 +51,7 @@ CREATE TABLE "enrolled" (
 	PRIMARY KEY("student_id", "course_id")
 );
 
-CREATE TYPE simulation_status AS ENUM ("DRAFT", "PUBLISHED", "CLOSED");
+CREATE TYPE simulation_status AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED');
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR,
