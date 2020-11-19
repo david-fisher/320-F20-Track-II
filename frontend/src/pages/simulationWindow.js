@@ -1,5 +1,5 @@
-import React, { useState, createContext, useEffect } from "react";
-import {Grid} from "@material-ui/core";
+import React, { useState, createContext, useEffect, useContext } from "react";
+import {Grid, Typography, Box} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import InfoGatheredList from "./components/gatheredList.js";
 import Results from "./results.js";
@@ -13,6 +13,9 @@ import Stakeholders from "./stakeholders.js";
 import MiddleReflection from "./midReflection";
 import Feedback from "./feedback.js";
 import FinalReflection from "./finalReflection.js"
+import { ScenariosContext } from "../Nav.js";
+import axios from "axios";
+import {BASE_URL, STUDENT_ID, DEV_MODE} from "../constants/config";
 
 export const GatheredInfoContext = createContext();
 
@@ -34,8 +37,9 @@ function SimulationWindow() {
   });
 
   const infoIdsState = useState([]);
+  const [scenarios, setScenarios] = useContext(ScenariosContext);
 
-  // Asynchronously initialize infoIdsState
+  // Asynchronously initialize infoIdsState and scenarios
   useEffect(() => {
     // placeholder async function until redux is set up
     async function imitateGetCompleteStakeholders() { return [] };// {name: 'Stakeholder 0', id: 's0'}] }
@@ -51,6 +55,22 @@ function SimulationWindow() {
         ];
       });
     });
+
+    axios({
+      method: 'get',
+      url: BASE_URL + '/scenarios',
+      headers: {
+        studentID: STUDENT_ID,
+      }
+    }).then(response => {
+      setScenarios(prev => {
+        return {
+          scenarioList: response.data
+        }
+      });
+    }).catch(err => {
+      console.error(err);
+    });
   }, []) // only fire once
 
   return (
@@ -63,14 +83,31 @@ function SimulationWindow() {
             <Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage} />
           </Grid>
           <Grid item lg={6} md={8} sm={8}>
+            <Box mb={6}>
               {React.cloneElement(pages[activePage].html, {
-                  pages: pages,
-                  setPages: setPages,
-                  activePage: activePage,
-                  setActivePage: setActivePage})}
+                    pages: pages,
+                    setPages: setPages,
+                    activePage: activePage,
+                    setActivePage: setActivePage})}
+            </Box>
+            {DEV_MODE && (
+              <Typography>
+                {"Scenarios:"} <br/>
+                {scenarios.scenarioList && scenarios.scenarioList.map(scenario => {
+                  return (<>
+                    {Object.keys(scenario).map(key => ((<>{key}: {scenario[key]}<br/></>)))}
+                    <br/> <br/>
+                  </>)
+                })}
+              </Typography>)}
           </Grid>
-          <Grid item lg={3} md={2} sm={2}>
-            <InfoGatheredList pages={pages}/>
+          <Grid container item lg={3} md={2} sm={2}>
+            <Grid item lg={12}>
+              <InfoGatheredList pages={pages}/>
+            </Grid>
+            <Grid item lg={12}>
+
+            </Grid>
           </Grid>
         </GatheredInfoContext.Provider>
       </Grid>

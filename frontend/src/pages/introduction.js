@@ -52,7 +52,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
       studentID: STUDENT_ID,
     }
   }).then(response => {
-    setIntroText(text => response.data[0].introduction);
+    setIntroText(text => response.data[0].body_text);
   }).catch((err)=>{
     console.log("err",err);
     alert(err);

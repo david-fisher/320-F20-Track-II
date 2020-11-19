@@ -65,7 +65,7 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
     },
   })
     .then((response) => {
-      setTask((text) => response.data[0].task);
+      setTask((text) => response.data[0].body_text);
     })
     .catch((err) => {
       console.log("err", err);
