@@ -57,7 +57,7 @@ CREATE TABLE "scenario" (
 	"name" VARCHAR,
 	"due_date" TIMESTAMP,
 	"description" VARCHAR,
-	"status" simulation_status DEFAULT "DRAFT",
+	"status" simulation_status DEFAULT 'DRAFT',
 	"additional_data" VARCHAR
 ); 
 
