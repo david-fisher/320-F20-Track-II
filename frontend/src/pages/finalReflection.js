@@ -45,18 +45,16 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
     setActivePage((prevPage) => "feedback");
   }
 
-  function goToResponse() {
-    if (pages.response.completed) {
-      if (pages.response.completed) {
-        if (!pages.response.visited) {
+  function goToConclusion() {
+    if (pages.conclusion.completed) {
+        if (!pages.conclusion.visited) {
           setPages((prevPages) => {
             let copy = { ...prevPages };
-            copy.response.visited = true;
+            copy.conclusion.visited = true;
             return copy;
           });
         }
-        setActivePage((prevPage) => "response");
-      }
+        setActivePage((prevPage) => "conclusion");
     }
   }
 
@@ -89,7 +87,7 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <QA header={mainText} questions={questions} nextPage={goToResponse} pages={pages} nextPageName={"response"} />
+          <QA header={mainText} questions={questions} nextPage={goToConclusion} pages={pages} nextPageName={"conclusion"} />
         </Grid>
       </Grid>
     </div>
