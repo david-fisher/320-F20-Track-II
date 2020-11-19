@@ -54,20 +54,6 @@ function getScenarios(studentID, callback){
 
 function getIntroPage(scenarioID, callback){
     let thisQuery= 'select pages.body_text from pages where pages.order = ' + INTROPAGE + 'and scenario_id = $1'
-    scenarioPageExists(1, 'PLAIN', scenarioID)
-    .then(function(result){
-        console.log(result);
-    })
-    .catch(function(err){
-        console.log(err);
-    });
-    scenarioExists(scenarioID)
-    .then(function(result){
-        console.log(result);
-    })
-    .catch(function(err){
-        console.log(err);
-    });
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -235,6 +221,14 @@ function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callba
     addReflectionResponse(studentID, input, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
 }
 
+
+// scenarioExists(scenarioID)
+// .then(function(result){
+//     console.log(result);
+// })
+// .catch(function(err){
+//     console.log(err);
+// });
 function scenarioExists(scenarioID){
     //returns True if scenarioID exists
     let thisQuery = 'select scenario.id from scenario where scenario.id = $1'
@@ -280,6 +274,13 @@ function addScenarioToCourse(scenarioID, courseID){
 }
 
 
+// scenarioPageExists(1, 'PLAIN', scenarioID)
+// .then(function(result){
+//     console.log(result);
+// })
+// .catch(function(err){
+//     console.log(err);
+// });
 function scenarioPageExists(order, type, scenarioID){
     // returns pageID
     let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = $1 and pages.order = $2 and pages.type = $3'
