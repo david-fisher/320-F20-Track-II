@@ -13,7 +13,7 @@ const bodyText = 'Although current AI offers us few ethical issues that are not 
 
 const questions = ["We would appreciate receiving any comments that you have on this online ethics simulation: "];
 
-function Response({pages, setPages, activePage, setActivePage}) {
+function Conclusion({pages, setPages, activePage, setActivePage}) {
   function goToFinalReflection(){
     if (!pages.finalReflection.visited) {
       setPages(prevPages => {
@@ -30,7 +30,7 @@ function Response({pages, setPages, activePage, setActivePage}) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt = {5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Response
+            Conclusion
           </TextTypography>
         </Box>
       </Grid>
@@ -46,11 +46,11 @@ function Response({pages, setPages, activePage, setActivePage}) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <QA header={bodyText} questions={questions} pages={pages} nextPageName={"response"} />
+          <QA header={bodyText} questions={questions} pages={pages} nextPageName={"conclusion"} />
         </Grid>
       </Grid>
     </div>
   );
 }
 
-export default Response;
+export default Conclusion;
