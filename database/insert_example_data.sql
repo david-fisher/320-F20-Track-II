@@ -27,7 +27,7 @@ INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflecti
 INSERT INTO prompt VALUES(2, 'Initial reflection prompt (a)...', 1);
 INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', 2);
 
-INSERT INTO pages VALUES(DEFAULT, 2, 'CONV', 'Body text before conversation task', 1);
+INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'Body text before task assignment', 1);
 INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 3);
 
@@ -93,10 +93,10 @@ INSERT INTO partof VALUES(2, 2);
 INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 'page: Intro page content for scenario 2', 2);
 --INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
 
-INSERT INTO pages VALUES(DEFAULT, 2, 'PRMPT', 'Body text before initial reflection', 2);
+INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflection', 2);
 INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection', 1);
 
-INSERT INTO pages VALUES(DEFAULT, 3, 'CONV', 'Body text before conversation', 2);
+INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'Body text before task assignment', 2);
 INSERT INTO conversation_task VALUES(10, 's2 conversation_task: <obj>');
 
 INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 2);
