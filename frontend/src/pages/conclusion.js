@@ -1,6 +1,7 @@
 import React from "react";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
 import QA from "./components/q&a";
+import { useHistory } from 'react-router-dom';
 
 
 const TextTypography = withStyles({
@@ -25,6 +26,11 @@ function Conclusion({pages, setPages, activePage, setActivePage}) {
     setActivePage(prevPage => 'finalReflection')
   }
 
+  let history = useHistory();
+  const goToHome = () => {
+    history.push('/');
+  }
+
   return (
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
@@ -46,7 +52,7 @@ function Conclusion({pages, setPages, activePage, setActivePage}) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <QA header={bodyText} questions={questions} pages={pages} nextPageName={"conclusion"} />
+          <QA header={bodyText} questions={questions} nextPage={goToHome} npages={pages} nextPageName={"home"} />
         </Grid>
       </Grid>
     </div>

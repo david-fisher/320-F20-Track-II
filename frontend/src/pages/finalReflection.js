@@ -47,7 +47,6 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
 
   function goToConclusion() {
     if (pages.conclusion.completed) {
-      if (pages.conclusion.completed) {
         if (!pages.conclusion.visited) {
           setPages((prevPages) => {
             let copy = { ...prevPages };
@@ -56,7 +55,6 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
           });
         }
         setActivePage((prevPage) => "conclusion");
-      }
     }
   }
 

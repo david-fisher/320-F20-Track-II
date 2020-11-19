@@ -42,7 +42,9 @@ export default function StateTextFields(props) {
     event.preventDefault();
     setError(true);
     console.log(props.nextPageName)
-    props.pages[props.nextPageName].completed = true;
+    if(props.nextPageName != 'home'){
+      props.pages[props.nextPageName].completed = true;
+    }
     props.nextPage();
   };
 
