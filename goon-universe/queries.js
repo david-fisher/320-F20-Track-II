@@ -246,8 +246,8 @@ function scenarioExists(scenarioID){
 
 // helper for createScenario
 function addScenario(name, due_date, description, additional_data){
-    let thisQuery = 'insert into scenario values($1, $2, $3, $5, $4)'
-    pool.query(thisQuery, [name, due_date, description, additional_data, "DRAFT"], (error, results) => {
+    let thisQuery = 'insert into scenario values($1, $2, $3, DEFAULT, $4)'
+    pool.query(thisQuery, [name, due_date, description, additional_data], (error, results) => {
         if (error){
             throw error
         }
@@ -565,7 +565,7 @@ function getStakeholderDescriptions(scenarioID){
 }
 
 function getInitReflectPage(scenarioID, callback){
-    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -575,7 +575,7 @@ function getInitReflectPage(scenarioID, callback){
 }
 
 function getMidReflectPage(scenarioID, callback){
-    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ MIDDLE_REFLECTION +' and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ MIDDLE_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -585,7 +585,7 @@ function getMidReflectPage(scenarioID, callback){
 }
 
 function getFinalReflectPage(scenarioID, callback){
-    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
