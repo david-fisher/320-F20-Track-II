@@ -29,6 +29,13 @@ const TYPE_CONV = 'CONV'
 
 const Pool = require('pg').Pool
 
+/* Example .env file
+ * PGUSER=<username>
+ * PGHOST="localhost"
+ * PGDATABASE="ethicssimulatordb"
+ * PGPASSWORD=<password>
+ * PGPORT=5432
+ */
 const pool = new Pool({
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,
