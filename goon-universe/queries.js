@@ -70,7 +70,7 @@ function getIntroPage(scenarioID, callback){
 }
 
 function getTaskPage(scenarioID, callback){
-    let thisQuery= 'select page_id from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
+    let thisQuery= 'select pages.body_text from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
