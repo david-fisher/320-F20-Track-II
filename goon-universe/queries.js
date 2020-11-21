@@ -571,33 +571,52 @@ function getStakeholderDescriptions(scenarioID){
     }
 }
 
+// Replace all these with a single helper taking an order parameter?
 function getInitReflectPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text, prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.promt_num from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
         }
-        callback(results.rows)
+        let response = {}
+        response.prompts = results.rows.map(row => ({
+            text: row.prompt
+            id. row.prompt_num
+        }))
+        response.body_text = results.rows[0].body_text
+        callback(response)
     })  
 }
 
 function getMidReflectPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text, prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order = '+ MIDDLE_REFLECTION +' and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order = '+ MIDDLE_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
         }
-        callback(results.rows)
+        let response = {}
+        response.prompts = results.rows.map(row => ({
+            text: row.prompt
+            id. row.prompt_num
+        }))
+        response.body_text = results.rows[0].body_text
+        callback(response)
     })  
 }
 
 function getFinalReflectPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text, prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
         }
-        callback(results.rows)
+        let response = {}
+        response.prompts = results.rows.map(row => ({
+            text: row.prompt
+            id. row.prompt_num
+        }))
+        response.body_text = results.rows[0].body_text
+        callback(response)
     })  
 }
 
