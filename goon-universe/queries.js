@@ -66,7 +66,7 @@ function getIntroPage(scenarioID, callback){
             throw error
         }
         callback(results.rows)
-    })  
+    })
 }
 
 function getTaskPage(scenarioID, callback){
@@ -76,7 +76,17 @@ function getTaskPage(scenarioID, callback){
             throw error
         }
         callback(results.rows)
-    }) 
+    })
+}
+
+function getConclusionPage(scenarioID, callback){
+    let thisQuery= 'select pages.body_text from pages where pages.order = ' + CONCLUSIONPAGE + 'and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })
 }
 
 function getAuthenticatedInstructorDashboardSummary(instructorID, callback){
@@ -693,6 +703,7 @@ function cb(results){
 module.exports = {
     getScenarios,
     getIntroPage,
+    getConclusionPage,
     getTaskPage,
     getAuthenticatedInstructorDashboardSummary,
     getStudentsSummary,
