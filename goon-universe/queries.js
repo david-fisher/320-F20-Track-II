@@ -581,7 +581,7 @@ function getInitReflectPage(scenarioID, callback){
         let response = {}
         response.prompts = results.rows.map(row => ({
             text: row.prompt,
-            id. row.prompt_num
+            id: row.prompt_num
         }))
         response.body_text = results.rows[0].body_text
         callback(response)
@@ -597,7 +597,7 @@ function getMidReflectPage(scenarioID, callback){
         let response = {}
         response.prompts = results.rows.map(row => ({
             text: row.prompt,
-            id. row.prompt_num
+            id: row.prompt_num
         }))
         response.body_text = results.rows[0].body_text
         callback(response)
@@ -613,7 +613,7 @@ function getFinalReflectPage(scenarioID, callback){
         let response = {}
         response.prompts = results.rows.map(row => ({
             text: row.prompt,
-            id. row.prompt_num
+            id: row.prompt_num
         }))
         response.body_text = results.rows[0].body_text
         callback(response)
