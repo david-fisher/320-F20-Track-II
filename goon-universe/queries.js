@@ -277,6 +277,19 @@ function createScenario(instructorID, name, due_date, description, additional_da
 
 }
 
+function setScenarioStatus(scenarioID, scenarioStatus) {
+    // We assume the editor backend already checked that this is valid
+    // Let PostgreSQL error propagate if invalid parameters passed
+    let thisQuery = "UPDATE scenario SET scenario.status = $2 WHERE scenario.id = $1"
+    pool.query(thisQuery, [scenarioID, scenarioStatus], (error, results) => {
+        if (error) {
+            throw error
+        } else if (results.rowCount == 0) {
+            throw new RangeError(`Scenario with ID ${scenarioID} does not exist`)
+        }
+    })
+}
+
 function addScenarioToCourse(scenarioID, courseID){
     // check course exists
     // check scenario exists
@@ -722,6 +735,7 @@ module.exports = {
     getInstructorInfo,
     addUser,
     addCourse,
+    setScenarioStatus,
     addInitReflectResponse,
     addMidReflectResponse,
     addFinalReflectResponse,
