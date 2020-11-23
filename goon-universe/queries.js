@@ -215,10 +215,10 @@ async function addReflectionResponse(studentID, input, promptNum, scenarioID, ti
 function addInitReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
     addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
 }
-function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback) {
+function addMidReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
     addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, MIDDLE_REFLECTION).then(() => callback("Success!"));
 }
-function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback) {
+function addFinalReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
     addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
 }
 
