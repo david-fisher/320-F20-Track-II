@@ -704,15 +704,60 @@ function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, tim
 }
 
 // helper for version control
-function getScenarioCSV(scenarioID){
+function getScenarioCSV(scenarioID, callback){
     // returns CSV string for a scenario
+    // let scenario_query = "select * from scenario where scenario.id = $1"
+    // let pages_query = "select * from pages"
+    let thisQuery = 
+        "select * from "+
+        "scenario left outer join pages on scenario.id = pages.scenario_id "+
+        "left join prompt on prompt.page_id = pages.id " +
+        "left join conversation_task on conversation_task.page_id = pages.id  " + 
+        "left join stakeholders on stakeholders.scenario_id = scenario.id " +
+        "left join conversation on conversation.stakeholder_id = stakeholders.id " +
+        "left join score on score.stakeholder_id = stakeholders.id " +
+        "left join issues on issues.id = score.issue_id " +
+        "left join mcq on mcq.page_id = pages.id " +
+        "left join question on question.mcq_id = mcq.page_id " +
+        "left join mcq_option on mcq_option.question_id = question.id " +
+        "where scenario.id = $1 "
 
+
+        let where_statement = "where scenario.id = $1 "
+        let pages_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + where_statement
+        let prompt_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join prompt on prompt.page_id = pages.id " +where_statement
+        let conversation_task_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join conversation_task on conversation_task.page_id = pages.id " +where_statement
+        let stakeholders_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + where_statement
+        let conversation_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + "left join conversation on conversation.stakeholder_id = stakeholders.id " + where_statement
+        let score_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + "left join score on score.stakeholder_id = stakeholders.id " +where_statement
+        let issues_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + "left join score on score.stakeholder_id = stakeholders.id " + "left join issues on issues.id = score.issue_id " + where_statement
+        let mcq_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join mcq on mcq.page_id = pages.id " + where_statement
+        let question_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join mcq on mcq.page_id = pages.id " + "left join question on quesiton.mcq_id = mcq.page_id " + where_statement
+        let mcq_option = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join mcq on mcq.page_id = pages.id " + "left join question on quesiton.mcq_id = mcq.page_id " + "left join mcq_option on mcq_option.question_id = question.id" + where_statement
+        
+    // collect results of all the queries and dump to csv
+    // return new Promise(function(resolve, reject){
+    //     pool.query(thisQuery, [scenarioID], (error, results) => {
+    //         if (error){
+    //             return reject(error)
+    //         }
+    //         // TODO return string instead
+    //         return resolve(results.rows.length!=0)
+    //     })
+    // })
+
+    pool.query(prompt_tbl, [scenarioID], (error, results) => {
+        if (error){
+            throw error;
+        }
+        callback(results.rows)
+    })
 }
 
 // helper for version control
 function loadScenarioCSV(scenario_csv_string){
     // creates new scenario using scenario_csv_string
-    
+
 }
 
 
@@ -767,5 +812,6 @@ module.exports = {
     getFinalActionPageQuestionsAndChoices,
     addMCQResponse,
     addInitActionResponse,
-    addFinalActionResponse
+    addFinalActionResponse,
+    getScenarioCSV
 }
