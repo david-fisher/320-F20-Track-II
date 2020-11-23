@@ -722,18 +722,27 @@ function getScenarioCSV(scenarioID, callback){
         "left join mcq_option on mcq_option.question_id = question.id " +
         "where scenario.id = $1 "
 
+        let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
+        let prompt_cols = "prompt.page_id, prompt.prompt, prompt.prompt_num "
+        let conversation_task_cols = "page_id " 
+        let stakeholders_cols = "id, name , designation, description, conversation, conversation_task_id "
+        let conversation_cols = "conversation.id, conversation.stakeholder_id, conversation.question, conversation.conversation_text "
+        let score_cols = "score.stakeholder_id, score.issue_id, score.value "
+        let issues_cols = "issues.id, issues.name, issues.description "
+        let mcq_cols = "mcq.page_id "
+        let question_cols = "question.id, question.question, question.mcq_id "
+        let mcq_option_cols = "mcq_option.id, mcq_option.option, mcq_option.question_id "
 
-        let where_statement = "where scenario.id = $1 "
-        let pages_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + where_statement
-        let prompt_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join prompt on prompt.page_id = pages.id " +where_statement
-        let conversation_task_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join conversation_task on conversation_task.page_id = pages.id " +where_statement
-        let stakeholders_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + where_statement
-        let conversation_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + "left join conversation on conversation.stakeholder_id = stakeholders.id " + where_statement
-        let score_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + "left join score on score.stakeholder_id = stakeholders.id " +where_statement
-        let issues_tbl = "select * from scenario left join stakeholders on scenario.id = stakeholders.scenario_id " + "left join score on score.stakeholder_id = stakeholders.id " + "left join issues on issues.id = score.issue_id " + where_statement
-        let mcq_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join mcq on mcq.page_id = pages.id " + where_statement
-        let question_tbl = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join mcq on mcq.page_id = pages.id " + "left join question on quesiton.mcq_id = mcq.page_id " + where_statement
-        let mcq_option = "select * from scenario left join pages on scenario.id = pages.scenario_id " + "left join mcq on mcq.page_id = pages.id " + "left join question on quesiton.mcq_id = mcq.page_id " + "left join mcq_option on mcq_option.question_id = question.id" + where_statement
+        let pages_tbl = "select " + pages_cols + "from pages where pages.scenario_id = $1 "
+        let prompt_tbl = "select " + prompt_cols + "from pages, prompt where pages.scenario_id = $1 and prompt.page_id = pages.id "
+        let conversation_task_tbl = "select " + conversation_task_cols + "from pages, conversation_task where pages.scenario_id = $1 and conversation_task.page_id = pages.id "
+        let stakeholders_tbl = "select " + stakeholders_cols + "from stakeholders where stakeholders.scenario_id = $1"
+        let conversation_tbl = "select " + conversation_cols + "from stakeholders, conversation where stakeholders.scenario_id = $1 and conversation.stakeholder_id = stakeholders.id"
+        let score_tbl = "select " + score_cols + "from score, stakeholders where score.stakeholder_id = stakeholder.id and stakeholders.scenario_id = $1"
+        let issues_tbl = "select " + issues_cols + "from score, issues, stakeholders where stakeholders.scenario_id = $1 and score.stakeholder_id = stakeholders.id and issues.id = score.issue_id"
+        let mcq_tbl = "select " + mcq_cols + "from pages, mcq where pages.scenario_id = $1 and mcq.page_id = pages.id "
+        let question_tbl = "select " + question_cols + "from pages, mcq, question where pages.scenario_id = $1 and mcq.page_id = pages.id and question.mcq_id = mcq.page_id "
+        let mcq_option_tbl = "select " + mcq_option_cols + "from pages, mcq, question, mcq_option where pages.scenario_id = $1 and  mcq.page_id = pages.id and question.mcq_id = mcq.page_id and mcq_option.question_id = question.id"
         
     // collect results of all the queries and dump to csv
     // return new Promise(function(resolve, reject){
@@ -746,10 +755,11 @@ function getScenarioCSV(scenarioID, callback){
     //     })
     // })
 
-    pool.query(prompt_tbl, [scenarioID], (error, results) => {
+    pool.query(mcq_option_tbl, [scenarioID], (error, results) => {
         if (error){
             throw error;
         }
+        console.log(results.rows);
         callback(results.rows)
     })
 }
