@@ -135,7 +135,7 @@ router.route('/scenarios/initialReflection')
         }
         else{
         db.getInitReflectPage(scenarioID, function(result){
-            if(result.length == 0) {
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No initial reflection found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -152,6 +152,7 @@ router.route('/scenarios/initialReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        prompt_num = req.body.prompt_num
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -162,10 +163,16 @@ router.route('/scenarios/initialReflection')
             console.log("Invalid Student ID")
             res.end()
         }
+        else if(!isnumber(prompt_num)){
+            res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+            console.log("Invalid Prompt")
+            res.end()
+        }
         else{
-        db.addInitReflectResponse(studentID, scenarioID, data, function(result){
+        timestamp = new Date()
+        db.addInitReflectResponse(studentID, data, prompt_num, scenarioID, timestamp, function(result){
           if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+              res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
           }
           else{
               res.status(200).send(result)
@@ -447,7 +454,7 @@ router.route('/scenarios/middleReflection')
         }
         else {
         db.getMidReflectPage(scenarioID, function(result){
-            if(result.length == 0){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No middle reflection found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -526,7 +533,7 @@ router.route('/scenarios/finalReflection')
         else{
             db.getFinalReflectPage(scenarioID, function(result){
                 // console.log("Final Relfection-", result)
-                if(result.length == 0){
+                if(Object.entries(result).length == 0){
                     res.status(404).json({error: `No final reflection found for scenarioID: ${scenarioID}`})
                 }
                 else{
