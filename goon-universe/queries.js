@@ -703,6 +703,19 @@ function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, tim
     addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then(() => callback("Success!"));
 }
 
+// helper for version control
+function getScenarioCSV(scenarioID){
+    // returns CSV string for a scenario
+
+}
+
+// helper for version control
+function loadScenarioCSV(scenario_csv_string){
+    // creates new scenario using scenario_csv_string
+    
+}
+
+
 function cb(results){
     console.log(results)
     pool.end()
