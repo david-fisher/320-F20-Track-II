@@ -53,14 +53,12 @@ export default function StateTextFields(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(!responses.includes('')){
-      props.handleResponse(responses).then(res => {
-        props.pages[props.nextPageName].completed = true;
-        props.nextPage();
-      }).catch(err => alert(err))
-    }else{
-      setHelperText('Please provide a response.');
+    setError(true);
+    console.log(props.nextPageName)
+    if(props.nextPageName != 'home'){
+      props.pages[props.nextPageName].completed = true;
     }
+    props.nextPage();
   };
   
   return (
