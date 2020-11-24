@@ -152,7 +152,6 @@ router.route('/scenarios/initialReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-        prompt_num = req.body.prompt_num
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -163,22 +162,27 @@ router.route('/scenarios/initialReflection')
             console.log("Invalid Student ID")
             res.end()
         }
-        else if(!isnumber(prompt_num)){
-            res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
-            console.log("Invalid Prompt")
-            res.end()
-        }
         else{
         timestamp = new Date()
-        db.addInitReflectResponse(studentID, data, prompt_num, scenarioID, timestamp, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated initial reflection")
-          }
-        })}
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addInitReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated initial reflection")
+                    }
+                })
+            }
+        }}
     })
 
 router.route('/scenarios/initialReflection/response')
@@ -469,6 +473,7 @@ router.route('/scenarios/middleReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        prompt_num = req.body.prompt_num
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -480,7 +485,8 @@ router.route('/scenarios/middleReflection')
             res.end()
         }
         else{
-        db.addMidReflectResponse(studentID, scenarioID, data, function(result){
+        timestamp = new Date()
+        db.addMidReflectResponse(studentID, data, prompt_num, scenarioID, timestamp, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
