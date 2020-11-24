@@ -473,7 +473,6 @@ router.route('/scenarios/middleReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-        prompt_num = req.body.prompt_num
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -486,17 +485,25 @@ router.route('/scenarios/middleReflection')
         }
         else{
         timestamp = new Date()
-        db.addMidReflectResponse(studentID, data, prompt_num, scenarioID, timestamp, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated middle reflection")
-          }
-        })
-        }
-
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addMidReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated middle reflection")
+                    }
+                })
+            }
+        }}
     })
 
 router.route('/scenarios/middleReflection/response')
@@ -555,27 +562,37 @@ router.route('/scenarios/finalReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-    	if(!isnumber(scenarioID)){
+        if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
-    	else if(!isnumber(studentID)){
+        else if(!isnumber(studentID)){
             res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
-    	else {
-    	  db.addFinalReflectResponse(studentID, scenarioID, data, function(result){
-                if(result.length === 0){
-                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-                }
-                else{
-                    res.status(200).send(result)
-                    console.log("Updated final reflection")
-                }
-            })}
-            console.log("Updated final reflection")
+        else{
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addFinalReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated final reflection")
+                    }
+                })
+            }
+        }}
     })
 
 
