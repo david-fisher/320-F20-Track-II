@@ -127,7 +127,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-            <QA header={bodyText} questions={prompts.map(res => res.text)} handleResponse={handleResponse} nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}/>
+            <QA header={bodyText} questions={prompts} handleResponse={handleResponse} nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}/>
         </Grid>
       </Grid>
     </div>
