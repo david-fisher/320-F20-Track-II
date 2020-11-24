@@ -95,8 +95,9 @@ function getStudentsSummary(scenarioID, callback){
     })  
 }
 
+// TODO: refactor into shared helper function
 function getInitReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and submissions.scenario_id=$2 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -106,7 +107,7 @@ function getInitReflectResponse(studentID, scenarioID, callback){
 }
 
 function getMidReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and submissions.scenario_id=$2 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -116,7 +117,7 @@ function getMidReflectResponse(studentID, scenarioID, callback){
 }
 
 function getFinalReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
+    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and submissions.scenario_id=$2 and pages.scenario_id =$2'
     pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
         if (error) {
             throw error
