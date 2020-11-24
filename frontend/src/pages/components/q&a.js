@@ -45,7 +45,7 @@ function getQuestions(questionArr, responses, setResponses) {
 export default function StateTextFields(props) {
   
   const [responses, setResponses] = React.useState(props.questions.map(question => ''));
-
+  const [error, setError] = React.useState(false);
   let qAndA = getQuestions(props.questions, responses, setResponses).map((question) => <>{question}</>)
   let header = props.header;
   const [helperText, setHelperText] = React.useState('');
