@@ -34,15 +34,15 @@ const questions = [
 ];
 
 function FinalReflection({ pages, setPages, activePage, setActivePage }) {
-  function goToFeedback() {
-    if (!pages.feedback.visited) {
+  function goToSummary() {
+    if (!pages.summary.visited) {
       setPages((prevPages) => {
         let copy = { ...prevPages };
-        copy.feedback.visited = true;
+        copy.summary.visited = true;
         return copy;
       });
     }
-    setActivePage((prevPage) => "feedback");
+    setActivePage((prevPage) => "summary");
   }
 
   function goToConclusion() {
@@ -74,7 +74,7 @@ function FinalReflection({ pages, setPages, activePage, setActivePage }) {
           <Button
             variant="contained"
             disableElevation
-            onClick={goToFeedback}
+            onClick={goToSummary}
           >
             Back
           </Button>

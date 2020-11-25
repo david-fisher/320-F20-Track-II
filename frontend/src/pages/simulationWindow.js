@@ -11,7 +11,7 @@ import InitialAction from "./initialAction.js";
 import GatheredInformation from "./gatheredInformation.js";
 import Stakeholders from "./stakeholders.js";
 import MiddleReflection from "./midReflection";
-import Feedback from "./feedback.js";
+import Summary from "./summary.js";
 import FinalReflection from "./finalReflection.js"
 
 export const GatheredInfoContext = createContext();
@@ -28,7 +28,7 @@ function SimulationWindow() {
     stakeholders: { visited: false, completed: true, pageNumber: 5, html: (<Stakeholders />) },
     middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
     results: { visited: false, completed: false, pageNumber: 7, html: (<Results />) },
-    feedback: { visited: false, completed: true, pageNumber: 8, html: (<Feedback />) },
+    summary: { visited: false, completed: true, pageNumber: 8, html: (<Summary />) },
     finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
     conclusion: { visited: false, completed: false, pageNumber: 10, html: (<Conclusion />) }
   });

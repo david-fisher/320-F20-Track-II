@@ -7,7 +7,7 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-function Feedback({pages, setPages, activePage, setActivePage}) {
+function Summary({pages, setPages, activePage, setActivePage}) {
   function goToResults(){
     if (!pages.results.visited) {
       setPages(prevPages => {
@@ -35,7 +35,7 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt = {5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Feedback
+            Summary
           </TextTypography>
         </Box>
       </Grid>
@@ -52,7 +52,7 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
           <Box m="2rem">
           </Box>
           <TextTypography variant="body1" align="center">
-            Some Feedback.
+            Some Summary.
           </TextTypography>
         </Grid>
       </Grid>
@@ -60,4 +60,4 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
   );
 }
 
-export default Feedback;
+export default Summary;

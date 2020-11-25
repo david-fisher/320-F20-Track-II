@@ -20,15 +20,15 @@ function Results({pages, setPages, activePage, setActivePage}) {
     }
     setActivePage(prevPage => 'middleReflection')
   }
-  function goToFeedback(){
-    if (!pages.feedback.visited) {
+  function goToSummary(){
+    if (!pages.summary.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.feedback.visited = true;
+        copy.summary.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'feedback');
+    setActivePage(prevPage => 'summary');
   }
   let Summary_Value = 2.03;
   let Coverage = { Safety: 0.5, Salary: 0.667, Reputation: 1.0, Privacy: 0.8 };
@@ -46,7 +46,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
           <Button variant="contained" disableElevation onClick={goToMiddleReflection}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation color="primary" onClick={goToFeedback}>Next</Button>
+          <Button variant="contained" disableElevation color="primary" onClick={goToSummary}>Next</Button>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
