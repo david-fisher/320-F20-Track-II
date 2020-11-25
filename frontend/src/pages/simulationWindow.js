@@ -3,7 +3,7 @@ import {Grid, Typography, Box, Button} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import InfoGatheredList from "./components/gatheredList.js";
 import Results from "./results.js";
-import Response from "./response.js";
+import Conclusion from "./conclusion.js";
 import Introduction from "./introduction.js";
 import ProjectAssignment from "./projectAssignment.js";
 import InitialReflection from "./initialReflection.js";
@@ -33,7 +33,7 @@ function SimulationWindow() {
     results: { visited: false, completed: false, pageNumber: 7, html: (<Results />) },
     feedback: { visited: false, completed: true, pageNumber: 8, html: (<Feedback />) },
     finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
-    response: { visited: false, completed: false, pageNumber: 10, html: (<Response />) }
+    conclusion: { visited: false, completed: false, pageNumber: 10, html: (<Conclusion />) }
   });
 
   const infoIdsState = useState([]);

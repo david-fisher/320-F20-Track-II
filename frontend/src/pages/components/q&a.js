@@ -47,6 +47,7 @@ export default function StateTextFields(props) {
     prev[question.id] = '';
     return prev;
   }, {}));
+  const [error, setError] = React.useState(false);
   let qAndA = getQuestions(props.questions, responses, setResponses)
   let header = props.header;
   const [helperText, setHelperText] = React.useState('');
@@ -61,7 +62,11 @@ export default function StateTextFields(props) {
       }).catch(err => alert(err))
     }else{
       setHelperText('Please provide a response.');
-    }
+      setError(true);
+      if(props.nextPageName != 'home'){
+        props.pages[props.nextPageName].completed = true;
+      }
+    props.nextPage();
   };
   
   return (
