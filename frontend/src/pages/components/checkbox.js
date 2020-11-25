@@ -34,8 +34,12 @@ export default function ErrorRadios(props) {
     if (value !== '') {
       setHelperText('Good Answer!');
       setError(true);
-      props.pages[props.nextPageName].completed = true;
-      props.nextPage();
+      // props.pages[props.nextPageName].completed = true;
+      // props.nextPage();
+      props.handleResponse(value).then(res => {
+        props.pages[props.nextPageName].completed = true;
+        props.nextPage();
+      }).catch(err => alert(err))
     } else {
       setHelperText('Please select an option.');
       setError(true);

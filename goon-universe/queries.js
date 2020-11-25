@@ -1,6 +1,6 @@
 var env = require('node-env-file');
 env(__dirname + '/.env');
-
+// require("dotenv").config()
 /*
  * These constants are concatenated into SQL queries below, so be careful
  * WHEN IN DOUBT, PATCH CONCATENATION OUT
@@ -111,35 +111,39 @@ function getStudentsSummary(scenarioID, callback){
     })  
 }
 
-// TODO: refactor into shared helper function
-function getInitReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and submissions.scenario_id=$2 and pages.scenario_id =$2'
-    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
-        if (error) {
-            throw error
+async function getReflectResponse(studentID, scenarioID, pageOrder) {
+    const client = await pool.connect();
+    let testIDExistenceQuery = 'SELECT users.id, scenario.id FROM users, scenario WHERE users.id=$1 AND scenario.id=$2'
+    let getReflectQuery = 'SELECT prompt_response.response, prompt_response.prompt_num FROM prompt_response, response, submissions, pages WHERE pages.order=$3 AND response.page_num=pages.id AND response.id=prompt_response.id AND response.submission_id=submissions.id AND submissions.user_id=$1 AND submissions.scenario_id=$2 AND pages.scenario_id=$2'
+    try {
+        await client.query("BEGIN");
+        let existenceResult = await client.query(testIDExistenceQuery, [studentID, scenarioID]);
+        if (existenceResult.rows.length !== 1) {
+            throw new RangeError("IDs invalid");
         }
-        callback(results.rows)
-    }) 
+        let reflectResult = await client.query(getReflectQuery, [studentID, scenarioID, pageOrder]);
+		await client.query("COMMIT");
+        return reflectResult.rows;
+    } catch (e) {
+        await client.query("ROLLBACK");
+        if (e.message === "IDs invalid") {
+            return null;
+        } else {
+            throw e;
+        }
+    } finally {
+        client.release();
+    }
 }
 
-function getMidReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and submissions.scenario_id=$2 and pages.scenario_id =$2'
-    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
+function getInitReflectResponse(studentID, scenarioID, callback) {
+    getReflectResponse(studentID, scenarioID, INITIAL_REFLECTION).then((result) => callback(result));
 }
-
-function getFinalReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and submissions.scenario_id=$2 and pages.scenario_id =$2'
-    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
+function getMidReflectResponse(studentID, scenarioID, callback) {
+    getReflectResponse(studentID, scenarioID, MIDDLE_REFLECTION).then((result) => callback(result));
+}
+function getFinalReflectResponse(studentID, scenarioID, callback) {
+    getReflectResponse(studentID, scenarioID, FINAL_REFLECTION).then((result) => callback(result));
 }
 
 //Get the names, ids, and descriptions of each stakeholder in a scenario
