@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect } from "react";
-import {Grid} from "@material-ui/core";
+import {Grid, Hidden, Box} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import InfoGatheredList from "./components/gatheredList.js";
 import Results from "./results.js";
@@ -12,7 +12,8 @@ import GatheredInformation from "./gatheredInformation.js";
 import Stakeholders from "./stakeholders.js";
 import MiddleReflection from "./midReflection";
 import Feedback from "./feedback.js";
-import FinalReflection from "./finalReflection.js"
+import FinalReflection from "./finalReflection.js";
+import Drawer from "./components/drawer.js";
 
 export const GatheredInfoContext = createContext();
 
@@ -54,27 +55,36 @@ function SimulationWindow() {
   }, []) // only fire once
 
   return (
-    <div>
+    <Box m={2}>
       <Grid container direction="row" justify="center" alignItems="center">
       </Grid>
+      <Hidden only={['lg']}>
+          <Grid item lg={3}>
+            <Drawer gatheredInformation={<GatheredInfoContext.Provider value={infoIdsState}><InfoGatheredList pages={pages}/></GatheredInfoContext.Provider>} stepper={<Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage}/>} />
+          </Grid>
+      </Hidden>
       <Grid container spacing={2}>
         <GatheredInfoContext.Provider value={infoIdsState}>
-          <Grid item lg={3} md={2} sm={2}>
-            <Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage} />
-          </Grid>
-          <Grid item lg={6} md={8} sm={8}>
+          <Hidden only={['sm', 'xs', 'md']}>
+            <Grid item lg={3}>
+              <Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage} />
+            </Grid>
+          </Hidden>
+          <Grid item lg={6}>
               {React.cloneElement(pages[activePage].html, {
                   pages: pages,
                   setPages: setPages,
                   activePage: activePage,
                   setActivePage: setActivePage})}
           </Grid>
-          <Grid item lg={3} md={2} sm={2}>
-            <InfoGatheredList pages={pages}/>
-          </Grid>
+          <Hidden only={['sm', 'xs', 'md']}>
+            <Grid item lg={3}>
+              <InfoGatheredList pages={pages}/>
+            </Grid>
+          </Hidden>
         </GatheredInfoContext.Provider>
       </Grid>
-    </div>
+    </Box>
   );
 }
 
