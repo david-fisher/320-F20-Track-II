@@ -10,6 +10,7 @@ import {
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
 import HTMLRenderer from './components/htmlRenderer';
+import { ScenariosContext } from "../Nav";
 
 const TextTypography = withStyles({
   root: {
@@ -41,22 +42,25 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
   }
 
   const [introText, setIntroText] = React.useState('');
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
   const classes = useStyles();
 
-  // backend call
-  axios({
-    method: 'get',
-    url: BASE_URL + '/scenarios/intro',
-    headers: {
-      scenarioID: SCENARIO_ID,
-      studentID: STUDENT_ID,
-    }
-  }).then(response => {
-    setIntroText(text => response.data[0].introduction);
-  }).catch((err)=>{
-    console.log("err",err);
-    alert(err);
-  });
+  useEffect(() => {
+    // backend call
+    axios({
+      method: 'get',
+      url: BASE_URL + '/scenarios/intro',
+      headers: {
+        scenarioID: scenarios.currentScenarioID,
+        studentID: STUDENT_ID,
+      }
+    }).then(response => {
+      setIntroText(text => response.data[0].body_text);
+    }).catch((err)=>{
+      console.log("err",err);
+      //alert(err);
+    });
+  }, [scenarios])
 
   return (
     <div>
