@@ -262,6 +262,7 @@ function scenarioExists(scenarioID){
 
 }
 
+/*
 // helper for createScenario
 function addScenario(name, due_date, description, additional_data){
     let thisQuery = 'insert into scenario values($1, $2, $3, DEFAULT, $4)'
@@ -273,9 +274,27 @@ function addScenario(name, due_date, description, additional_data){
     })
 
 }
+*/
+async function createScenario(courseID, name, due_date, description, additional_data, callback){
+    const insertScenarioQuery='insert into scenario values(DEFAULT, $1, $2, $3, DEFAULT, $4) RETURNING id';
+    const insertScenarioToCoursesQuesry='insert into partof values($1, $2)';
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        
+        const scenarioInsert= await client.query(insertScenarioQuery, [name, due_date, description, additional_data]);
+        let scenarioID=scenarioInsert.rows[0].id;
+        const partofInsert= await client.query(insertScenarioToCoursesQuesry, [courseID, scenarioID]);
 
-function createScenario(instructorID, name, due_date, description, additional_data){
-
+        await client.query("COMMIT");
+        callback(scenarioID);
+    } catch (e) {
+        console.log("ROLLBACK")
+        await client.query("ROLLBACK");
+        throw e;
+    } finally {
+        client.release();
+    }
 }
 
 function setScenarioStatus(scenarioID, scenarioStatus) {
@@ -291,6 +310,7 @@ function setScenarioStatus(scenarioID, scenarioStatus) {
     })
 }
 
+/*
 function addScenarioToCourse(scenarioID, courseID){
     // check course exists
     // check scenario exists
@@ -303,7 +323,7 @@ function addScenarioToCourse(scenarioID, courseID){
         return results.rows
     })
 }
-
+*/
 
 // scenarioPageExists(1, 'PLAIN', scenarioID)
 // .then(function(result){
@@ -768,5 +788,6 @@ module.exports = {
     getFinalActionPageQuestionsAndChoices,
     addMCQResponse,
     addInitActionResponse,
-    addFinalActionResponse
+    addFinalActionResponse,
+    createScenario
 }
