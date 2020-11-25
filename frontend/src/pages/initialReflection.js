@@ -69,35 +69,53 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
 
   const [bodyText, setBodyText] = React.useState('');
   const [prompts, setPrompts] = React.useState([]);
+  const [promptResponses, setPromptResponses] = React.useState({});
   const [scenarios, setScenarios] = React.useContext(ScenariosContext);
 
   React.useEffect(() => {
-    axios({
-      method: 'get',
-      url: BASE_URL + '/scenarios/initialReflection',
-      headers: {
-        scenarioID: SCENARIO_ID,
-        studentID: STUDENT_ID
-      }
-    }).then(response => {
-      setBodyText(response.data.body_text);
-      setPrompts(prev => response.data.prompts);
-    }).catch(err => {
-      console.log(err);
-      alert(err);
-    })
-  }, [scenarios])
+    (async () => {
+      await axios({
+        method: 'get',
+        url: BASE_URL + '/scenarios/initialReflection',
+        headers: {
+          scenarioID: scenarios.currentScenarioID
+        }
+      }).then(response => {
+        setBodyText(response.data.body_text);
+        setPrompts(prev => response.data.prompts);
+      }).catch(err => {
+        console.log(err);
+        alert(err);
+      });
+
+      axios({
+        method: 'get',
+        url: BASE_URL + '/scenarios/initialReflection/response',
+        headers: {
+          scenarioID: scenarios.currentScenarioID,
+          studentID: STUDENT_ID
+        }
+      }).then(response => {
+        setPromptResponses(response.data.reduce((prev, curr) => {
+          prev[curr.prompt_num] = curr.response;
+          return prev;
+        }, {}));
+      }).catch(err => {
+        console.log(err);
+      });
+    })();
+  }, [scenarios]);
 
   async function handleResponse(data) {
     await axios({
       url: BASE_URL + '/scenarios/initialReflection',
       method: 'put',
       data: {
-        scenarioID: SCENARIO_ID,
+        scenarioID: scenarios.currentScenarioID,
         studentID: STUDENT_ID,
         data: data
       }
-    })
+    });
   }
 
   return (
@@ -127,7 +145,9 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-            <QA header={bodyText} questions={prompts} handleResponse={handleResponse} nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}/>
+            <QA header={bodyText} questions={prompts} handleResponse={handleResponse}
+              nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}
+              prevResponses={promptResponses}/>
         </Grid>
       </Grid>
     </div>
