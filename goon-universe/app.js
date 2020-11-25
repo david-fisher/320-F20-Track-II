@@ -202,13 +202,13 @@ router.route('/scenarios/initialReflection/response')
         }
         else{
         db.getInitReflectResponse(studentID, scenarioID, function(result){
-            // if(result.length == 0) {
-            //     res.status(404).json({error: `No initial reflection response found with one or both of the ID's`});
-            // }
-            // else{
-            res.status(200).json(result)
-            console.log("Got initial relfection response")
-            // }
+            if(result == null) {
+                res.status(404).json({error: `No initial reflection response found with one or both of the ID's`});
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got initial relfection response")
+            }
         })
         }
     })
@@ -523,13 +523,13 @@ router.route('/scenarios/middleReflection/response')
         }
         else{
         db.getMidReflectResponse(studentID, scenarioID, function(result){
-            // if(result.length == 0) {
-            //     res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
-            // }
-            // else{
-            res.status(200).json(result)
-            console.log("Got middle relfection response")
-            // }
+            if(result == null) {
+                res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got middle relfection response")
+            }
         })
         }
     })
@@ -613,13 +613,13 @@ router.route('/scenarios/finalReflection/response')
             }
             else{
             db.getFinalReflectResponse(studentID, scenarioID, function(result){
-                // if(result.length == 0) {
-                //     res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
-                // }
-                // else{
-                res.status(200).json(result)
-                console.log("Got final relfection response")
-                // }
+                if(result == null) {
+                    res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
+                }
+                else{
+                    res.status(200).json(result)
+                    console.log("Got final relfection response")
+                }
             })
             }
         })
