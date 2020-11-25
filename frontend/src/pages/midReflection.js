@@ -44,16 +44,16 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
     setActivePage((prevPage) => "stakeholders");
   }
 
-  function goToResults(){
-    if (pages.results.completed) {
-    if (!pages.results.visited) {
+  function goToFeedback(){
+    if (pages.feedback.completed) {
+    if (!pages.feedback.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.results.visited = true;
+        copy.feedback.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'results')
+    setActivePage(prevPage => 'feedback')
   }
   }
 
@@ -86,7 +86,7 @@ function MiddleReflection({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <QA header={mainText} questions={questions} nextPage={goToResults} pages={pages} nextPageName={"results"}/>
+          <QA header={mainText} questions={questions} nextPage={goToFeedback} pages={pages} nextPageName={"feedback"}/>
         </Grid>
       </Grid>
     </div>

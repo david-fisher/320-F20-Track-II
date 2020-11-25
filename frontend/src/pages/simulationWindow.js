@@ -2,7 +2,7 @@ import React, { useState, createContext, useEffect } from "react";
 import {Grid} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import InfoGatheredList from "./components/gatheredList.js";
-import Results from "./results.js";
+import Feedback from "./feedback.js";
 import Conclusion from "./conclusion.js";
 import Introduction from "./introduction.js";
 import ProjectAssignment from "./projectAssignment.js";
@@ -27,7 +27,7 @@ function SimulationWindow() {
     gatheredInformation: { visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation />) },
     stakeholders: { visited: false, completed: true, pageNumber: 5, html: (<Stakeholders />) },
     middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
-    results: { visited: false, completed: false, pageNumber: 7, html: (<Results />) },
+    feedback: { visited: false, completed: false, pageNumber: 7, html: (<Feedback />) },
     summary: { visited: false, completed: true, pageNumber: 8, html: (<Summary />) },
     finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
     conclusion: { visited: false, completed: false, pageNumber: 10, html: (<Conclusion />) }

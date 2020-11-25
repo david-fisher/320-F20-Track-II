@@ -1,6 +1,6 @@
 import React from "react";
 
-import Results from "./pages/results";
+import Feedback from "./pages/feedback";
 import Home from "./pages/home";
 import RadarTest from "./pages/chartTest";
 import InitialReflection from "./pages/initialReflection";
@@ -57,8 +57,8 @@ const menuItems = [
     listPath: "/",
   },
   {
-    listText: "Results",
-    listPath: "/results",
+    listText: "Feedback",
+    listPath: "/feedback",
   },
   {
     listText: "Simulation Window",
@@ -94,9 +94,9 @@ function Nav() {
                       Home
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/results">
+                  <Link className={classes.link} to="/feedback">
                     <Button className={classes.title} color="inherit">
-                      Results
+                    Feedback
                     </Button>
                   </Link>
                   <Link className={classes.link} to="/simulation">
@@ -120,8 +120,8 @@ function Nav() {
             <Route path="/" exact>
               <Home />
             </Route>
-            <Route path="/results" exact>
-              <Results />
+            <Route path="/feedback" exact>
+              <Feedback />
             </Route>
             <Route path="/simulation" exact>
               <SimulationWindow />
