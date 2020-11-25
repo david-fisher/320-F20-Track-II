@@ -212,17 +212,28 @@ async function addReflectionResponse(studentID, input, promptNum, scenarioID, ti
     try {
         await client.query("BEGIN");
         const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
+        if (pageSelection.rows.length == 0) {
+            throw new RangeError("Empty SQL selection");
+        }
         let pageID = pageSelection.rows[0].id;
         const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        if (submissionSelection.rows.length == 0) {
+            throw new RangeError("Empty SQL selection");
+        }
         let submissionID = submissionSelection.rows[0].id;
         // RETURNING clause returns ID at the same time
         const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
         await client.query(insertPromptResponseQuery, [responseID, promptNum, input]);
         await client.query("COMMIT");
+        return true;
     } catch (e) {
         await client.query("ROLLBACK");
-        throw e;
+        if (e.message === "Empty SQL selection") {
+            return false;
+        } else {
+            throw e;
+        }
     } finally {
         client.release();
     }
@@ -230,13 +241,16 @@ async function addReflectionResponse(studentID, input, promptNum, scenarioID, ti
 
 
 function addInitReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
-    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
+    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, INITIAL_REFLECTION)
+        .then((succeeded) => callback(succeeded ? "Success!" : ""));
 }
 function addMidReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
-    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, MIDDLE_REFLECTION).then(() => callback("Success!"));
+    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, MIDDLE_REFLECTION)
+        .then((succeeded) => callback(succeeded ? "Success!" : ""));
 }
 function addFinalReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
-    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
+    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, FINAL_REFLECTION)
+        .then((succeeded) => callback(succeeded ? "Success!" : ""));
 }
 
 
