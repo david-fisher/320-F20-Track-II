@@ -691,7 +691,7 @@ function getFinalReflectPage(scenarioID, callback){
 //Returns question IDs as well for getChoices functions
 
 function getInitActionPageQuestionsAndChoices(scenarioID,questionID,callback){
-    let thisQuery='select question.question, question.id, mcq_option.option from pages, mcq, mcq_option, question where pages.order ='+ INIT_ACTION +'and scenario_id = $1 and mcq.page_id = question.mcq_id and pages.id=mcq.page_id and mcq_option.question_id = $2 and mcq_option.question_id = question.id'
+    let thisQuery='select question.question, mcq_option.option from pages, mcq, mcq_option, question where pages.order ='+ INIT_ACTION +'and scenario_id = $1 and mcq.page_id = question.mcq_id and pages.id=mcq.page_id and mcq_option.question_id = $2 and mcq_option.question_id = question.id'
     pool.query(thisQuery, [scenarioID, questionID], (error,results) => {
         if(error){
             throw error
@@ -701,7 +701,7 @@ function getInitActionPageQuestionsAndChoices(scenarioID,questionID,callback){
 }
 
 function getFinalActionPageQuestionsAndChoices(scenarioID,questionID,callback){
-    let thisQuery='select question.question, question.id, mcq_option.option from pages, mcq, mcq_option, question where pages.order ='+ FINAL_ACTION +'and scenario_id = $1 and mcq.page_id = question.mcq_id and pages.id=mcq.page_id and mcq_option.question_id = $2 and mcq_option.question_id = question.id'
+    let thisQuery='select question.question, mcq_option.option from pages, mcq, mcq_option, question where pages.order ='+ FINAL_ACTION +'and scenario_id = $1 and mcq.page_id = question.mcq_id and pages.id=mcq.page_id and mcq_option.question_id = $2 and mcq_option.question_id = question.id'
     pool.query(thisQuery, [scenarioID, questionID], (error,results) => {
         if(error){
             throw error
