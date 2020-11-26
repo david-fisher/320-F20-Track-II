@@ -393,7 +393,7 @@ function addIntroPage(scenarioID, text, callback){
     // upsert intro page
     if (scenarioExists(scenarioID)){
         // create page object - plain-page when no prompt linked
-        pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+        let pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
         callback('Success!')
     }
     else{
@@ -406,9 +406,9 @@ function addInitReflectPage(scenarioID, description, prompts, callback){
     // upsert init reflect page
     if (scenarioExists(scenarioID)){
         //create page object
-        pageID = createPage(INTROPAGE, TYPE_PROMPT, description, scenarioID)
+        let pageID = createPage(INTROPAGE, TYPE_PROMPT, description, scenarioID)
         //create prompt object
-        for (p in prompts){
+        for (let p of prompts){
             let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
             pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
@@ -430,9 +430,9 @@ function addMidReflectPage(scenarioID, description, prompts, callback){
     // upsert mid reflect page
     if(scenarioExists(scenarioID)){
         // create page object (checks or conflicts)
-        pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, description, scenarioID)
+        let pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, description, scenarioID)
         // create priompt object
-        for (p in prompts){
+        for (let p of prompts){
             let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
             pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
@@ -452,9 +452,9 @@ function addFinalReflectPage(scenarioID, description, prompts, callback){
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
         // create page object (checks for conflicts)
-        pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, description, scenarioID)
+        let pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, description, scenarioID)
         //create prompt object
-        for (p in prompts){
+        for (let p of prompts){
             let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
             pool.query(thisQuery, [pageID, p], (error, results) => {
                 if (error){
@@ -476,7 +476,7 @@ function addConvTaskPage(scenarioID, description, callback){
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
         // create page object (checks for conflicts)
-        pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
+        let pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
         //create prompt object
         let thisQuery = 'insert into conversation_task values($1, $2)'
         pool.query(thisQuery, [pageID, description], (error, results) => {
@@ -498,7 +498,7 @@ function addConclusionPage(scenarioID, text, callback){
     // upsert intro page
     if (scenarioExists(scenarioID)){
         // create page object - plain-page when no prompt linked
-        pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
+        let pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
         callback('Success!')
     }
     else{
@@ -515,7 +515,7 @@ function addStakeholder(scenarioID, name, description, conversations, callback){
     
     if (scenarioExists(scenarioID)){
         // create page object (checks for c)
-        pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
+        let pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
         //create conversation_task object
         let thisQuery = 'insert into stakeholders values(DEFAULT, $1, $2, NULL, $4, $5) returning id;'
         pool.query(thisQuery, [name, description, scenarioID, pageID], (error, results) => {
@@ -538,7 +538,7 @@ function addStakeholderConversations(stakeholderID, conversation_text_array){
     // TODO check stakeholder exists
 
     // insert conversations from array
-    for(conv in conversation_text_array){    
+    for(let conv of conversation_text_array){    
         let thisQuery = 'insert into conversation values(DEFAULT, $1, $2)'
         pool.query(thisQuery, [stakeholderID, conv], (error, results) => {
             if (error){
@@ -555,9 +555,9 @@ function addInitActionPage(scenarioID, description, prompts, callback){
     // upsert MCQ page
     if (scenarioExists(scenarioID)){
         // create page object
-        pageID = createPage(INIT_ACTION, TYPE_MCQ, "", scenarioID)
+        let pageID = createPage(INIT_ACTION, TYPE_MCQ, "", scenarioID)
         //create prompt object
-        for (i in prompts){
+        for (let i of prompts){
             let thisQuery = 'insert into mcq values($1, $2)'
             pool.query(thisQuery, [pageID, description], (error, results) => {
                 if (error){
@@ -578,9 +578,9 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
     // upsert MCQ page
     if (scenarioExists(scenarioID)){
         // create page object
-        pageID = createPage(FINAL_ACTION, TYPE_MCQ, "", scenarioID)
+        let pageID = createPage(FINAL_ACTION, TYPE_MCQ, "", scenarioID)
         //create prompt object
-        for (i in prompts){
+        for (let i of prompts){
             let thisQuery = 'insert into mcq values($1, $2)'
             pool.query(thisQuery, [pageID, description], (error, results) => {
                 if (error){
