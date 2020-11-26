@@ -42,7 +42,7 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 1);
 INSERT INTO pages VALUES(DEFAULT, 5, 'PLAIN', 'page: Init action subsequent (start to gather info) for scenario 1', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'CONV', 'Body text before conversation', 1);
-INSERT INTO conversation_task VALUES(6);
+INSERT INTO conversation_task VALUES(6,1);
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 6);
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PRMPT', 'Body text before middle reflection', 1);
@@ -117,7 +117,7 @@ INSERT INTO prompt VALUES(:scenario_2_init_reflect_id, 'prompt: s2 Initial refle
 INSERT INTO pages VALUES(DEFAULT, 4, 'MCQ', 'Body text before initial action multiple choice question', 2);
 INSERT INTO mcq VALUES(12);
 
-INSERT INTO conversation_task VALUES(10); -- ??
+INSERT INTO conversation_task VALUES(10,1); -- ??
 -- Enter pages here?
 INSERT INTO pages VALUES(DEFAULT, 7, 'PRMPT', 'Body text before middle reflection', 2) RETURNING id \gset scenario_2_mid_reflect_
 INSERT INTO prompt VALUES(:scenario_2_mid_reflect_id, 'prompt: s2 middle reflection', 1);
