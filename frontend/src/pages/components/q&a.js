@@ -68,7 +68,7 @@ export default function StateTextFields(props) {
       }
     props.nextPage();
   };
-  
+  }
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
