@@ -405,6 +405,9 @@ async function createPage(order, type, body_text, scenarioID){
     return pageID
 }
 
+// TODO: client BEGIN/COMMIT/ROLLBACK does not have intended effect
+// Helper functions allocate their own clients
+// The helpers may need to take an allocated client as a parameter
 async function addIntroPage(scenarioID, text, callback){
     const client = await pool.connect();
     try{
