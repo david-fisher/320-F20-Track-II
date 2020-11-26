@@ -84,7 +84,7 @@ CREATE TABLE "prompt" (
 
 CREATE TABLE "conversation_task" (
 	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"conversation_limit" INT NOT NULL CHECK("" > 0)
+	"conversation_limit" INT NOT NULL CHECK("conversation_limit" > 0)
 );
 
 CREATE TABLE "stakeholders" (
