@@ -101,8 +101,8 @@ CREATE TABLE "conversation" (
 	"id" SERIAL PRIMARY KEY,
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"question" varchar,
-	"conversation_text" VARCHAR
-
+	"conversation_text" VARCHAR,
+	"conversation_limit" INT NOT NULL CHECK("" > 0);
 );
 
 CREATE TABLE "issues" (
