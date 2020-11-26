@@ -54,11 +54,12 @@ function getSteps(pages, navigatePageFunc) {
       buttonName += keys[i].charAt(j);
     }
     buttonName += keys[i].charAt(keys[i].length - 1);
-    if (pages[keys[i]].visited === false) {
-      stepArr.push(<Button disabled>{buttonName}</Button>);
-    } else {
-      stepArr.push(<Button style={{ color: "#881c1c" }} onClick={() => navigatePageFunc(keys[i])} >{buttonName}</Button>);
-    }
+    // if (pages[keys[i]].visited === false) {
+    //   stepArr.push(<Button disabled>{buttonName}</Button>);
+    // } else {
+    //   stepArr.push(<Button style={{ color: "#881c1c" }} onClick={() => navigatePageFunc(keys[i])} >{buttonName}</Button>);
+    // }
+    stepArr.push(<Button style={{ color: "#881c1c" }} onClick={() => navigatePageFunc(keys[i])} >{buttonName}</Button>);
   }
   return stepArr;
 }
