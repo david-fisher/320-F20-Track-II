@@ -350,124 +350,155 @@ function addScenarioToCourse(scenarioID, courseID){
 // .catch(function(err){
 //     console.log(err);
 // });
-function scenarioPageExists(order, type, scenarioID){
+async function scenarioPageExists(order, type, scenarioID){
     // returns pageID
     let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = $1 and pages.order = $2 and pages.type = $3'
-    return new Promise(function(resolve, reject){
-        pool.query(thisQuery, [scenarioID, order, type], (error, results) => {
-            if (error){
-                return reject(error);
-            }
-            // return pageID from results
-            if (results.rows.length != 0){
-                return resolve(results.rows[0].id);
-            }
-            else{
-                return resolve(-1)
-            }
-        })
-    })
-
+    let pageID = -1;
+    const client = await pool.connect();
+    try{
+        await client.query("BEGIN")
+        let pageResult = await client.query(thisQuery, [scenarioID, order, type])
+        pageID = pageResult.rows[0].id
+        await client.query("COMMIT")
+    } catch (e) {
+        await client.query("ROLLBACK")
+    } finally {
+        client.release()
+    }
+    return pageID
     
+    // return new Promise(function(resolve, reject){
+    //     pool.query(thisQuery, [scenarioID, order, type], (error, results) => {
+    //         if (error){
+    //             return reject(error);
+    //         }
+    //         // return pageID from results
+    //         if (results.rows.length != 0){
+    //             return resolve(results.rows[0].id);
+    //         }
+    //         else{
+    //             return resolve(-1)
+    //         }
+    //     })
+    // })
 }
 
-function createPage(order, type, body_text, scenarioID){
+async function createPage(order, type, body_text, scenarioID){
     // returns pageID if exists, else creates new
-    let pageID = scenarioPageExists(order, type, scenarioID)
-    // TODO: handle page already existing in a better way?
-    if(pageID === null){
-        let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4)'
-        pool.query(thisQuery, [order, type, body_text, scenarioID], (error, results) => {
-            if (error){
-                throw error
-            }
-            // return pageID
-            return scenarioPageExists(order, type, sceanrioID);
-        })
+    let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4)'
+    const client = await pool.connect();
+    try{
+        await client.query("BEGIN");
+        let pageID = scenarioPageExists(order, type, scenarioID);
+        if (pageID === null){
+            await client.query(thisQuery, [order, type, body_text, scenarioID]);
+            await client.query("COMMIT");
+            pageID = scenarioPageExists(order, type, scenarioID);
+        }
+    } catch (e) {
+        await client.query("ROLLBACK")
+        throw e;
+    } finally {
+        client.release()
     }
     return pageID
 }
 
-function addIntroPage(scenarioID, text, callback){
-    //check scenario exists
-    // upsert intro page
-    if (scenarioExists(scenarioID)){
-        // create page object - plain-page when no prompt linked
-        let pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
-        callback('Success!')
-    }
-    else{
-        // TODO return InvalidScenarioError
-        throw error
-    }
-}
-function addInitReflectPage(scenarioID, description, prompts, callback){
-    // check scenario exists
-    // upsert init reflect page
-    if (scenarioExists(scenarioID)){
-        //create page object
-        let pageID = createPage(INTROPAGE, TYPE_PROMPT, description, scenarioID)
-        //create prompt object
-        for (let p of prompts){
-            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
-            pool.query(thisQuery, [pageID, p], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
+async function addIntroPage(scenarioID, text, callback){
+    const client = await pool.connect();
+    try{
+        await client.query("BEGIN");
+        if (scenarioExists(scenarioID)){
+            let pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+            await client.query("COMMIT");
         }
+        else{
+            throw error
+        }
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+    } finally {
+        client.release();
+
     }
-    else{
-        // TODO return InvalidScenarioError
-        throw error;
+    callback("Success!")
+}
+async function addInitReflectPage(scenarioID, description, prompts, callback){
+    let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
+    const client = await pool.connect();
+    try{
+        await client.query("BEGIN")
+        if (scenarioExists(scenarioID)){
+            let pageID = createPage(INTROPAGE, TYPE_PROMPT, description, scenarioID)
+            for (let p of prompts){
+                await client.query(thisQuery, [pageID, p])
+            }
+            await client.query("COMMIT");
+        }
+        else{
+            throw error;
+        }
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+    } finally {
+        client.release()
     }
 
 }
 
-function addMidReflectPage(scenarioID, description, prompts, callback){
-    // check scenario exists
-    // upsert mid reflect page
-    if(scenarioExists(scenarioID)){
-        // create page object (checks or conflicts)
-        let pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, description, scenarioID)
-        // create priompt object
-        for (let p of prompts){
-            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
-            pool.query(thisQuery, [pageID, p], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
+async function addMidReflectPage(scenarioID, description, prompts, callback){
+    let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
+    const client = await pool.connect();
+    try{
+        await client.query("BEGIN")
+        if(scenarioExists(scenarioID)){
+            let pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, description, scenarioID)
+            for (let p of prompts){
+
+                client.query(thisQuery, [pageID, p])
+            }
+            await client.query("COMMIT");
         }
+        else{
+            throw error;
+        }
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+    } finally{
+        client.release();
     }
-    else{
-        // TODO return InvalidScenarioError
-        throw error;
-    }
+    callback("Success!")
 }
-function addFinalReflectPage(scenarioID, description, prompts, callback){
+
+async function addFinalReflectPage(scenarioID, description, prompts, callback){
     // check scenario exists
     // upsert final reflect page
-    if (scenarioExists(scenarioID)){
-        // create page object (checks for conflicts)
-        let pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, description, scenarioID)
-        //create prompt object
-        for (let p of prompts){
-            let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
-            pool.query(thisQuery, [pageID, p], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
+    let thisQuery = 'insert into prompt values($1, $2, DEFAULT)';
+    const client = await pool.connect();
+    try{
+        await client.query("BEGIN");
+        if (scenarioExists(scenarioID)){
+            let pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, description, scenarioID)
+            //create prompt object
+            for (let p of prompts){
+                await client.query(thisQuery, [pageID, p]);
+            }
+            await client.query("COMMIT");
         }
+        else{
+            throw error;
+        }
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+    } finally{
+        client.release();
     }
-    else{
-        // TODO return InvalidScenarioError
-        throw error;
-    }
+    callback("Success!");
+
 }
 
 // TODO: add body text argument to functions below?
@@ -579,7 +610,7 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
     if (scenarioExists(scenarioID)){
         // create page object
         let pageID = createPage(FINAL_ACTION, TYPE_MCQ, "", scenarioID)
-        //create prompt object
+        //create object
         for (let i of prompts){
             let thisQuery = 'insert into mcq values($1, $2)'
             pool.query(thisQuery, [pageID, description], (error, results) => {
