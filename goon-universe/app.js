@@ -225,7 +225,7 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.getInitActions(scenarioID, function(result){
+        db.getInitActionPageQuestionsAndChoices(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No initial actions found with scenarioID: ${scenarioID}`})
             }
@@ -252,7 +252,7 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.addInitActionChoice(studentID, scenarioID, data, function(result){
+        db.addInitActionResponse(studentID, scenarioID, data, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
@@ -273,7 +273,7 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else {
-        db.getFinalAction(scenarioID, function(result){
+        db.getFinalActionPageQuestionsAndChoices(scenarioID, function(result){
             if(result.length == 0) {
                 res.status(404).json({error: `No scenario final action page found for scenarioID: ${scenarioID}`})
             }
@@ -301,7 +301,7 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else{
-        db.addFinalActionChoice(studentID, scenarioID, data, function(result){
+        db.addFinalActionResponse(studentID, scenarioID, data, function(result){
           if(result.length === 0){
               res.status(404).json({error: `student ID or scenario ID does not exist in database`})
           }
