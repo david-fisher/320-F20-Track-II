@@ -54,9 +54,9 @@ CREATE TABLE "enrolled" (
 CREATE TYPE simulation_status AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED');
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR NOT NULL,
+	"name" VARCHAR NOT NULL CHECK(name <> ''),
 	"due_date" TIMESTAMP,
-	"description" VARCHAR,
+	"description" VARCHAR NOT NULL,
 	"status" simulation_status DEFAULT 'DRAFT',
 	"additional_data" VARCHAR
 ); 
@@ -69,7 +69,7 @@ CREATE TABLE "partof" (
 -- TODO: make type below an ENUM
 CREATE TABLE "pages" (
 	"id" SERIAL PRIMARY KEY,
-	"order" INT,
+	"order" INT NOT NULL,
 	"type" CHAR(5) NOT NULL,
 	"body_text" VARCHAR NOT NULL,
 	"scenario_id" INT REFERENCES scenario
@@ -78,7 +78,7 @@ CREATE TABLE "pages" (
 CREATE TABLE "prompt" (
 	"page_id" INT REFERENCES pages,
 	"prompt" VARCHAR NOT NULL CHECK (prompt <> ''),
-	"prompt_num" INT,
+	"prompt_num" INT NOT NULL CHECK (prompt_num > 0),
 	PRIMARY KEY(page_id, prompt_num)
 );
 
@@ -89,10 +89,10 @@ CREATE TABLE "conversation_task" (
 
 CREATE TABLE "stakeholders" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR,
+	"name" VARCHAR NOT NULL CHECK ("name" <> ''),
 	"designation" VARCHAR,
 	"description" VARCHAR,
-	"conversation" VARCHAR,
+	"conversation" VARCHAR NOT NULL,
 	"scenario_id" INT REFERENCES scenario,
 	"conversation_task_id" INT REFERENCES conversation_task
 );
@@ -107,16 +107,16 @@ CREATE TABLE "conversation" (
 
 CREATE TABLE "issues" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR,
-	"description" VARCHAR
+	"name" VARCHAR NOT NULL CHECK("name" <> ''),
+	"description" VARCHAR NOT NULL
 );
 
-	
+
 CREATE TABLE "score" (
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"issue_id" INT REFERENCES issues,
 	PRIMARY KEY (stakeholder_id, issue_id),
-	"value" INT
+	"value" INT NOT NULL CHECK("value" >= 0)
 );
 
 -- Probably redundant
@@ -134,7 +134,8 @@ CREATE TABLE "question" (
 CREATE TABLE "mcq_option" (
 	"id" SERIAL PRIMARY KEY,
 	"option" VARCHAR NOT NULL CHECK("option" <> ''),
-	"question_id" INT REFERENCES question
+	"question_id" INT REFERENCES question,
+	UNIQUE(question_id, "option")
 );
 
 CREATE TABLE "submissions" (
@@ -156,7 +157,7 @@ CREATE TABLE "response" (
 CREATE TABLE "prompt_response" (
 	"id" INT REFERENCES response,
 	"prompt_num" INT,
-	"response" VARCHAR,
+	"response" VARCHAR NOT NULL,
 	PRIMARY KEY (id, prompt_num)
 );
 
