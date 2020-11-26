@@ -82,9 +82,9 @@ CREATE TABLE "prompt" (
 	PRIMARY KEY(page_id, prompt_num)
 );
 
--- Might be redundant
 CREATE TABLE "conversation_task" (
-	"page_id" INT REFERENCES pages PRIMARY KEY
+	"page_id" INT REFERENCES pages PRIMARY KEY,
+	"conversation_limit" INT NOT NULL CHECK("" > 0)
 );
 
 CREATE TABLE "stakeholders" (
@@ -101,8 +101,7 @@ CREATE TABLE "conversation" (
 	"id" SERIAL PRIMARY KEY,
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"question" varchar,
-	"conversation_text" VARCHAR,
-	"conversation_limit" INT NOT NULL CHECK("" > 0);
+	"conversation_text" VARCHAR
 );
 
 CREATE TABLE "issues" (
