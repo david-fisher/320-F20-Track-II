@@ -1,4 +1,5 @@
 const { query } = require('express');
+const { Parser, transforms: { unwind } } = require('json2csv');
 var env = require('node-env-file');
 env(__dirname + '/.env');
 
@@ -704,6 +705,27 @@ function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, tim
     addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then(() => callback("Success!"));
 }
 
+
+function convertToCSV(objArray) {
+    console.log("getting CSV")
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    console.log(array)
+    var str = '';
+
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        for (var index in array[i]) {
+            if (line != '') line += ','
+
+            line += array[i][index];
+        }
+
+        str += line + '\r\n';
+    }
+    console.log(str)
+    return str;
+}
+
 // helper for version control
 async function getScenarioCSV(scenarioID, callback){
     // returns CSV string for a scenario
@@ -723,11 +745,11 @@ async function getScenarioCSV(scenarioID, callback){
         "left join question on question.mcq_id = mcq.page_id " +
         "left join mcq_option on mcq_option.question_id = question.id " +
         "where scenario.id = $1 "
-    let scenario_cols = "id, name, due_date, description, status, additional_data "
+    let scenario_cols = "scenario.id, scenario.name, scenario.due_date, scenario.description, scenario.status, scenario.additional_data "
     let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
     let prompt_cols = "prompt.page_id, prompt.prompt, prompt.prompt_num "
-    let conversation_task_cols = "page_id " 
-    let stakeholders_cols = "id, name , designation, description, conversation, conversation_task_id "
+    let conversation_task_cols = "conversation_task.page_id " 
+    let stakeholders_cols = "stakeholders.id, stakeholders.name , stakeholders.designation, stakeholders.description, stakeholders.conversation, stakeholders.conversation_task_id "
     let conversation_cols = "conversation.id, conversation.stakeholder_id, conversation.question, conversation.conversation_text "
     let score_cols = "score.stakeholder_id, score.issue_id, score.value "
     let issues_cols = "issues.id, issues.name, issues.description "
@@ -750,15 +772,11 @@ async function getScenarioCSV(scenarioID, callback){
     let table_queries = [scenario_tbl, pages_tbl, prompt_tbl, conversation_task_tbl, stakeholders_tbl, conversation_tbl, score_tbl, issues_tbl, mcq_tbl, question_tbl, mcq_option_tbl]
     let table_names = ["scenario", "pages", "prompt", "conversation_task", "stakeholders", "conversation", "score", "issues", "mcq", "question", "mcq_option"]
     let query_results = {}
-    console.log("connecting to db...")
-    console.log(table_queries)
     const client = await pool.connect();
     try {
         await client.query("BEGIN");
         for (let q = 0; q < table_queries.length; q++){
-            console.log(q)
             let query_output = await client.query(table_queries[q], [scenarioID]);
-            console.log(query_output)
             query_results[table_names[q]]  = query_output.rows;
         }
         await client.query("COMMIT");
@@ -768,27 +786,16 @@ async function getScenarioCSV(scenarioID, callback){
     } finally {
         client.release()
     }
-    console.log(query_results)
-    callback(query_results)
+    let _fields = [scenario_cols, pages_cols, prompt_cols, conversation_task_cols, stakeholders_cols, conversation_cols, score_cols, issues_cols, mcq_cols, question_cols, mcq_option_cols]
+    let fields = (_fields.map(function(itm) {return itm.split(",").map(function(t) {return t.trim();})}))
+    
+    fields = [].concat(...fields)
+    const transforms = [unwind({ paths: table_names, blankOut: true })];
+    const json2csvParser = new Parser({ fields, transforms });
+    const csv = json2csvParser.parse(query_results);
+    // output needs to be unescaped before saving to csv
+    callback(csv)
     return query_results;
-    // collect results of all the queries and dump to csv
-    // return new Promise(function(resolve, reject){
-    //     pool.query(thisQuery, [scenarioID], (error, results) => {
-    //         if (error){
-    //             return reject(error)
-    //         }
-    //         // TODO return string instead
-    //         return resolve(results.rows.length!=0)
-    //     })
-    // })
-
-    // pool.query(everything, [scenarioID], (error, results) => {
-    //     if (error){
-    //         throw error;
-    //     }
-    //     console.log(results.rows);
-    //     callback(results.rows)
-    // })
 }
 
  
