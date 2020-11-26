@@ -38,7 +38,6 @@ export default function SwipeableTemporaryDrawer({stepper, gatheredInformation})
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      {/* <p>Insert Stepper here</p> */}
       {stepper}
     </div>
   );
@@ -52,15 +51,15 @@ export default function SwipeableTemporaryDrawer({stepper, gatheredInformation})
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      {/* <p>Insert GI here</p> */}
       {gatheredInformation}
     </div>
   );
 
   return (
     <div>
+      <Grid container direction="row" justify="space-between">
           <Grid item style={{ marginRight: "0rem"}}>
-            <Button onClick={toggleDrawer('Left', true)}>Stepper</Button>
+            <Button variant="contained" onClick={toggleDrawer('Left', true)}>Stepper</Button>
             <SwipeableDrawer
             anchor={'Left'}
             open={state['Left']}
@@ -70,8 +69,8 @@ export default function SwipeableTemporaryDrawer({stepper, gatheredInformation})
             {listLeft('Left')}
           </SwipeableDrawer>
           </Grid>
-          <Grid item style={{ marginLeft: "0rem"}}>
-            <Button onClick={toggleDrawer('Right', true)}>Gathered Information</Button>
+          <Grid item style={{ marginRight: "0rem"}}>
+            <Button variant="contained" onClick={toggleDrawer('Right', true)}>Gathered Information</Button>
             <SwipeableDrawer
             anchor={'Right'}
             open={state['Right']}
@@ -81,6 +80,7 @@ export default function SwipeableTemporaryDrawer({stepper, gatheredInformation})
             {listRight('Right')}
           </SwipeableDrawer>
           </Grid>
+      </Grid>
     </div>
   );
 }
