@@ -1,3 +1,4 @@
+const { query } = require('express');
 var env = require('node-env-file');
 env(__dirname + '/.env');
 
@@ -704,7 +705,7 @@ function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, tim
 }
 
 // helper for version control
-function getScenarioCSV(scenarioID, callback){
+async function getScenarioCSV(scenarioID, callback){
     // returns CSV string for a scenario
     // let scenario_query = "select * from scenario where scenario.id = $1"
     // let pages_query = "select * from pages"
@@ -722,7 +723,7 @@ function getScenarioCSV(scenarioID, callback){
         "left join question on question.mcq_id = mcq.page_id " +
         "left join mcq_option on mcq_option.question_id = question.id " +
         "where scenario.id = $1 "
-
+    let scenario_cols = "id, name, due_date, description, status, additional_data "
     let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
     let prompt_cols = "prompt.page_id, prompt.prompt, prompt.prompt_num "
     let conversation_task_cols = "page_id " 
@@ -734,17 +735,42 @@ function getScenarioCSV(scenarioID, callback){
     let question_cols = "question.id, question.question, question.mcq_id "
     let mcq_option_cols = "mcq_option.id, mcq_option.option, mcq_option.question_id "
 
+    let scenario_tbl = "select " + scenario_cols + "from scenario where scenario.id = $1"
     let pages_tbl = "select " + pages_cols + "from pages where pages.scenario_id = $1 "
     let prompt_tbl = "select " + prompt_cols + "from pages, prompt where pages.scenario_id = $1 and prompt.page_id = pages.id "
     let conversation_task_tbl = "select " + conversation_task_cols + "from pages, conversation_task where pages.scenario_id = $1 and conversation_task.page_id = pages.id "
     let stakeholders_tbl = "select " + stakeholders_cols + "from stakeholders where stakeholders.scenario_id = $1"
     let conversation_tbl = "select " + conversation_cols + "from stakeholders, conversation where stakeholders.scenario_id = $1 and conversation.stakeholder_id = stakeholders.id"
-    let score_tbl = "select " + score_cols + "from score, stakeholders where score.stakeholder_id = stakeholder.id and stakeholders.scenario_id = $1"
+    let score_tbl = "select " + score_cols + "from score, stakeholders where score.stakeholder_id = stakeholders.id and stakeholders.scenario_id = $1"
     let issues_tbl = "select " + issues_cols + "from score, issues, stakeholders where stakeholders.scenario_id = $1 and score.stakeholder_id = stakeholders.id and issues.id = score.issue_id"
     let mcq_tbl = "select " + mcq_cols + "from pages, mcq where pages.scenario_id = $1 and mcq.page_id = pages.id "
     let question_tbl = "select " + question_cols + "from pages, mcq, question where pages.scenario_id = $1 and mcq.page_id = pages.id and question.mcq_id = mcq.page_id "
     let mcq_option_tbl = "select " + mcq_option_cols + "from pages, mcq, question, mcq_option where pages.scenario_id = $1 and  mcq.page_id = pages.id and question.mcq_id = mcq.page_id and mcq_option.question_id = question.id"
-        
+    
+    let table_queries = [scenario_tbl, pages_tbl, prompt_tbl, conversation_task_tbl, stakeholders_tbl, conversation_tbl, score_tbl, issues_tbl, mcq_tbl, question_tbl, mcq_option_tbl]
+    let table_names = ["scenario", "pages", "prompt", "conversation_task", "stakeholders", "conversation", "score", "issues", "mcq", "question", "mcq_option"]
+    let query_results = {}
+    console.log("connecting to db...")
+    console.log(table_queries)
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        for (let q = 0; q < table_queries.length; q++){
+            console.log(q)
+            let query_output = await client.query(table_queries[q], [scenarioID]);
+            console.log(query_output)
+            query_results[table_names[q]]  = query_output.rows;
+        }
+        await client.query("COMMIT");
+    } catch (e) {
+        await client.query("ROLLBACK");
+        throw (e);
+    } finally {
+        client.release()
+    }
+    console.log(query_results)
+    callback(query_results)
+    return query_results;
     // collect results of all the queries and dump to csv
     // return new Promise(function(resolve, reject){
     //     pool.query(thisQuery, [scenarioID], (error, results) => {
@@ -756,13 +782,13 @@ function getScenarioCSV(scenarioID, callback){
     //     })
     // })
 
-    pool.query(everything, [scenarioID], (error, results) => {
-        if (error){
-            throw error;
-        }
-        console.log(results.rows);
-        callback(results.rows)
-    })
+    // pool.query(everything, [scenarioID], (error, results) => {
+    //     if (error){
+    //         throw error;
+    //     }
+    //     console.log(results.rows);
+    //     callback(results.rows)
+    // })
 }
 
  
