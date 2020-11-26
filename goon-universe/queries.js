@@ -1,7 +1,6 @@
-// var env = require('node-env-file');
-// env(__dirname + '/.env');
-require("dotenv").config()
-
+var env = require('node-env-file');
+env(__dirname + '/.env');
+// require("dotenv").config()
 /*
  * These constants are concatenated into SQL queries below, so be careful
  * WHEN IN DOUBT, PATCH CONCATENATION OUT
@@ -65,7 +64,7 @@ function getIntroPage(scenarioID, callback){
 }
 
 function getTaskPage(scenarioID, callback){
-    let thisQuery= 'select page_id from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
+    let thisQuery= 'select pages.body_text from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -96,34 +95,39 @@ function getStudentsSummary(scenarioID, callback){
     })  
 }
 
-function getInitReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ INITIAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
-    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
-        if (error) {
-            throw error
+async function getReflectResponse(studentID, scenarioID, pageOrder) {
+    const client = await pool.connect();
+    let testIDExistenceQuery = 'SELECT users.id, scenario.id FROM users, scenario WHERE users.id=$1 AND scenario.id=$2'
+    let getReflectQuery = 'SELECT prompt_response.response, prompt_response.prompt_num FROM prompt_response, response, submissions, pages WHERE pages.order=$3 AND response.page_num=pages.id AND response.id=prompt_response.id AND response.submission_id=submissions.id AND submissions.user_id=$1 AND submissions.scenario_id=$2 AND pages.scenario_id=$2'
+    try {
+        await client.query("BEGIN");
+        let existenceResult = await client.query(testIDExistenceQuery, [studentID, scenarioID]);
+        if (existenceResult.rows.length !== 1) {
+            throw new RangeError("IDs invalid");
         }
-        callback(results.rows)
-    }) 
+        let reflectResult = await client.query(getReflectQuery, [studentID, scenarioID, pageOrder]);
+		await client.query("COMMIT");
+        return reflectResult.rows;
+    } catch (e) {
+        await client.query("ROLLBACK");
+        if (e.message === "IDs invalid") {
+            return null;
+        } else {
+            throw e;
+        }
+    } finally {
+        client.release();
+    }
 }
 
-function getMidReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order = '+ MIDDLE_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
-    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
+function getInitReflectResponse(studentID, scenarioID, callback) {
+    getReflectResponse(studentID, scenarioID, INITIAL_REFLECTION).then((result) => callback(result));
 }
-
-function getFinalReflectResponse(studentID, scenarioID, callback){
-    let thisQuery= 'select prompt_response.response, prompt_response.prompt_num from prompt_response, response, submissions, pages where pages.order='+ FINAL_REFLECTION +' and response.page_num=pages.id and response.id= prompt_response.id and response.submission_id=submissions.id and submissions.user_id =$1 and pages.scenario_id =$2'
-    pool.query(thisQuery,[studentID, scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
+function getMidReflectResponse(studentID, scenarioID, callback) {
+    getReflectResponse(studentID, scenarioID, MIDDLE_REFLECTION).then((result) => callback(result));
+}
+function getFinalReflectResponse(studentID, scenarioID, callback) {
+    getReflectResponse(studentID, scenarioID, FINAL_REFLECTION).then((result) => callback(result));
 }
 
 //Get the names, ids, and descriptions of each stakeholder in a scenario
@@ -196,31 +200,45 @@ async function addReflectionResponse(studentID, input, promptNum, scenarioID, ti
     try {
         await client.query("BEGIN");
         const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
+        if (pageSelection.rows.length == 0) {
+            throw new RangeError("Empty SQL selection");
+        }
         let pageID = pageSelection.rows[0].id;
         const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        if (submissionSelection.rows.length == 0) {
+            throw new RangeError("Empty SQL selection");
+        }
         let submissionID = submissionSelection.rows[0].id;
         // RETURNING clause returns ID at the same time
         const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
         await client.query(insertPromptResponseQuery, [responseID, promptNum, input]);
         await client.query("COMMIT");
+        return true;
     } catch (e) {
         await client.query("ROLLBACK");
-        throw e;
+        if (e.message === "Empty SQL selection") {
+            return false;
+        } else {
+            throw e;
+        }
     } finally {
         client.release();
     }
 }
 
 
-function addInitReflectResponse(studentID, input, scenarioID, timestamp, callback) {
-    addReflectionResponse(studentID, input, scenarioID, timestamp, INITIAL_REFLECTION).then(() => callback("Success!"));
+function addInitReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
+    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, INITIAL_REFLECTION)
+        .then((succeeded) => callback(succeeded ? "Success!" : ""));
 }
-function addMidReflectResponse(studentID, input, scenarioID, timestamp, callback) {
-    addReflectionResponse(studentID, input, scenarioID, timestamp, MIDDLE_REFLECTION).then(() => callback("Success!"));
+function addMidReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
+    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, MIDDLE_REFLECTION)
+        .then((succeeded) => callback(succeeded ? "Success!" : ""));
 }
-function addFinalReflectResponse(studentID, input, scenarioID, timestamp, callback) {
-    addReflectionResponse(studentID, input, scenarioID, timestamp, FINAL_REFLECTION).then(() => callback("Success!"));
+function addFinalReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
+    addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, FINAL_REFLECTION)
+        .then((succeeded) => callback(succeeded ? "Success!" : ""));
 }
 
 function scenarioExists(scenarioID){
@@ -540,40 +558,58 @@ function getStakeholderDescriptions(scenarioID){
     }
 }
 
+// Replace all these with a single helper taking an order parameter?
 function getInitReflectPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order = 2' +' and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order = '+ INITIAL_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
         }
-        // callback(results.rows)
         let response = {}
-        response.prompts = results.rows.map(row => ({
-            text: row.prompt,
-            id: row.prompt_num
-        }))
-        response.body_text = results.rows[0].body_text
+        if (results.rows.length !== 0) {
+            response.prompts = results.rows.map(row => ({
+                text: row.prompt,
+                id: row.prompt_num
+            }))
+            response.body_text = results.rows[0].body_text
+        }
         callback(response)
     })  
 }
 
 function getMidReflectPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order = 4'+ ' and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order = '+ MIDDLE_REFLECTION +' and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
         }
-        callback(results.rows)
+        let response = {}
+        if (results.rows.length !== 0) {
+            response.prompts = results.rows.map(row => ({
+                text: row.prompt,
+                id: row.prompt_num
+            }))
+            response.body_text = results.rows[0].body_text
+        }
+        callback(response)
     })  
 }
 
 function getFinalReflectPage(scenarioID, callback){
-    let thisQuery= 'select prompt.prompt from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
+    let thisQuery= 'select pages.body_text, prompt.prompt, prompt.prompt_num from pages, prompt where pages.id = prompt.page_id and pages.order ='+ FINAL_REFLECTION +'and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
         }
-        callback(results.rows)
+        let response = {}
+        if (results.rows.length !== 0) {
+            response.prompts = results.rows.map(row => ({
+                text: row.prompt,
+                id: row.prompt_num
+            }))
+            response.body_text = results.rows[0].body_text
+        }
+        callback(response)
     })  
 }
 

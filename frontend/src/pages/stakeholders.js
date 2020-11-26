@@ -6,6 +6,7 @@ import { GatheredInfoContext } from './simulationWindow';
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
 import Conversation from './conversation';
+import HTMLRenderer from './components/htmlRenderer';
 
 const TextTypography = withStyles({
   root: {
@@ -121,7 +122,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
           maxWidth = {'md'}
           >
           <DialogContent>
-            <DialogContentText color = "#000000">{background}</DialogContentText>
+            <HTMLRenderer html={background}/>
             <Button variant="contained" onClick={() => {
                 setCurrentStakeholder(prev => ({
                   name: name,

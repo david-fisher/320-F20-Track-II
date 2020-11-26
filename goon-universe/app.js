@@ -135,7 +135,7 @@ router.route('/scenarios/initialReflection')
         }
         else{
         db.getInitReflectPage(scenarioID, function(result){
-            if(result.length == 0) {
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No initial reflection found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -163,15 +163,26 @@ router.route('/scenarios/initialReflection')
             res.end()
         }
         else{
-        db.addInitReflectResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated initial reflection")
-          }
-        })}
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addInitReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated initial reflection")
+                    }
+                })
+            }
+        }}
     })
 
 router.route('/scenarios/initialReflection/response')
@@ -191,13 +202,13 @@ router.route('/scenarios/initialReflection/response')
         }
         else{
         db.getInitReflectResponse(studentID, scenarioID, function(result){
-            // if(result.length == 0) {
-            //     res.status(404).json({error: `No initial reflection response found with one or both of the ID's`});
-            // }
-            // else{
-            res.status(200).json(result)
-            console.log("Got initial relfection response")
-            // }
+            if(result == null) {
+                res.status(404).json({error: `No initial reflection response found with one or both of the ID's`});
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got initial relfection response")
+            }
         })
         }
     })
@@ -447,7 +458,7 @@ router.route('/scenarios/middleReflection')
         }
         else {
         db.getMidReflectPage(scenarioID, function(result){
-            if(result.length == 0){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No middle reflection found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -473,17 +484,26 @@ router.route('/scenarios/middleReflection')
             res.end()
         }
         else{
-        db.addMidReflectResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated middle reflection")
-          }
-        })
-        }
-
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addMidReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated middle reflection")
+                    }
+                })
+            }
+        }}
     })
 
 router.route('/scenarios/middleReflection/response')
@@ -503,13 +523,13 @@ router.route('/scenarios/middleReflection/response')
         }
         else{
         db.getMidReflectResponse(studentID, scenarioID, function(result){
-            // if(result.length == 0) {
-            //     res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
-            // }
-            // else{
-            res.status(200).json(result)
-            console.log("Got middle relfection response")
-            // }
+            if(result == null) {
+                res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got middle relfection response")
+            }
         })
         }
     })
@@ -526,7 +546,7 @@ router.route('/scenarios/finalReflection')
         else{
             db.getFinalReflectPage(scenarioID, function(result){
                 // console.log("Final Relfection-", result)
-                if(result.length == 0){
+                if(Object.entries(result).length == 0){
                     res.status(404).json({error: `No final reflection found for scenarioID: ${scenarioID}`})
                 }
                 else{
@@ -542,27 +562,37 @@ router.route('/scenarios/finalReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-    	if(!isnumber(scenarioID)){
+        if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
-    	else if(!isnumber(studentID)){
+        else if(!isnumber(studentID)){
             res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
-    	else {
-    	  db.addFinalReflectResponse(studentID, scenarioID, data, function(result){
-                if(result.length === 0){
-                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-                }
-                else{
-                    res.status(200).send(result)
-                    console.log("Updated final reflection")
-                }
-            })}
-            console.log("Updated final reflection")
+        else{
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addFinalReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated final reflection")
+                    }
+                })
+            }
+        }}
     })
 
 
@@ -583,13 +613,13 @@ router.route('/scenarios/finalReflection/response')
             }
             else{
             db.getFinalReflectResponse(studentID, scenarioID, function(result){
-                // if(result.length == 0) {
-                //     res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
-                // }
-                // else{
-                res.status(200).json(result)
-                console.log("Got final relfection response")
-                // }
+                if(result == null) {
+                    res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
+                }
+                else{
+                    res.status(200).json(result)
+                    console.log("Got final relfection response")
+                }
             })
             }
         })

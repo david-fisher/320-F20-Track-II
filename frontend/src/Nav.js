@@ -70,8 +70,11 @@ const menuItems = [
   },
 ];
 
+export const ScenariosContext = React.createContext();
+
 function Nav() {
   const classes = useStyles();
+  const scenariosState = React.useState({});
 
   return (
     <div className={classes.root}>
@@ -124,7 +127,9 @@ function Nav() {
               <Results />
             </Route>
             <Route path="/simulation" exact>
-              <SimulationWindow />
+              <ScenariosContext.Provider value={scenariosState}>
+                <SimulationWindow />
+              </ScenariosContext.Provider>
             </Route>
             <Route path="/chartTest" exact>
               <RadarTest />
