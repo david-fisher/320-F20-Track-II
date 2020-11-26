@@ -387,9 +387,10 @@ async function createPage(order, type, body_text, scenarioID){
     // returns pageID if exists, else creates new
     let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4)'
     const client = await pool.connect();
+    let pageID = -1;
     try{
         await client.query("BEGIN");
-        let pageID = scenarioPageExists(order, type, scenarioID);
+        pageID = scenarioPageExists(order, type, scenarioID);
         if (pageID === null){
             await client.query(thisQuery, [order, type, body_text, scenarioID]);
             await client.query("COMMIT");
@@ -409,7 +410,7 @@ async function addIntroPage(scenarioID, text, callback){
     try{
         await client.query("BEGIN");
         if (scenarioExists(scenarioID)){
-            let pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+            createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
             await client.query("COMMIT");
         }
         else{
@@ -424,65 +425,27 @@ async function addIntroPage(scenarioID, text, callback){
     }
     callback("Success!")
 }
-async function addInitReflectPage(scenarioID, description, prompts, callback){
-    let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
-    const client = await pool.connect();
-    try{
-        await client.query("BEGIN")
-        if (scenarioExists(scenarioID)){
-            let pageID = createPage(INTROPAGE, TYPE_PROMPT, description, scenarioID)
-            for (let p of prompts){
-                await client.query(thisQuery, [pageID, p])
-            }
-            await client.query("COMMIT");
-        }
-        else{
-            throw error;
-        }
-    } catch (e) {
-        await client.query("ROLLBACK");
-        throw e;
-    } finally {
-        client.release()
-    }
 
+
+async function addInitReflectPage(scenarioID, description, prompts, callback){
+    addReflectPage(scenarioID, description, prompts, INITIAL_REFLECTION).then((result) => callback(result));
 }
 
 async function addMidReflectPage(scenarioID, description, prompts, callback){
-    let thisQuery = 'insert into prompt values($1, $2, DEFAULT)'
-    const client = await pool.connect();
-    try{
-        await client.query("BEGIN")
-        if(scenarioExists(scenarioID)){
-            let pageID = createPage(MIDDLE_REFLECTION, TYPE_PROMPT, description, scenarioID)
-            for (let p of prompts){
-
-                client.query(thisQuery, [pageID, p])
-            }
-            await client.query("COMMIT");
-        }
-        else{
-            throw error;
-        }
-    } catch (e) {
-        await client.query("ROLLBACK");
-        throw e;
-    } finally{
-        client.release();
-    }
-    callback("Success!")
+    addReflectPage(scenarioID, description, prompts, MIDDLE_REFLECTION).then((result) => callback(result));
 }
 
 async function addFinalReflectPage(scenarioID, description, prompts, callback){
-    // check scenario exists
-    // upsert final reflect page
+    addReflectPage(scenarioID, description, prompts, FINAL_REFLECTION).then((result) => callback(result));
+}
+
+async function addReflectPage(scenarioID, description, prompts, ORDER){
     let thisQuery = 'insert into prompt values($1, $2, DEFAULT)';
     const client = await pool.connect();
     try{
         await client.query("BEGIN");
         if (scenarioExists(scenarioID)){
-            let pageID = createPage(FINAL_REFLECTION, TYPE_PROMPT, description, scenarioID)
-            //create prompt object
+            let pageID = createPage(ORDER, TYPE_PROMPT, description, scenarioID)
             for (let p of prompts){
                 await client.query(thisQuery, [pageID, p]);
             }
@@ -498,8 +461,8 @@ async function addFinalReflectPage(scenarioID, description, prompts, callback){
         client.release();
     }
     callback("Success!");
-
 }
+
 
 // TODO: add body text argument to functions below?
 function addConvTaskPage(scenarioID, description, callback){
@@ -718,6 +681,9 @@ function getFinalReflectPage(scenarioID, callback){
         callback(response)
     })  
 }
+
+
+
 
 //Returns question IDs as well for getChoices functions
 
