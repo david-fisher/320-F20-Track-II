@@ -82,9 +82,9 @@ CREATE TABLE "prompt" (
 	PRIMARY KEY(page_id, prompt_num)
 );
 
+-- Might be redundant
 CREATE TABLE "conversation_task" (
-	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"content" VARCHAR
+	"page_id" INT REFERENCES pages PRIMARY KEY
 );
 
 CREATE TABLE "stakeholders" (
@@ -119,9 +119,9 @@ CREATE TABLE "score" (
 	"value" INT
 );
 
+-- Probably redundant
 CREATE TABLE "mcq" (
-	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"content" VARCHAR
+	"page_id" INT REFERENCES pages PRIMARY KEY
 );
 
 
