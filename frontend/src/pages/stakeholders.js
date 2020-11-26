@@ -6,6 +6,7 @@ import { GatheredInfoContext } from './simulationWindow';
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
 import Conversation from './conversation';
+import { ScenariosContext } from "../Nav";
 
 const TextTypography = withStyles({
   root: {
@@ -31,60 +32,54 @@ function ellipses(str, cutoff) {
 
 function Stakeholders({ pages, setPages, activePage, setActivePage }) {
   const theme = useTheme();
+  const [stakeholders, setStakeholders] = React.useState([])
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
 
-    const [stakeholders, setStakeholders] = React.useState([]);
+  React.useEffect(() => {
+    axios({
+      method: 'get',
+      url: BASE_URL + '/scenarios/stakeholders',
+      headers: {
+        scenarioID: scenarios.currentScenarioID,
+        studentID: STUDENT_ID
+      }
+    }).then(response => {
+      setStakeholders(response.data);
+    }).catch(err => {
+      console.log(err);
+      alert(err);
+    })
+  }, [scenarios])
 
-    // React.useEffect(() => {
-    //   axios({
-    //     method: 'get',
-    //     url: BASE_URL + '/scenarios/stakeholders',
-    //     headers: {
-    //       scenarioID: SCENARIO_ID,
-    //       studentID: STUDENT_ID
-    //     }
-    //   }).then(response => {
-    //     setStakeholders(response.data);
- 
-    //   }).catch(err => {
-    //     console.log(err);
-    //     alert(err);
-    //   })
-    // }, [])
-    // console.log(stakeholders);
+  // setStakeholders([
+  //   { name: 'Bob Smith', designation: 'I am Bob Smith' , id: 0, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
+  //   { name: 'b', designation: 'I am stakeholder b' , id: 1, description: 'really cool background for stakeholder B this is not placeholder data'.repeat(2)},
+  //   { name: 'c', designation: 'I am stakeholder c' , id: 2, description: 'really cool background for stakeholder C this is not placeholder data'},
+  //   { name: 'd', designation: 'I am stakeholder d' , id: 3, description: 'really cool background for stakeholder D this is not placeholder data'},
+  //   { name: 'e', designation: 'I am stakeholder e' , id: 4, description: 'really cool background for stakeholder E this is not placeholder data'},
+  //   { name: 'f', designation: 'I am stakeholder f' , id: 5, description: 'really cool background for stakeholder F this is not placeholder data'},
+  //   { name: 'g', designation: 'I am stakeholder g' , id: 6, description: 'really cool background for stakeholder G this is not placeholder data'},
+  //   { name: 'h', designation: 'I am stakeholder h' , id: 7, description: 'abc'}
+  //   ]);
 
+  // const [test, setTest] = React.useState([]);
 
-
-
-
-    const [test, setTest] = React.useState([]);
-    setStakeholders([
-      { name: 'Bob Smith', designation: 'I am Bob Smith' , id: 0, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-      { name: 'b', designation: 'I am stakeholder b' , id: 1, description: 'really cool background for stakeholder B this is not placeholder data'.repeat(2)},
-      { name: 'c', designation: 'I am stakeholder c' , id: 2, description: 'really cool background for stakeholder C this is not placeholder data'},
-      { name: 'd', designation: 'I am stakeholder d' , id: 3, description: 'really cool background for stakeholder D this is not placeholder data'},
-      { name: 'e', designation: 'I am stakeholder e' , id: 4, description: 'really cool background for stakeholder E this is not placeholder data'},
-      { name: 'f', designation: 'I am stakeholder f' , id: 5, description: 'really cool background for stakeholder F this is not placeholder data'},
-      { name: 'g', designation: 'I am stakeholder g' , id: 6, description: 'really cool background for stakeholder G this is not placeholder data'},
-      { name: 'h', designation: 'I am stakeholder h' , id: 7, description: 'abc'}
-      ]);
-  
-    React.useEffect(() => {
-      axios({
-        method: 'get',
-        url: BASE_URL + '/scenarios/stakeholders',
-        headers: {
-          scenarioID: SCENARIO_ID,
-          studentID: STUDENT_ID
-        }
-      }).then(response => {
-        setTest(response.data);
- 
-      }).catch(err => {
-        console.log(err);
-        alert(err);
-      })
-    }, [])
-    console.log(test);
+  // React.useEffect(() => {
+    // axios({
+    //   method: 'get',
+    //   url: BASE_URL + '/scenarios/stakeholders',
+    //   headers: {
+    //     scenarioID: SCENARIO_ID,
+    //     studentID: STUDENT_ID
+    //   }
+    // }).then(response => {
+    //   setTest(response.data);
+    // }).catch(err => {
+    //   console.log(err);
+    //   alert(err);
+    // })
+  // }, [])
+  // console.log(test);
 
 
 
@@ -122,11 +117,11 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
       return obj;
     }, {})
   );
+  const createdCardStyles = cardStyles();
   const stakeholdersGrid = getStakeholdersGrid(stakeholders);
  
 
-  function getStakeholderCards(id, name, description, background) {
-    const card = cardStyles();
+  function getStakeholderCards(id, name, description, background, styles) {
     const PAGE_ID_OF_PAGE_BEFORE_CONVERSATIONS = 'gatheredInformation';
 
     function toggleModal(id, toggle) {
@@ -138,12 +133,12 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
     }
     let cardClass, nameClass, backgroundClass;
     if (stakeholdersDisabled[id]) {
-      cardClass = `${card.root} ${card.disabled}`;
-      nameClass = backgroundClass = card.disabled;
+      cardClass = `${styles.root} ${styles.disabled}`;
+      nameClass = backgroundClass = styles.disabled;
     } else {
-      cardClass = card.root;
-      nameClass = card.name;
-      backgroundClass = card.background;
+      cardClass = styles.root;
+      nameClass = styles.name;
+      backgroundClass = styles.background;
     }
     return (
       <>
@@ -207,7 +202,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
 
   function getStakeholdersGrid(stakeholders) {
     let items = stakeholders.map(stakeholder => getStakeholderCards(
-      stakeholder.id, stakeholder.name, stakeholder.designation, stakeholder.description));
+      stakeholder.id, stakeholder.name, stakeholder.designation, stakeholder.description, createdCardStyles));
     return (
       <div>
         <Grid container spacing={3} justify={'center'}>
