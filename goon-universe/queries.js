@@ -114,7 +114,7 @@ function getStudentsSummary(scenarioID, callback){
 async function getReflectResponse(studentID, scenarioID, pageOrder) {
     const client = await pool.connect();
     let testIDExistenceQuery = 'SELECT users.id, scenario.id FROM users, scenario WHERE users.id=$1 AND scenario.id=$2'
-    let getReflectQuery = 'SELECT prompt_response.response, prompt_response.prompt_num FROM prompt_response, response, submissions, pages WHERE pages.order=$3 AND response.page_num=pages.id AND response.id=prompt_response.id AND response.submission_id=submissions.id AND submissions.user_id=$1 AND submissions.scenario_id=$2 AND pages.scenario_id=$2'
+    let getReflectQuery = 'SELECT prompt_response.response, prompt_response.prompt_num FROM prompt_response, response, submissions, pages WHERE pages.order=$3 AND response.page_id=pages.id AND response.id=prompt_response.id AND response.submission_id=submissions.id AND submissions.user_id=$1 AND submissions.scenario_id=$2 AND pages.scenario_id=$2'
     try {
         await client.query("BEGIN");
         let existenceResult = await client.query(testIDExistenceQuery, [studentID, scenarioID]);
@@ -210,7 +210,7 @@ function addCourse(coursePage, courseName, semester, callback){
 async function addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, page_order) {
     const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
     const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 RETURNING id';
     const insertPromptResponseQuery='insert into prompt_response(id, prompt_num, response) VALUES ($1, $2, $3) ON CONFLICT (id, prompt_num) DO UPDATE SET response = $3';
     const client = await pool.connect();
     try {
@@ -713,7 +713,7 @@ function getFinalActionPageQuestionsAndChoices(scenarioID,questionID,callback){
 async function addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, page_order){
     const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
     const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 returning id';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 returning id';
     const insertMCQResponseQuery='INSERT INTO mcq_response(id, question_id, choice_id) VALUES($1, $2, $3) ON CONFLICT (id, question_id) DO UPDATE SET choice_id=$3;';
     const client = await pool.connect();
     try {

@@ -148,9 +148,9 @@ CREATE TABLE "submissions" (
 CREATE TABLE "response" (
 	"id" SERIAL PRIMARY KEY,
 	"submission_id" INT REFERENCES submissions,
-	"page_num" INT,
+	"page_id" INT REFERENCES pages,
 	"time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	UNIQUE(submission_id, page_num)
+	UNIQUE(submission_id, page_id)
 );
 
 CREATE TABLE "prompt_response" (
