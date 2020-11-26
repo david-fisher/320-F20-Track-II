@@ -148,7 +148,7 @@ function getFinalReflectResponse(studentID, scenarioID, callback) {
 
 //Get the names, ids, and descriptions of each stakeholder in a scenario
 function getStakeholders(scenarioID, callback){
-    let thisQuery= 'select stakeholders.name, stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
+    let thisQuery= 'select stakeholders.name, stakeholders.id, stakeholders.designation, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
