@@ -464,16 +464,16 @@ async function addReflectPage(scenarioID, description, prompts, ORDER){
 }
 
 
-// TODO: add body text argument to functions below?
-function addConvTaskPage(scenarioID, description, callback){
+function addConvTaskPage(scenarioID, description, convLimit, callback){
     // check scenario exists
     // upsert final reflect page
     if (scenarioExists(scenarioID)){
         // create page object (checks for conflicts)
-        let pageID = createPage(CONVERSATION, TYPE_CONV, "", scenarioID)
+        let pageID = createPage(CONVERSATION, TYPE_CONV, description, scenarioID)
         //create prompt object
+		//TODO: upsert new limit count?
         let thisQuery = 'insert into conversation_task values($1, $2)'
-        pool.query(thisQuery, [pageID, description], (error, results) => {
+        pool.query(thisQuery, [pageID, convLimit], (error, results) => {
             if (error){
                 throw error;
             }
