@@ -26,21 +26,21 @@ DROP TYPE IF EXISTS simulation_status CASCADE;
 CREATE TABLE "users" (
 	"id" SERIAL,
 	PRIMARY KEY (id),
-	"full_name" VARCHAR NOT NULL,
-	"email" CHAR(254) NOT NULL,
+	"full_name" VARCHAR NOT NULL CHECK (full_name <> ''),
+	"email" CHAR(254) NOT NULL CHECK (email <> ''),
 	"demographics" VARCHAR
 );  
 
 CREATE TABLE "courses" (
 	"id" SERIAL PRIMARY KEY,
-	"webpage" VARCHAR,
-	"name" VARCHAR,
-	"semester" CHAR(10) NOT NULL
+	"webpage" VARCHAR NOT NULL,
+	"name" VARCHAR NOT NULL CHECK (name <> ''),
+	"semester" CHAR(10) NOT NULL CHECK (semester <> '')
 );
 
 CREATE TABLE "instructs" (
 	"instructor_id" INT REFERENCES users,
-	"webpage" VARCHAR,
+	"webpage" VARCHAR NOT NULL,
 	"course_id" INT REFERENCES courses,
 	PRIMARY KEY("course_id", "instructor_id")
 );
@@ -54,7 +54,7 @@ CREATE TABLE "enrolled" (
 CREATE TYPE simulation_status AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED');
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR,
+	"name" VARCHAR NOT NULL,
 	"due_date" TIMESTAMP,
 	"description" VARCHAR,
 	"status" simulation_status DEFAULT 'DRAFT',
@@ -70,14 +70,14 @@ CREATE TABLE "partof" (
 CREATE TABLE "pages" (
 	"id" SERIAL PRIMARY KEY,
 	"order" INT,
-	"type" CHAR(5),
-	"body_text" VARCHAR,
+	"type" CHAR(5) NOT NULL,
+	"body_text" VARCHAR NOT NULL,
 	"scenario_id" INT REFERENCES scenario
 );
 
 CREATE TABLE "prompt" (
 	"page_id" INT REFERENCES pages,
-	"prompt" VARCHAR,
+	"prompt" VARCHAR NOT NULL CHECK (prompt <> ''),
 	"prompt_num" INT,
 	PRIMARY KEY(page_id, prompt_num)
 );
@@ -127,13 +127,13 @@ CREATE TABLE "mcq" (
 
 CREATE TABLE "question" (
 	"id" SERIAL PRIMARY KEY,
-	"question" VARCHAR,
+	"question" VARCHAR NOT NULL CHECK(question <> ''),
 	"mcq_id" INT REFERENCES mcq
 );
 
 CREATE TABLE "mcq_option" (
 	"id" SERIAL PRIMARY KEY,
-	"option" VARCHAR NOT NULL,
+	"option" VARCHAR NOT NULL CHECK("option" <> ''),
 	"question_id" INT REFERENCES question
 );
 
