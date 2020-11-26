@@ -51,36 +51,6 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
     })
   }, [scenarios])
 
-  // setStakeholders([
-  //   { name: 'Bob Smith', designation: 'I am Bob Smith' , id: 0, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-  //   { name: 'b', designation: 'I am stakeholder b' , id: 1, description: 'really cool background for stakeholder B this is not placeholder data'.repeat(2)},
-  //   { name: 'c', designation: 'I am stakeholder c' , id: 2, description: 'really cool background for stakeholder C this is not placeholder data'},
-  //   { name: 'd', designation: 'I am stakeholder d' , id: 3, description: 'really cool background for stakeholder D this is not placeholder data'},
-  //   { name: 'e', designation: 'I am stakeholder e' , id: 4, description: 'really cool background for stakeholder E this is not placeholder data'},
-  //   { name: 'f', designation: 'I am stakeholder f' , id: 5, description: 'really cool background for stakeholder F this is not placeholder data'},
-  //   { name: 'g', designation: 'I am stakeholder g' , id: 6, description: 'really cool background for stakeholder G this is not placeholder data'},
-  //   { name: 'h', designation: 'I am stakeholder h' , id: 7, description: 'abc'}
-  //   ]);
-
-  // const [test, setTest] = React.useState([]);
-
-  // React.useEffect(() => {
-    // axios({
-    //   method: 'get',
-    //   url: BASE_URL + '/scenarios/stakeholders',
-    //   headers: {
-    //     scenarioID: SCENARIO_ID,
-    //     studentID: STUDENT_ID
-    //   }
-    // }).then(response => {
-    //   setTest(response.data);
-    // }).catch(err => {
-    //   console.log(err);
-    //   alert(err);
-    // })
-  // }, [])
-  // console.log(test);
-
 
 
   const cardStyles = makeStyles({
