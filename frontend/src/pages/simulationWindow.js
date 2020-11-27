@@ -10,9 +10,7 @@ import Reflection from "./reflection.js";
 import InitialAction from "./initialAction.js";
 import GatheredInformation from "./gatheredInformation.js";
 import Stakeholders from "./stakeholders.js";
-import MiddleReflection from "./midReflection";
 import Feedback from "./feedback.js";
-import FinalReflection from "./finalReflection.js"
 import { ScenariosContext } from "../Nav.js";
 import axios from "axios";
 import {BASE_URL, STUDENT_ID, DEV_MODE, SCENARIO_ID} from "../constants/config";
