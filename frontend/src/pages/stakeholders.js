@@ -91,7 +91,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
   const stakeholdersGrid = getStakeholdersGrid(stakeholders);
  
 
-  function getStakeholderCards(id, name, description, background, styles) {
+  function getStakeholderCards(id, name, designation, description, styles) {
     const PAGE_ID_OF_PAGE_BEFORE_CONVERSATIONS = 'gatheredInformation';
 
     function toggleModal(id, toggle) {
@@ -101,14 +101,14 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
         return newToggles;
       });
     }
-    let cardClass, nameClass, backgroundClass;
+    let cardClass, nameClass, descriptionClass;
     if (stakeholdersDisabled[id]) {
       cardClass = `${styles.root} ${styles.disabled}`;
-      nameClass = backgroundClass = styles.disabled;
+      nameClass = descriptionClass = styles.disabled;
     } else {
       cardClass = styles.root;
       nameClass = styles.name;
-      backgroundClass = styles.background;
+      descriptionClass = styles.description;
     }
     return (
       <>
@@ -119,10 +119,10 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
                 {name}
               </Typography>
               <Typography variant="body1" component="p" align='left'>
-                {description}
+                {designation}
               </Typography>
-              <Typography variant="body2" component="p" align='left' className={backgroundClass}>
-                {ellipses(background, 87)}
+              <Typography variant="body2" component="p" align='left' className={descriptionClass}>
+                {ellipses(description, 87)}
               </Typography>
             </CardContent>
           </Card>
@@ -133,7 +133,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
           maxWidth = {'md'}
           >
           <DialogContent>
-            <DialogContentText color = "#000000">{background}</DialogContentText>
+            <DialogContentText color = "#000000">{description}</DialogContentText>
             <Button variant="contained" onClick={() => {
                 setCurrentStakeholder(prev => ({
                   name: name,
