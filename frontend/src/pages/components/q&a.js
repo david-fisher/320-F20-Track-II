@@ -57,16 +57,15 @@ export default function StateTextFields(props) {
     event.preventDefault();
     if(!Object.values(responses).includes('') && Object.keys(responses).length > 0){
       props.handleResponse(responses).then(res => {
-        props.pages[props.nextPageName].completed = true;
+        if(props.nextPageName != 'home'){
+          props.pages[props.nextPageName].completed = true;
+        }
         props.nextPage();
       }).catch(err => alert(err))
     }else{
-      setHelperText('Please provide a response.');
       setError(true);
-      if(props.nextPageName != 'home'){
-        props.pages[props.nextPageName].completed = true;
-      }
-    props.nextPage();
+      setHelperText('Please provide a response.');
+    }
   };
   }
   return (
