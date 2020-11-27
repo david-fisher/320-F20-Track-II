@@ -265,7 +265,7 @@ function scenarioExists(scenarioID){
 
 // helper for createScenario
 function addScenario(name, due_date, description, additional_data){
-    let thisQuery = 'insert into scenario values($1, $2, $3, DEFAULT, $4)'
+    let thisQuery = 'insert into scenario values(DEFAULT, $1, $2, $3, DEFAULT, $4)'
     pool.query(thisQuery, [name, due_date, description, additional_data], (error, results) => {
         if (error){
             throw error
@@ -804,6 +804,30 @@ async function getScenarioCSV(scenarioID, callback){
 // helper for version control
 function loadScenarioCSV(scenario_csv_string){
     // creates new scenario using scenario_csv_string
+
+    // create scenario object
+
+    // create pages objects
+    // addIntroPage
+    // addConvTaskPage
+    // addMidReflectPage
+    // addFinalActionPage
+    // addFinalReflectPage
+    // create conversation_task objects
+
+    // create stakeholders objects
+
+    // create conversation objects
+
+    // create score objects
+
+    // create issues objects
+
+    // create mcq objects
+
+    // create question objects
+
+    // create mcq_option objects
 
 }
 
