@@ -6,13 +6,11 @@ import Results from "./results.js";
 import Conclusion from "./conclusion.js";
 import Introduction from "./introduction.js";
 import ProjectAssignment from "./projectAssignment.js";
-import InitialReflection from "./initialReflection.js";
+import Reflection from "./reflection.js";
 import InitialAction from "./initialAction.js";
 import GatheredInformation from "./gatheredInformation.js";
 import Stakeholders from "./stakeholders.js";
-import MiddleReflection from "./midReflection";
 import Feedback from "./feedback.js";
-import FinalReflection from "./finalReflection.js"
 import { ScenariosContext } from "../Nav.js";
 import axios from "axios";
 import {BASE_URL, STUDENT_ID, DEV_MODE, SCENARIO_ID} from "../constants/config";
@@ -25,14 +23,19 @@ function SimulationWindow() {
   const [pages, setPages] = useState({
     introduction: { visited: true, completed: true, pageNumber: 0, html: (<Introduction />) },
     projectAssignment: { visited: false, completed: true, pageNumber: 1, html: (<ProjectAssignment />) },
-    initialReflection: { visited: false, completed: true, pageNumber: 2, html: (<InitialReflection />) },
+    initialReflection: { visited: false, completed: true, pageNumber: 2, html: (<Reflection
+      content_url="/scenarios/initialReflection" res_url="/scenarios/initialReflection/response" nextPageID="initialAction" prevPageID="projectAssignment" title="Reflect on Initial Information"/>) },
     initialAction: { visited: false, completed: false, pageNumber: 3, html: (<InitialAction />) },
     gatheredInformation: { visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation />) },
     stakeholders: { visited: false, completed: true, pageNumber: 5, html: (<Stakeholders />) },
-    middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
+    middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<Reflection
+      content_url="/scenarios/middleReflection" res_url="/scenarios/middleReflection/response"
+      nextPageID="results" prevPageID="stakeholders" title="Reflect on Stakeholder Information"/>) },
     results: { visited: false, completed: false, pageNumber: 7, html: (<Results />) },
     feedback: { visited: false, completed: true, pageNumber: 8, html: (<Feedback />) },
-    finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
+    finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<Reflection
+      content_url="/scenarios/finalReflection" res_url="/scenarios/finalReflection/response"
+      nextPageID="conclusion" prevPageID="feedback" title="Reflect on Final Information"/>) },
     conclusion: { visited: false, completed: false, pageNumber: 10, html: (<Conclusion />) }
   });
 

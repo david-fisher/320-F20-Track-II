@@ -3,7 +3,6 @@ import React from "react";
 import Results from "./pages/results";
 import Home from "./pages/home";
 import RadarTest from "./pages/chartTest";
-import InitialReflection from "./pages/initialReflection";
 
 import {
   ThemeProvider,

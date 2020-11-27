@@ -19,14 +19,14 @@ const TextTypography = withStyles({
 // onChange={(event) => {
 //   setTestInput3(event.target.value);
 
-function getQuestions(questionArr, responses, setResponses) {
+function getQuestions(questionArr, responses, setResponses, previouslyResponded) {
   let arr = [];
   for (let i = 0; i < questionArr.length; i++) {
     const question = questionArr[i];
     arr.push(
       <div>
         <p><b>{question.text}</b></p>
-        <textarea id={question.id} value={responses[question.id]} onChange={event => {
+        <textarea disabled={previouslyResponded} id={question.id} value={responses[question.id]} onChange={event => {
           const target = event.target
           setResponses((reses) => {
             let newObj = {...reses};
@@ -42,26 +42,33 @@ function getQuestions(questionArr, responses, setResponses) {
 }
 
 export default function StateTextFields(props) {
-  
-  const [responses, setResponses] = React.useState(props.questions.reduce((prev, question) => {
-    prev[question.id] = '';
-    return prev;
-  }, {}));
+
+  const previouslyResponded = Object.keys(props.prevResponses).length > 0;
+
+  const [responses, setResponses] = React.useState({});
   const [error, setError] = React.useState(false);
-  let qAndA = getQuestions(props.questions, responses, setResponses)
   let header = props.header;
   const [helperText, setHelperText] = React.useState('');
 
+  React.useEffect(() => {
+    setResponses(props.questions.reduce((prev, question) => {
+      prev[question.id] = (previouslyResponded && props.prevResponses[question.id] !== undefined) 
+        ? props.prevResponses[question.id] : '';
+      return prev;
+    }, {}));
+  }, [props.prevResponses])
+
+  let qAndA = getQuestions(props.questions, responses, setResponses, previouslyResponded);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(!Object.values(responses).includes('') && Object.keys(responses).length > 0){
+    if(!Object.values(responses).includes('') && Object.keys(responses).length === props.questions.length){
       props.handleResponse(responses).then(res => {
-        if(props.nextPageName != 'home'){
+        if(props.nextPageName !== 'home'){
           props.pages[props.nextPageName].completed = true;
         }
         props.nextPage();
-      }).catch(err => alert(err))
+      }).catch(err => alert(err));
     }else{
       setError(true);
       setHelperText('Please provide a response.');
