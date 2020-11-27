@@ -29,39 +29,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const mainText = "You have just been presented with a scenario about a new project that your company is developing. You have a role to play in the development and eventual launch of that project. Thinking about that role and about what you have learned about this new project, please provide responses to the following questions. You must write something, but your responses do not need to be highly polished; you should aim for a few thoughtful sentences.";
-// const questions = [
-// "Why did you select your chosen source(s) of information?",
-// "What did you learn that most affects the action that you will take next?",
-// ];
+function Reflection({ pages, setPages, activePage, setActivePage,
+  content_url, res_url, nextPageID, prevPageID , title}) {
 
-const questions = [
-"What new responsibilities do you have after being asssigned to this project?",
-"What aren't you sure about, or what questions are raised for you about those responsibilities?",
-];
-
-function InitialReflection({ pages, setPages, activePage, setActivePage }) {
-  function goToProjectAssignment() {
-    if (!pages.projectAssignment.visited) {
-      setPages((prevPages) => {
-        let copy = { ...prevPages };
-        copy.projectAssignment.visited = true;
-        return copy;
-      });
-    }
-    setActivePage((prevPage) => "projectAssignment");
-  }
-
-  function goToInitialAction() {
-    if (pages.initialAction.completed) {
-      if (!pages.initialAction.visited) {
+  function goToPage(pageID) {
+    if (pages[pageID].completed) {
+      if (!pages[pageID].visited) {
         setPages((prevPages) => {
           let copy = { ...prevPages };
-          copy.initialAction.visited = true;
+          copy[pageID].visited = true;
           return copy;
         });
       }
-      setActivePage((prevPage) => "initialAction");
+      setActivePage((prevPage) => pageID);
     }
   }
 
@@ -76,7 +56,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
     (async () => {
       await axios({
         method: 'get',
-        url: BASE_URL + '/scenarios/initialReflection',
+        url: BASE_URL + content_url,
         headers: {
           scenarioID: scenarios.currentScenarioID
         }
@@ -90,7 +70,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
 
       axios({
         method: 'get',
-        url: BASE_URL + '/scenarios/initialReflection/response',
+        url: BASE_URL + res_url,
         headers: {
           scenarioID: scenarios.currentScenarioID,
           studentID: STUDENT_ID
@@ -104,11 +84,11 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
         console.log(err);
       });
     })();
-  }, [scenarios]);
+  }, [scenarios, activePage]);
 
   async function handleResponse(data) {
     await axios({
-      url: BASE_URL + '/scenarios/initialReflection',
+      url: BASE_URL + content_url,
       method: 'put',
       data: {
         scenarioID: scenarios.currentScenarioID,
@@ -123,7 +103,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt={5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Reflect on Initial Information
+            {title}
           </TextTypography>
         </Box>
       </Grid>
@@ -132,7 +112,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
           <Button
             variant="contained"
             disableElevation
-            onClick={goToProjectAssignment}
+            onClick={() => goToPage(prevPageID)}
           >
             Back
           </Button>
@@ -146,7 +126,7 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
           <Box m="2rem">
           </Box>
             <QA header={bodyText} questions={prompts} handleResponse={handleResponse}
-              nextPage={goToInitialAction} pages={pages} nextPageName={"initialAction"}
+              nextPage={() => goToPage(nextPageID)} pages={pages} nextPageName={nextPageID}
               prevResponses={promptResponses}/>
         </Grid>
       </Grid>
@@ -154,4 +134,4 @@ function InitialReflection({ pages, setPages, activePage, setActivePage }) {
   );
 }
 
-export default InitialReflection;
+export default Reflection;
