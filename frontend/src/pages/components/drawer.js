@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
 import {Grid} from '@material-ui/core';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
@@ -59,7 +59,7 @@ export default function SwipeableTemporaryDrawer({stepper, gatheredInformation})
     <div>
       <Grid container direction="row" justify="space-between">
           <Grid item style={{ marginRight: "0rem"}}>
-            <Button variant="contained" onClick={toggleDrawer('Left', true)}>Stepper</Button>
+            <Button variant="contained" color="primary" onClick={toggleDrawer('Left', true)}>Stepper</Button>
             <SwipeableDrawer
             anchor={'Left'}
             open={state['Left']}
@@ -70,7 +70,7 @@ export default function SwipeableTemporaryDrawer({stepper, gatheredInformation})
           </SwipeableDrawer>
           </Grid>
           <Grid item style={{ marginRight: "0rem"}}>
-            <Button variant="contained" onClick={toggleDrawer('Right', true)}>Gathered Information</Button>
+            <Button variant="contained" color="primary" onClick={toggleDrawer('Right', true)}>Gathered Information</Button>
             <SwipeableDrawer
             anchor={'Right'}
             open={state['Right']}
