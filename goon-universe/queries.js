@@ -451,26 +451,26 @@ async function addIntroPage(scenarioID, text, callback){
 }
 
 
-async function addInitReflectPage(scenarioID, description, prompts, callback){
-    addReflectPage(scenarioID, description, prompts, INITIAL_REFLECTION).then((result) => callback(result));
+async function addInitReflectPage(scenarioID, body_text, prompts, callback){
+    addReflectPage(scenarioID, body_text, prompts, INITIAL_REFLECTION).then((result) => callback(result));
 }
 
-async function addMidReflectPage(scenarioID, description, prompts, callback){
-    addReflectPage(scenarioID, description, prompts, MIDDLE_REFLECTION).then((result) => callback(result));
+async function addMidReflectPage(scenarioID, body_text, prompts, callback){
+    addReflectPage(scenarioID, body_text, prompts, MIDDLE_REFLECTION).then((result) => callback(result));
 }
 
-async function addFinalReflectPage(scenarioID, description, prompts, callback){
-    addReflectPage(scenarioID, description, prompts, FINAL_REFLECTION).then((result) => callback(result));
+async function addFinalReflectPage(scenarioID, body_text, prompts, callback){
+    addReflectPage(scenarioID, body_text, prompts, FINAL_REFLECTION).then((result) => callback(result));
 }
 
-async function addReflectPage(scenarioID, description, prompts, ORDER){
+async function addReflectPage(scenarioID, body_text, prompts, ORDER){
     let thisQuery = 'insert into prompt values($1, $2, DEFAULT)';
     let pageID = -1
     const client = await pool.connect();
     try{
         await client.query("BEGIN");
         if (scenarioExists(scenarioID)){
-            pageID = createPage(ORDER, TYPE_PROMPT, description, scenarioID)
+            pageID = createPage(ORDER, TYPE_PROMPT, body_text, scenarioID)
             for (let p of prompts){
                 await client.query(thisQuery, [pageID, p]);
             }
@@ -490,7 +490,7 @@ async function addReflectPage(scenarioID, description, prompts, ORDER){
 }
 
 
-async function addConvTaskPage(scenarioID, description, convLimit, callback){
+async function addConvTaskPage(scenarioID, body_text, convLimit, callback){
     // check scenario exists
     // upsert final reflect page
     let thisQuery = 'insert into conversation_task values($1, $2)'
@@ -501,7 +501,7 @@ async function addConvTaskPage(scenarioID, description, convLimit, callback){
         if (scenarioExists(scenarioID)){
 
             // create page object (checks for conflicts)
-            pageID = createPage(CONVERSATION, TYPE_CONV, description, scenarioID)
+            pageID = createPage(CONVERSATION, TYPE_CONV, body_text, scenarioID)
             //TODO: upsert new limit count?
             client.query(thisQuery, [pageID, convLimit])
 
@@ -585,54 +585,46 @@ async function addStakeholderConversations(stakeholderID, conv_ques_text_array){
     
 }
 
-function addInitActionPage(scenarioID, description, prompts, callback){
-    // check scenario exists
-    // upsert MCQ page
-    if (scenarioExists(scenarioID)){
-        // create page object
-        let pageID = createPage(INIT_ACTION, TYPE_MCQ, "", scenarioID)
-        //create prompt object
-        for (let i of prompts){
-            let thisQuery = 'insert into mcq values($1, $2)'
-            pool.query(thisQuery, [pageID, description], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
-        }
+function addInitActionPage(scenarioID, body_text, QA_array, callback){
+    try {
+        addActionPage(sceanrioID, INIT_ACTION, body_text, QA_array)
+        addMCQ(scenarioID, INIT_ACTION, QA_array)
+    } catch (e) {
+        console.log("Failed to add InitActionPage")
+        throw (e)
     }
-    else{
-        // TODO return InvalidScenarioError
-        throw error;
-    }
+    callback(SUCCESS)
 }
 
-function addFinalActionPage(scenarioID, description, prompts, callback){
-    // check scenario exists
-    // upsert MCQ page
-    if (scenarioExists(scenarioID)){
-        // create page object
-        let pageID = createPage(FINAL_ACTION, TYPE_MCQ, "", scenarioID)
-        //create object
-        for (let i of prompts){
-            let thisQuery = 'insert into mcq values($1, $2)'
-            pool.query(thisQuery, [pageID, description], (error, results) => {
-                if (error){
-                    throw error;
-                }
-                callback(results.rows)
-            })
+function addFinalActionPage(scenarioID, body_text, QA_array, callback){
+    try {
+        addActionPage(sceanrioID, FINAL_ACTION, body_text, QA_array)
+        addMCQ(scenarioID, FINAL_ACTION, QA_array)
+    } catch (e) {
+        console.log("Failed to add FinalActionPage")
+        throw (e)
+    }
+    callback(SUCCESS)
+
+}
+
+function addActionPage(scenarioID, order, body_text, QA_array){
+    try {
+        if (scenarioExists(scenarioID)){
+            let pageID = createPage(order, TYPE_MCQ, body_text, scenarioID)
+            addMCQ(scenarioID, FINAL_ACTION, QA_array)
         }
+        else{
+            throw RangeError(`ScenarioID ${scenarioID} does not exist`);
+        }
+    } catch (e) {
+        console.log("Failed to add final action page")
     }
-    else{
-        // TODO return InvalidScenarioError
-        throw error;
-    }
+    return
 }
 
 // function addMCQ(scenarioID, )
-async function addMCQ(scenarioID, order, QA_array, callback){
+async function addMCQ(scenarioID, order, QA_array){
     // QA_array = [[Q1, [op1, op2, op3]], [Q2, [op1, op2, op3]]]
     let pageID = getPageID(scenarioID, order)
     try {
@@ -644,7 +636,7 @@ async function addMCQ(scenarioID, order, QA_array, callback){
         console.log("failed to add MCQs")
         throw e
     }
-    callback(SUCCESS)
+    return
 }
 
 // may be used as a helper
