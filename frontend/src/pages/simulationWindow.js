@@ -29,11 +29,11 @@ function SimulationWindow() {
     initialAction: { visited: false, completed: false, pageNumber: 3, html: (<InitialAction />) },
     gatheredInformation: { visited: false, completed: false, pageNumber: 4, html: (<GatheredInformation />) },
     stakeholders: { visited: false, completed: true, pageNumber: 5, html: (<Stakeholders />) },
-    middleReflection: { visited: false, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
-    results: { visited: false, completed: false, pageNumber: 7, html: (<Results />) },
+    middleReflection: { visited: true, completed: true, pageNumber: 6, html: (<MiddleReflection />) },
+    results: { visited: false, completed: true, pageNumber: 7, html: (<Results />) },
     feedback: { visited: false, completed: true, pageNumber: 8, html: (<Feedback />) },
-    finalReflection: { visited: false, completed: true, pageNumber: 9, html: (<FinalReflection />) },
-    conclusion: { visited: false, completed: false, pageNumber: 10, html: (<Conclusion />) }
+    finalReflection: { visited: true, completed: true, pageNumber: 9, html: (<FinalReflection />) },
+    conclusion: { visited: true, completed: true, pageNumber: 10, html: (<Conclusion />) }
   });
 
   const infoIdsState = useState([]);

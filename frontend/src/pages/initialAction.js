@@ -45,6 +45,7 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
   }
 
   async function handleResponse(data) {
+    /*
     await axios({
       url: BASE_URL + '/scenarios/initialAction',
       method: 'put',
@@ -54,6 +55,7 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
         data: data
       }
     });
+    */
   }
 
   return (
