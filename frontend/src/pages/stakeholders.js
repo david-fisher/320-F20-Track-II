@@ -108,7 +108,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
     } else {
       cardClass = styles.root;
       nameClass = styles.name;
-      descriptionClass = styles.description;
+      descriptionClass = styles.background;
     }
     return (
       <>
