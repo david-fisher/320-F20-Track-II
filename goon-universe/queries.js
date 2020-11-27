@@ -27,6 +27,8 @@ const TYPE_PROMPT = 'PRMPT'
 const TYPE_MCQ = 'MCQ'
 const TYPE_CONV = 'CONV'
 
+const SUCCESS = "Success!"
+
 const Pool = require('pg').Pool
 
 /* Example .env file
@@ -629,28 +631,60 @@ function addFinalActionPage(scenarioID, description, prompts, callback){
     }
 }
 
-// may be used as a helper
-function addMCQQuestion(question, mcq_id){
-    // TODO check for invalid parameters
-    let thisQuery = 'insert into question values(DEFAULT, $1, $2)'
-    pool.query(thisQuery, [question, mcq_id], (error, results) => {
-        if (error){
-            throw error;
+// function addMCQ(scenarioID, )
+async function addMCQ(scenarioID, order, QA_array, callback){
+    // QA_array = [[Q1, [op1, op2, op3]], [Q2, [op1, op2, op3]]]
+    let pageID = getPageID(scenarioID, order)
+    try {
+        for (let QA of QA_array){
+            let Q_ID = addMCQQuestion(QA[0], pageID)
+            addMCQOptions(QA[1], Q_ID)
         }
-        callback(results.rows)
-    })
+    } catch (e){
+        console.log("failed to add MCQs")
+        throw e
+    }
+    callback(SUCCESS)
 }
 
 // may be used as a helper
-function addMCQOption(option, question_id){
+async function addMCQQuestion(question, mcq_id){
+    // TODO check for invalid parameters
+    let thisQuery = 'insert into question values(DEFAULT, $1, $2) RETURNING id'
+    let questionID = -1
+    const client = pool.connect()
+    try{
+        await client.query("BEGIN")
+        let query_result = pool.query(thisQuery, [question, mcq_id])
+        questionID = query_result.rows[0].id
+        if (questionID === -1) throw RangeError("failed to add question")
+        await client.query("COMMIT")
+    } catch (e) {
+        await client.query("ROLLBACK")
+    } finally {
+        await client.release()
+    }
+    return questionID
+}
+
+// may be used as a helper
+async function addMCQOptions(option_array, question_id){
     // TODO check for invalid parameters
     let thisQuery = 'insert into mcq_option values(DEFAULT, $1, $2)'
-    pool.query(thisQuery, [option, question_id], (error, results) => {
-        if (error){
-            throw error;
+    const client = pool.connect()
+    try {
+        (await client).query("BEGIN")
+        for (let option of option_array){
+            await client.query(thisQuery, [option, question_id])
         }
-        callback(results.rows)
-    })
+        (await client).query("COMMIT")
+    } catch (e){
+        (await client).query("ROLLBACK")
+        throw e
+    } finally {
+        await client.release()
+    }
+    return SUCCESS
 }
 
 function getStakeholderDescriptions(scenarioID){
