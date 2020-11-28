@@ -252,15 +252,34 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.addInitActionResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated inital action")
-          }
-        })}
+            timestamp = new Date()
+            for(questionID in data){
+                if(!isnumber(questionID)){
+                    res.status(400).json({error: `Invalid question ID: ${questionID}`})
+                    console.log("Invalid Question ID")
+                    res.end()
+                }
+                else{
+                    choiceID = data[questionID]
+                    if(!isnumber(choiceID)){
+                        res.status(400).json({error: `Invalid choice ID: ${choiceID}`})
+                        console.log("Invalid Choice ID")
+                        res.end()                        
+                    }
+                    else{
+                        db.addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
+                            if(result.length === 0){
+                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else{
+                                res.status(200).send(result)
+                                console.log("Updated inital action")
+                            }
+                    })
+                    }
+                }
+            }
+        }
     })
 
 router.route('/scenarios/finalAction')
@@ -301,15 +320,34 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else{
-        db.addFinalActionResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated final action")
-          }
-        })}
+            timestamp = new Date()
+            for(questionID in data){
+                if(!isnumber(questionID)){
+                    res.status(400).json({error: `Invalid question ID: ${questionID}`})
+                    console.log("Invalid Question ID")
+                    res.end()
+                }
+                else{
+                    choiceID = data[questionID]
+                    if(!isnumber(choiceID)){
+                        res.status(400).json({error: `Invalid choice ID: ${choiceID}`})
+                        console.log("Invalid Choice ID")
+                        res.end()                        
+                    }
+                    else{
+                        db.addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
+                            if(result.length === 0){
+                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else{
+                                res.status(200).send(result)
+                                console.log("Updated final action")
+                            }
+                    })
+                    }
+                }
+            }
+        }
     })
 
 router.route('/scenarios/consequences')
