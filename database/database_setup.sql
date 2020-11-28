@@ -91,7 +91,7 @@ CREATE TABLE "stakeholders" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR NOT NULL CHECK ("name" <> ''),
 	"designation" VARCHAR,
-	"description" VARCHAR,
+	"description" VARCHAR NOT NULL,
 	"conversation" VARCHAR NOT NULL,
 	"scenario_id" INT REFERENCES scenario,
 	"conversation_task_id" INT REFERENCES conversation_task
@@ -155,7 +155,7 @@ CREATE TABLE "response" (
 
 CREATE TABLE "prompt_response" (
 	"id" INT REFERENCES response,
-	"prompt_num" INT,
+	"prompt_num" INT NOT NULL CHECK (prompt_num > 0),
 	"response" VARCHAR NOT NULL,
 	PRIMARY KEY (id, prompt_num)
 );
