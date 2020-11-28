@@ -67,7 +67,7 @@ export default function StateTextFields(props) {
       setHelperText('Please provide a response.');
     }
   };
-  }
+  
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
