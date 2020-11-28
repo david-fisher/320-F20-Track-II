@@ -11,7 +11,7 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-function Results({pages, setPages, activePage, setActivePage}) {
+function Summary({pages, setPages, activePage, setActivePage}) {
   function goToMiddleReflection(){
     if (!pages.middleReflection.visited) {
       setPages(prevPages => {
@@ -60,4 +60,4 @@ function Results({pages, setPages, activePage, setActivePage}) {
   );
 }
 
-export default Results;
+export default Summary;
