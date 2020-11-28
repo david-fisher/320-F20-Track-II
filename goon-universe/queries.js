@@ -752,24 +752,27 @@ function getFinalReflectPage(scenarioID, callback){
 
 //Returns question IDs as well for getChoices functions
 
-function getInitActionPageQuestionsAndChoices(scenarioID,questionID,callback){
-    let thisQuery='select question.question, mcq_option.option from pages, mcq, mcq_option, question where pages.order ='+ INIT_ACTION +'and scenario_id = $1 and mcq.page_id = question.mcq_id and pages.id=mcq.page_id and mcq_option.question_id = $2 and mcq_option.question_id = question.id'
-    pool.query(thisQuery, [scenarioID, questionID], (error,results) => {
-        if(error){
+function getActionPageQuestionsAndChoices(scenarioID, pageOrder, callback) {
+    let thisQuery='SELECT question.question, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id'
+    pool.query(thisQuery, [scenarioID, pageOrder], (error,results) => {
+        if (error) {
             throw error
         }
-        callback(results.rows)
+        let resultObject = {}
+        if (results.rows.length !== 0) {
+            // Selected question will be the same across all rows
+            resultObject.question=results.rows[0].question
+            resultObject.mcq_choices=results.rows.map((row) => row.option)
+        }
+        callback(resultObject)
     })
 }
+function getInitActionPageQuestionsAndChoices(scenarioID,callback){
+    getActionPageQuestionsAndChoices(scenarioID, INIT_ACTION, callback);
+}
 
-function getFinalActionPageQuestionsAndChoices(scenarioID,questionID,callback){
-    let thisQuery='select question.question, mcq_option.option from pages, mcq, mcq_option, question where pages.order ='+ FINAL_ACTION +'and scenario_id = $1 and mcq.page_id = question.mcq_id and pages.id=mcq.page_id and mcq_option.question_id = $2 and mcq_option.question_id = question.id'
-    pool.query(thisQuery, [scenarioID, questionID], (error,results) => {
-        if(error){
-            throw error
-        }
-        callback(results.rows)
-    })
+function getFinalActionPageQuestionsAndChoices(scenarioID,callback){
+    getActionPageQuestionsAndChoices(scenarioID, FINAL_ACTION, callback);
 }
 
 async function addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, page_order){
