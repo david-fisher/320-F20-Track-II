@@ -39,7 +39,7 @@ function Summary({pages, setPages, activePage, setActivePage}) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt = {5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Coverage Of Issues
+            Summary
           </TextTypography>
         </Box>
       </Grid>
