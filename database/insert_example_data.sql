@@ -17,44 +17,61 @@ INSERT INTO enrolled VALUES(2, 1);
 INSERT INTO enrolled VALUES(2, 2);
 INSERT INTO enrolled VALUES(4, 2);
 
+-- The use of \gset and RETURNING clauses removes the need to manually update references to serial primary keys
+-- Do not use a semicolon after statements with \gset
+-- Consult the PostgreSQL documentation for more information
+
 -- test scenario 1
-INSERT INTO scenario VALUES(DEFAULT, 'Sceanrio 1', '2020-12-01 23:59:59', 'description: test scenario', 'DRAFT', '<additional_data>');
+INSERT INTO scenario VALUES(DEFAULT, 'Scenario 1', '2020-12-01 23:59:59', 'description: test scenario', 'DRAFT', '<additional_data>');
 insert into partof values(1,1);
 INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'page: Intro page content for scenario 1', 1);
---INSERT INTO plain_page VALUES(1, 'page: Intro page content for scenario 1');
+INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'page: Task page content for scenario 1', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflection', 1);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt (a)...', 1);
-INSERT INTO prompt VALUES(2, 'Initial reflection prompt (b)...', 2);
+INSERT INTO prompt VALUES(3, 'Initial reflection prompt (a)...', 1);
+INSERT INTO prompt VALUES(3, 'Initial reflection prompt (b)...', 2);
 
-INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'Body text before task assignment', 1);
-INSERT INTO conversation_task VALUES(3, 'conversation_task: <obj>');
-INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 3);
-
-INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 1);
-INSERT INTO prompt VALUES(4, 'prompt: middle reflection', 1);
-
-INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 'Body text before multiple choice question objects', 1);
-INSERT INTO mcq VALUES(5, 'MCQ: <obj>');
-INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 1: <text>', 5);
+INSERT INTO pages VALUES(DEFAULT, 4, 'MCQ', 'Body text before initial action', 1);
+INSERT INTO mcq VALUES(4);
+INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Initial Action: <text>', 4);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option A', 1);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option B', 1);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option C', 1);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 1);
 
-INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 2: <text>', 5);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option A', 2);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option B', 2);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 2);
+INSERT INTO pages VALUES(DEFAULT, 5, 'PLAIN', 'page: Init action subsequent (start to gather info) for scenario 1', 1);
 
+INSERT INTO pages VALUES(DEFAULT, 6, 'CONV', 'Body text before conversation', 1);
+INSERT INTO conversation_task VALUES(6,1);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 6);
 
-INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 'Body text before final reflection', 1);
-INSERT INTO prompt VALUES(6, 'prompt: final reflection', 1);
+INSERT INTO pages VALUES(DEFAULT, 7, 'PRMPT', 'Body text before middle reflection', 1);
+INSERT INTO prompt VALUES(7, 'prompt: middle reflection', 1);
 
-INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: results will be available in one week', 1);
---INSERT INTO plain_page VALUES(7, 'Page: results will be available in one week');
+INSERT INTO pages VALUES(DEFAULT, 8, 'MCQ', 'Body text before final action multiple choice question objects', 1);
+INSERT INTO mcq VALUES(8);
+INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 1: <text>', 8);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option A', 2);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option B', 2);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option C', 2);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 2);
 
+INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 2: <text>', 8);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option A', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option B', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 3);
 
+-- Double check page types
+INSERT INTO pages VALUES(DEFAULT, 9, 'PLAIN', 'Body text of summary page', 1);
+INSERT INTO pages VALUES(DEFAULT, 10, 'PLAIN', 'Body text of feedback page', 1);
+
+INSERT INTO pages VALUES(DEFAULT, 11, 'PRMPT', 'Body text before final reflection', 1);
+INSERT INTO prompt VALUES(11, 'prompt: final reflection', 1);
+
+INSERT INTO pages VALUES(DEFAULT, 12, 'PLAIN', 'Page: results will be available in one week', 1);
+
+-- TODO: fix sample submissions
+-- ID is 2 for some reason?
 INSERT INTO submissions VALUES(DEFAULT, 1, 1, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 1, 2, '2020-10-10 10:10:00');
 INSERT INTO prompt_response VALUES(1, 1, 'John Doe''s response to initial reflection (a)');
@@ -83,35 +100,35 @@ INSERT INTO response VALUES(DEFAULT, 2, 5, '2020-10-11 09:10:00');
 INSERT INTO mcq_response VALUES(7, 1, 3);
 
 
-
 -- test scenario 2
+-- Fix this
 INSERT INTO scenario VALUES(DEFAULT, 'Scenario 2', '2020-12-18 23:59:59', 'description: sceanrio 2', 'DRAFT', '<additional_data for scenario 2>');
 INSERT INTO partof VALUES(2, 2);
 -- INSERT INTO partof VALUES(1, 2); 
 -- two courses have the same scenario, one student is enrolled in both
 
 INSERT INTO pages VALUES(DEFAULT, 1 , 'PLAIN', 'page: Intro page content for scenario 2', 2);
---INSERT INTO plain_page VALUES(8, 'page: Intro page content for scenario 2');
-
-INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflection', 2);
-INSERT INTO prompt VALUES(9, 'prompt: s2 Initial reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'Body text before task assignment', 2);
-INSERT INTO conversation_task VALUES(10, 's2 conversation_task: <obj>');
 
-INSERT INTO pages VALUES(DEFAULT, 4, 'PRMPT', 'Body text before middle reflection', 2);
-INSERT INTO prompt VALUES(11, 'prompt: s2 middle reflection', 1);
+INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflection', 2) RETURNING id \gset scenario_2_init_reflect_
+INSERT INTO prompt VALUES(:scenario_2_init_reflect_id, 'prompt: s2 Initial reflection', 1);
+-- Enter pages here
+INSERT INTO pages VALUES(DEFAULT, 4, 'MCQ', 'Body text before initial action multiple choice question', 2);
+INSERT INTO mcq VALUES(12);
 
-INSERT INTO pages VALUES(DEFAULT, 5, 'MCQ', 'Body text before multiple choice question', 2);
-INSERT INTO mcq VALUES(12, 's2 MCQ: <obj>');
+INSERT INTO conversation_task VALUES(10,1); -- ??
+-- Enter pages here?
+INSERT INTO pages VALUES(DEFAULT, 7, 'PRMPT', 'Body text before middle reflection', 2) RETURNING id \gset scenario_2_mid_reflect_
+INSERT INTO prompt VALUES(:scenario_2_mid_reflect_id, 'prompt: s2 middle reflection', 1);
 
-INSERT INTO pages VALUES(DEFAULT, 6, 'PRMPT', 'Body text before final reflection', 2);
-INSERT INTO prompt VALUES(13, 'prompt: s2 final reflection', 1);
+INSERT INTO pages VALUES(DEFAULT, 11, 'PRMPT', 'Body text before final reflection', 2) RETURNING id \gset scenario_2_final_reflect_
+INSERT INTO prompt VALUES(:scenario_2_final_reflect_id, 'prompt: s2 final reflection', 1);
 
-INSERT INTO pages VALUES(DEFAULT, 7, 'PLAIN', 'Page: s2 results will be available in one week', 2);
---INSERT INTO plain_page VALUES(14, 'Page: s2 results will be available in one week');
+INSERT INTO pages VALUES(DEFAULT, 12, 'PLAIN', 'Page: s2 results will be available in one week', 2);
+--INSERT INTO plain_page VALUES(##, 'Page: s2 results will be available in one week');
 
-
+-- TODO: fix sample submissions
 INSERT INTO submissions VALUES(DEFAULT, 2, 2, '2020-10-10 10:10:00');
 INSERT INTO response VALUES(DEFAULT, 3, 2, DEFAULT);
 INSERT INTO prompt_response VALUES(8, 1, 'Jane''s response to scenario 2 initial reflection');

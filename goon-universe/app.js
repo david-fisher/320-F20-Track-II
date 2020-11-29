@@ -225,8 +225,8 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.getInitActions(scenarioID, function(result){
-            if(result.length == 0) {
+        db.getInitActionPageQuestionsAndChoices(scenarioID, function(result){
+            if(Object.entries(result).length == 0) {
                 res.status(404).json({error: `No initial actions found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -252,15 +252,37 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.addInitActionChoice(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated inital action")
-          }
-        })}
+            timestamp = new Date()
+            for(questionID in data){
+                if(!isnumber(questionID)){
+                    res.status(400).json({error: `Invalid question ID: ${questionID}`})
+                    console.log("Invalid Question ID")
+                    res.end()
+                }
+                else{
+                    choiceID = data[questionID]
+                    if(!isnumber(choiceID)){
+                        res.status(400).json({error: `Invalid choice ID: ${choiceID}`})
+                        console.log("Invalid Choice ID")
+                        res.end()                        
+                    }
+                    else{
+                        db.addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
+                            if(result === "scenario/status ID error"){
+                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else if (result === "response/question/choice ID error"){
+                                res.status(404).json({error: `response ID or question ID does not exist in database`})
+                            }
+                            else{
+                                res.status(200).send(result)
+                                console.log("Updated inital action")
+                            }
+                    })
+                    }
+                }
+            }
+        }
     })
 
 router.route('/scenarios/finalAction')
@@ -273,8 +295,8 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else {
-        db.getFinalAction(scenarioID, function(result){
-            if(result.length == 0) {
+        db.getFinalActionPageQuestionsAndChoices(scenarioID, function(result){
+            if(Object.entries(result).length == 0) {
                 res.status(404).json({error: `No scenario final action page found for scenarioID: ${scenarioID}`})
             }
             else{
@@ -301,15 +323,34 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else{
-        db.addFinalActionChoice(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated final action")
-          }
-        })}
+            timestamp = new Date()
+            for(questionID in data){
+                if(!isnumber(questionID)){
+                    res.status(400).json({error: `Invalid question ID: ${questionID}`})
+                    console.log("Invalid Question ID")
+                    res.end()
+                }
+                else{
+                    choiceID = data[questionID]
+                    if(!isnumber(choiceID)){
+                        res.status(400).json({error: `Invalid choice ID: ${choiceID}`})
+                        console.log("Invalid Choice ID")
+                        res.end()                        
+                    }
+                    else{
+                        db.addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
+                            if(result.length === 0){
+                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else{
+                                res.status(200).send(result)
+                                console.log("Updated final action")
+                            }
+                    })
+                    }
+                }
+            }
+        }
     })
 
 router.route('/scenarios/consequences')
