@@ -781,7 +781,7 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
     const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
     const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
     const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 returning id';
-    const responseQuestionExistenceQuery = 'SELECT response.id, question.id FROM response, question WHERE response.id=$1 AND question.id=$2'
+    const IDExistenceQuery = 'SELECT response.id, question.id, mcq_option.id FROM response, question, mcq_option WHERE response.id=$1 AND question.id=$2 AND mcq_option.id=$3'
     const insertMCQResponseQuery='INSERT INTO mcq_response(id, question_id, choice_id) VALUES($1, $2, $3) ON CONFLICT (id, question_id) DO UPDATE SET choice_id=$3;';
     const client = await pool.connect();
     try {
@@ -797,10 +797,10 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
         // RETURNING clause returns ID at the same time
         const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
-        let existenceQueryResult = await client.query(responseQuestionExistenceQuery, [responseID, questionID]);
+        let existenceQueryResult = await client.query(IDExistenceQuery, [responseID, questionID, choiceID]);
         if (existenceQueryResult.rows.length === 0) {
             await client.query("ROLLBACK")
-            return "response/question ID error"
+            return "response/question/choice ID error"
         }
         await client.query(insertMCQResponseQuery, [responseID, questionID, choiceID]);
         await client.query("COMMIT");

@@ -271,7 +271,7 @@ router.route('/scenarios/initialAction')
                             if(result === "scenario/status ID error"){
                                 res.status(404).json({error: `student ID or scenario ID does not exist in database`})
                             }
-                            else if (result === "response/question ID error"){
+                            else if (result === "response/question/choice ID error"){
                                 res.status(404).json({error: `response ID or question ID does not exist in database`})
                             }
                             else{
