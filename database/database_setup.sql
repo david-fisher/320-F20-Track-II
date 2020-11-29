@@ -107,7 +107,9 @@ CREATE TABLE "conversation" (
 CREATE TABLE "issues" (
 	"id" SERIAL PRIMARY KEY,
 	"name" VARCHAR NOT NULL CHECK("name" <> ''),
-	"description" VARCHAR NOT NULL
+	"description" VARCHAR NOT NULL,
+	-- Do not need high precision so not using NUMERIC type
+	"importance" REAL NOT NULL CHECK ("importance" >= 0 AND "importance" <= 1)
 );
 
 
@@ -115,7 +117,7 @@ CREATE TABLE "score" (
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"issue_id" INT REFERENCES issues,
 	PRIMARY KEY (stakeholder_id, issue_id),
-	"value" INT NOT NULL CHECK("value" >= 0)
+	"value" INT NOT NULL CHECK("value" >= 0 AND "value" <= 4)
 );
 
 -- Probably redundant
