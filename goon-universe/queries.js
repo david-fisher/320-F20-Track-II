@@ -781,14 +781,15 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
     const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
     const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
     const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 returning id';
+    const responseQuestionExistenceQuery = 'SELECT response.id, question.id FROM response, question WHERE response.id=$1 AND question.id=$2'
     const insertMCQResponseQuery='INSERT INTO mcq_response(id, question_id, choice_id) VALUES($1, $2, $3) ON CONFLICT (id, question_id) DO UPDATE SET choice_id=$3;';
     const client = await pool.connect();
     try {
         await client.query("BEGIN");
         const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
         if (submissionSelection.rows.length === 0) {
-            await client.query("COMMIT");
-            return false;
+            await client.query("ROLLBACK");
+            return "scenario/status ID error";
         }
         let submissionID = submissionSelection.rows[0].id;
         const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
@@ -796,9 +797,14 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
         // RETURNING clause returns ID at the same time
         const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
+        let existenceQueryResult = await client.query(responseQuestionExistenceQuery, [responseID, questionID]);
+        if (existenceQueryResult.rows.length === 0) {
+            await client.query("ROLLBACK")
+            return "response/question ID error"
+        }
         await client.query(insertMCQResponseQuery, [responseID, questionID, choiceID]);
         await client.query("COMMIT");
-        return true;
+        return "Success!";
     } catch (e) {
         await client.query("ROLLBACK");
         throw e;
@@ -808,10 +814,10 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
 }
 
 function addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
-    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, INIT_ACTION).then((status) => callback(status ? "Success!" : ""));
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, INIT_ACTION).then((status_string) => callback(status_string));
 }
 function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
-    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then((status) => callback(status ? "Success!" : ""));
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then((status_string) => callback(status_string));
 }
 
 // helper for version control

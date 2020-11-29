@@ -268,8 +268,11 @@ router.route('/scenarios/initialAction')
                     }
                     else{
                         db.addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
-                            if(result.length === 0){
+                            if(result === "scenario/status ID error"){
                                 res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else if (result === "response/question ID error"){
+                                res.status(404).json({error: `response ID or question ID does not exist in database`})
                             }
                             else{
                                 res.status(200).send(result)
