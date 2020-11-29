@@ -785,10 +785,14 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
     const client = await pool.connect();
     try {
         await client.query("BEGIN");
+        const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        if (submissionSelection.rows.length === 0) {
+            await client.query("COMMIT");
+            return;
+        }
+        let submissionID = submissionSelection.rows[0].id;
         const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
         let pageID = pageSelection.rows[0].id;
-        const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
-        let submissionID = submissionSelection.rows[0].id;
         // RETURNING clause returns ID at the same time
         const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
