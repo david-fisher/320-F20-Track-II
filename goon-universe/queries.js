@@ -753,7 +753,7 @@ function getFinalReflectPage(scenarioID, callback){
 //Returns question IDs as well for getChoices functions
 
 function getActionPageQuestionsAndChoices(scenarioID, pageOrder, callback) {
-    let thisQuery='SELECT question.question, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id'
+    let thisQuery='SELECT question.id AS question_id, question.question, mcq_option.id AS option_id, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id'
     pool.query(thisQuery, [scenarioID, pageOrder], (error,results) => {
         if (error) {
             throw error
@@ -761,7 +761,9 @@ function getActionPageQuestionsAndChoices(scenarioID, pageOrder, callback) {
         let resultObject = {}
         if (results.rows.length !== 0) {
             // Selected question will be the same across all rows
+            resultObject.question_id=results.rows[0].question_id
             resultObject.question=results.rows[0].question
+            resultObject.mcq_choices_id=results.rows.map((row) => row.option_id)
             resultObject.mcq_choices=results.rows.map((row) => row.option)
         }
         callback(resultObject)
