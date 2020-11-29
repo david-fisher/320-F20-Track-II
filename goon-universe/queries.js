@@ -867,6 +867,7 @@ module.exports = {
     getFinalReflectPage,
     addStakeholder,
     addStakeholderConversations,
+    addInitActionPage,
     addFinalActionPage,
     addConclusionPage,
     getInitActionPageQuestionsAndChoices,
