@@ -8,6 +8,7 @@ import {
   Grid,
   Button,
   makeStyles,
+  Hidden
 } from "@material-ui/core";
 import HTMLRenderer from './components/htmlRenderer';
 import { ScenariosContext } from "../Nav";
@@ -123,9 +124,16 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
     <div>
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt={5}>
-          <TextTypography variant="h4" align="center" gutterBottom>
-            Project Task Assignment
-          </TextTypography>
+          <Hidden only={['xs']}>
+            <TextTypography variant="h4" align="center" gutterBottom>
+              Project Task Assignment
+            </TextTypography>
+          </Hidden>
+          <Hidden only={['lg', 'md', 'sm']}>
+            <TextTypography variant="h5" align="center" gutterBottom>
+              Project Task Assignment
+            </TextTypography>
+          </Hidden>
         </Box>
       </Grid>
       <Grid container direction="row" justify="space-between">
@@ -150,7 +158,7 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Box p={2} className={classes.textBox}>
             {/* <TextTypography variant="body1">{upperText}</TextTypography> */}
             {/* <>{textList}</> */}

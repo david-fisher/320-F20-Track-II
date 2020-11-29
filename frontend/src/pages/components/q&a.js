@@ -77,24 +77,26 @@ export default function StateTextFields(props) {
   
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={2}>
-        <Grid item lg={12}>
-          <TextTypography variant="body1" align="center">
-            {header}
-          </TextTypography>
+      <Box container spacing={2} display="flex" justifyContent="center">
+        <Grid direction="row">
+          <Grid item lg={12} md={12} sm={12} xs={12}>
+            <TextTypography variant="body1" align="center">
+              {header}
+            </TextTypography>
+          </Grid>
+          <Grid item lg={12} md={12} sm={12} xs={12}>
+            <TextTypography variant="body1" align="center">
+              {qAndA}
+            </TextTypography>
+          </Grid>
+          <Grid item lg={12} md={12} sm={12} xs={12}>
+            <FormHelperText>{helperText}</FormHelperText>
+            <Button type="submit" variant="outlined" color="primary">
+              Submit
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item lg={12}>
-          <TextTypography variant="body1" align="center">
-            {qAndA}
-          </TextTypography>
-        </Grid>
-        <Grid item lg={12}>
-        <FormHelperText>{helperText}</FormHelperText>
-          <Button type="submit" variant="outlined" color="primary">
-            Submit
-          </Button>
-        </Grid>
-      </Grid>
+      </Box>
     </form>
 
 

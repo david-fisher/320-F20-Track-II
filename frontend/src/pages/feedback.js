@@ -50,25 +50,27 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
           <Button variant="contained" disableElevation color="primary" onClick={goToFinalReflection}>Next</Button>
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
-        <Grid lg={12}>
-          <Box m="2rem">
+      <Box container spacing={2} display="flex" justifyContent="center">
+        <Grid item lg={12} md={12} sm={12} xs={12}>
+          <Box container spacing={2} display="flex" justifyContent="center">
             <Radar coverage={Coverage} summary={Summary_Value} />
           </Box>
-          <TextTypography variant="body1">
-            Artificial intelligence and machine learning technologies are
-            rapidly transforming society and will continue to do so in the
-            coming decades. This social transformation will have deep ethical
-            impact, with these powerful new technologies both improving and
-            disrupting human lives. AI, as the externalization of human
-            intelligence, offers us in amplified form everything that humanity
-            already is, both good and evil. Much is at stake. At this crossroads
-            in history we should think very carefully about how to make this
-            transition, or we risk empowering the grimmer side of our nature,
-            rather than the brighter.
-          </TextTypography>
+          <Box m="2rem">
+            <TextTypography variant="body1">
+              Artificial intelligence and machine learning technologies are
+              rapidly transforming society and will continue to do so in the
+              coming decades. This social transformation will have deep ethical
+              impact, with these powerful new technologies both improving and
+              disrupting human lives. AI, as the externalization of human
+              intelligence, offers us in amplified form everything that humanity
+              already is, both good and evil. Much is at stake. At this crossroads
+              in history we should think very carefully about how to make this
+              transition, or we risk empowering the grimmer side of our nature,
+              rather than the brighter.
+            </TextTypography>
+          </Box>
         </Grid>
-      </Grid>
+      </Box>
     </div>
   );
 }

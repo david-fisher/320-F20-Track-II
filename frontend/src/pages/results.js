@@ -52,7 +52,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid lg={12}>
+        <Grid lg={12} md={12} sm={12} xs={12}>
           <ScrollableTabsButtonAuto/>
         </Grid>
       </Grid>

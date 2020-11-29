@@ -1,5 +1,5 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
-import {Grid, Typography, Box, Button} from "@material-ui/core";
+import {Grid, Typography, Box, Button, Hidden} from "@material-ui/core";
 import Stepper from "./components/stepper.js";
 import InfoGatheredList from "./components/gatheredList.js";
 import Results from "./results.js";
@@ -14,6 +14,7 @@ import Feedback from "./feedback.js";
 import { ScenariosContext } from "../Nav.js";
 import axios from "axios";
 import {BASE_URL, STUDENT_ID, DEV_MODE, SCENARIO_ID} from "../constants/config";
+import Drawer from "./components/drawer.js";
 
 export const GatheredInfoContext = createContext();
 
@@ -80,52 +81,55 @@ function SimulationWindow() {
   }, []) // only fire once
 
   return (
-    <div>
-      <Grid container direction="row" justify="center" alignItems="center">
-      </Grid>
+    <Box m={2}>
+      <Hidden only={['lg']}>
+          <Grid item lg={3}>
+            <Drawer gatheredInformation={<GatheredInfoContext.Provider value={infoIdsState}><InfoGatheredList pages={pages}/></GatheredInfoContext.Provider>} stepper={<Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage}/>} />
+          </Grid>
+      </Hidden>
       <Grid container spacing={2}>
         <GatheredInfoContext.Provider value={infoIdsState}>
-          <Grid item lg={3} md={2} sm={2}>
+        <Hidden only={['sm', 'xs', 'md']}>
+          <Grid item lg={3}>
             <Stepper activePage={activePage} pages={pages} setPages={setPages} setActivePage={setActivePage} key={activePage} />
           </Grid>
-          <Grid item lg={6} md={8} sm={8}>
-            <Box mb={6}>
+        </Hidden>
+          <Grid item lg={6} md={12} sm={12} xs={12}>
+            <Box mb={2}>
               {React.cloneElement(pages[activePage].html, {
                     pages: pages,
                     setPages: setPages,
                     activePage: activePage,
                     setActivePage: setActivePage})}
             </Box>
-            {DEV_MODE && (
-              <Typography>
-                {"Scenarios:"} <br/>
-                {scenarios.scenarioList && scenarios.scenarioList.map(scenario => {
-                  return (<>
-                    {Object.keys(scenario).map(key => ((<>{key}: {scenario[key]}<br/></>)))}
-                    <Button variant="contained" disableElevation
-                    onClick={() => setScenarios(scenarios => {
-                      let newScenarios = {...scenarios};
-                      newScenarios.currentScenarioID = scenario.id;
-                      return newScenarios;
-                    })}>
-                      set as current scenario
-                    </Button>
-                    <br/> <br/>
-                  </>)
-                })}
-              </Typography>)}
-          </Grid>
-          <Grid container item lg={3} md={2} sm={2}>
-            <Grid item lg={12}>
-              <InfoGatheredList pages={pages}/>
-            </Grid>
-            <Grid item lg={12}>
 
-            </Grid>
+            {DEV_MODE && (
+                <Typography>
+                  {"Scenarios:"} <br/>
+                  {scenarios.scenarioList && scenarios.scenarioList.map(scenario => {
+                    return (<>
+                      {Object.keys(scenario).map(key => ((<>{key}: {scenario[key]}<br/></>)))}
+                      <Button variant="contained" disableElevation
+                      onClick={() => setScenarios(scenarios => {
+                        let newScenarios = {...scenarios};
+                        newScenarios.currentScenarioID = scenario.id;
+                        return newScenarios;
+                      })}>
+                        set as current scenario
+                      </Button>
+                      <br/> <br/>
+                    </>)
+                  })}
+                </Typography>)}
           </Grid>
+          <Hidden only={['sm', 'xs', 'md']}>
+          <Grid container item lg={3}>
+              <InfoGatheredList pages={pages}/>
+          </Grid>
+          </Hidden>
         </GatheredInfoContext.Provider>
       </Grid>
-    </div>
+    </Box>
   );
 }
 

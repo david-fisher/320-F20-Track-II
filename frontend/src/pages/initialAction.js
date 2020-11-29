@@ -57,7 +57,7 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
   }
 
   return (
-    <div>
+    <Box>
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt={5}>
           <TextTypography variant="h4" align="center" gutterBottom>
@@ -74,18 +74,18 @@ function InitialAction({ pages, setPages, activePage, setActivePage }) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Box m="2rem">
           </Box>
           <TextTypography variant="body1" align="center">
             Should there be some occupations or parts of human life where Artificial Intelligence and the use of robots are prohibited?
           </TextTypography>
         </Grid>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Checkbox nextPage={goToGatheredInformation} handleResponse={handleResponse} pages={pages} nextPageName={"gatheredInformation"} />
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 }
 

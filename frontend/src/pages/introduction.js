@@ -63,7 +63,7 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
   }, [scenarios])
 
   return (
-    <div>
+    <Box>
       <Box mt={5}>
         <Grid container direction="row" justify="center" alignItems="center">
           <TextTypography variant="h4" align="center" gutterBottom>
@@ -94,13 +94,13 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Box p={2} className={classes.textBox}>
             <HTMLRenderer html={introText}/>
           </Box>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 }
 

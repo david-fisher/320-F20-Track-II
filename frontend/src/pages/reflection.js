@@ -7,6 +7,7 @@ import {
   Grid,
   Button,
   makeStyles,
+  Hidden
 } from "@material-ui/core";
 import { BASE_URL, STUDENT_ID, SCENARIO_ID }from "../constants/config";
 import axios from 'axios';
@@ -99,12 +100,19 @@ function Reflection({ pages, setPages, activePage, setActivePage,
   }
 
   return (
-    <div>
+    <Box>
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt={5}>
-          <TextTypography variant="h4" align="center" gutterBottom>
-            {title}
-          </TextTypography>
+          <Hidden only={['xs']}>
+            <TextTypography variant="h4" align="center" gutterBottom>
+              {title}
+            </TextTypography>
+          </Hidden>
+          <Hidden only={['lg', 'md', 'sm']}>
+            <TextTypography variant="h5" align="center" gutterBottom>
+              {title}
+            </TextTypography>
+          </Hidden>
         </Box>
       </Grid>
       <Grid container direction="row" justify="space-between">
@@ -120,9 +128,8 @@ function Reflection({ pages, setPages, activePage, setActivePage,
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
         </Grid>
       </Grid>
-
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Box m="2rem">
           </Box>
             <QA header={bodyText} questions={prompts} handleResponse={handleResponse}
@@ -130,7 +137,7 @@ function Reflection({ pages, setPages, activePage, setActivePage,
               prevResponses={promptResponses}/>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 }
 

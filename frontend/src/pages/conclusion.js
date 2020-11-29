@@ -32,7 +32,7 @@ function Conclusion({pages, setPages, activePage, setActivePage}) {
   }
 
   return (
-    <div>
+    <Box>
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt = {5}>
           <TextTypography variant="h4" align="center" gutterBottom>
@@ -49,7 +49,7 @@ function Conclusion({pages, setPages, activePage, setActivePage}) {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item lg={12}>
+        <Grid item lg={12} md={12} sm={12} xs={12}>
           <Box m="2rem">
           </Box>
           <QA header={bodyText} questions={questions}
@@ -58,7 +58,7 @@ function Conclusion({pages, setPages, activePage, setActivePage}) {
             prevResponses={{}}/>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 }
 
