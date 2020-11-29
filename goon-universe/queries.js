@@ -788,7 +788,7 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
         const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
         if (submissionSelection.rows.length === 0) {
             await client.query("COMMIT");
-            return;
+            return false;
         }
         let submissionID = submissionSelection.rows[0].id;
         const pageSelection = await client.query(selectPageQuery, [scenarioID, page_order]);
@@ -798,6 +798,7 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
         let responseID = responseCreation.rows[0].id;
         await client.query(insertMCQResponseQuery, [responseID, questionID, choiceID]);
         await client.query("COMMIT");
+        return true;
     } catch (e) {
         await client.query("ROLLBACK");
         throw e;
@@ -807,10 +808,10 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
 }
 
 function addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
-    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, INIT_ACTION).then(() => callback("Success!"));
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, INIT_ACTION).then((status) => callback(status ? "Success!" : ""));
 }
 function addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, callback){
-    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then(() => callback("Success!"));
+    addMCQResponse(studentID, questionID, choiceID, scenarioID, timestamp, FINAL_ACTION).then((status) => callback(status ? "Success!" : ""));
 }
 
 // helper for version control
