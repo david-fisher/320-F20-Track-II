@@ -195,7 +195,7 @@ function addUser(fullName, email, callback){
         if (error) {
             throw error
         }
-        callback('Success!')
+        callback(SUCCESS)
     }) 
 }
 
@@ -205,7 +205,7 @@ function addCourse(coursePage, courseName, semester, callback){
         if (error) {
             throw error
         }
-        callback('Success!')
+        callback(SUCCESS)
     }) 
 }
 
@@ -248,15 +248,15 @@ async function addReflectionResponse(studentID, input, promptNum, scenarioID, ti
 
 function addInitReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
     addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, INITIAL_REFLECTION)
-        .then((succeeded) => callback(succeeded ? "Success!" : ""));
+        .then((succeeded) => callback(succeeded ? SUCCESS : ""));
 }
 function addMidReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
     addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, MIDDLE_REFLECTION)
-        .then((succeeded) => callback(succeeded ? "Success!" : ""));
+        .then((succeeded) => callback(succeeded ? SUCCESS : ""));
 }
 function addFinalReflectResponse(studentID, input, promptNum, scenarioID, timestamp, callback) {
     addReflectionResponse(studentID, input, promptNum, scenarioID, timestamp, FINAL_REFLECTION)
-        .then((succeeded) => callback(succeeded ? "Success!" : ""));
+        .then((succeeded) => callback(succeeded ? SUCCESS : ""));
 }
 
 
@@ -446,7 +446,7 @@ async function addIntroPage(scenarioID, text, callback){
         client.release();
 
     }
-    callback("Success!")
+    callback(SUCCESS)
     return pageID
 }
 
@@ -485,7 +485,7 @@ async function addReflectPage(scenarioID, body_text, prompts, ORDER){
     } finally{
         client.release();
     }
-    callback("Success!");
+    callback(SUCCESS);
     return pageID
 }
 
@@ -525,7 +525,7 @@ function addConclusionPage(scenarioID, text, callback){
     if (scenarioExists(scenarioID)){
         // create page object - plain-page when no prompt linked
         let pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
-        callback('Success!')
+        callback(SUCCESS)
     }
     else{
         // TODO return InvalidScenarioError
@@ -559,7 +559,7 @@ async function addStakeholder(scenarioID, name, designation, description, callba
     } finally {
         client.release()
     }
-    callback("Success!")
+    callback(SUCCESS)
 }
 
 // helper function for addStakeholder
@@ -581,7 +581,7 @@ async function addStakeholderConversations(stakeholderID, conv_ques_text_array){
     } finally {
         client.release()
     }
-    callback("Success!")
+    callback(SUCCESS)
     
 }
 
@@ -804,7 +804,7 @@ async function addMCQResponse(studentID, questionID, choiceID, scenarioID, times
         }
         await client.query(insertMCQResponseQuery, [responseID, questionID, choiceID]);
         await client.query("COMMIT");
-        return "Success!";
+        return SUCCESS;
     } catch (e) {
         await client.query("ROLLBACK");
         throw e;
