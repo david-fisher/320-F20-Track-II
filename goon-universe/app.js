@@ -1,11 +1,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const port = 3000
+const port = 5000
 const db = require('./queries')
 const isnumber = require('is-number')
+const cors = require('cors');
 
+const corsOptions = {
 
+}
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json())
 app.use(
     bodyParser.urlencoded({
@@ -130,7 +135,7 @@ router.route('/scenarios/initialReflection')
         }
         else{
         db.getInitReflectPage(scenarioID, function(result){
-            if(result.length == 0) {
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No initial reflection found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -158,15 +163,26 @@ router.route('/scenarios/initialReflection')
             res.end()
         }
         else{
-        db.addInitReflectResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated initial reflection")
-          }
-        })}
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addInitReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated initial reflection")
+                    }
+                })
+            }
+        }}
     })
 
 router.route('/scenarios/initialReflection/response')
@@ -186,13 +202,13 @@ router.route('/scenarios/initialReflection/response')
         }
         else{
         db.getInitReflectResponse(studentID, scenarioID, function(result){
-            // if(result.length == 0) {
-            //     res.status(404).json({error: `No initial reflection response found with one or both of the ID's`});
-            // }
-            // else{
-            res.status(200).json(result)
-            console.log("Got initial relfection response")
-            // }
+            if(result == null) {
+                res.status(404).json({error: `No initial reflection response found with one or both of the ID's`});
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got initial relfection response")
+            }
         })
         }
     })
@@ -209,8 +225,8 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.getInitActions(scenarioID, function(result){
-            if(result.length == 0) {
+        db.getInitActionPageQuestionsAndChoices(scenarioID, function(result){
+            if(Object.entries(result).length == 0) {
                 res.status(404).json({error: `No initial actions found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -236,15 +252,37 @@ router.route('/scenarios/initialAction')
             res.end()
         }
         else{
-        db.addInitActionChoice(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated inital action")
-          }
-        })}
+            timestamp = new Date()
+            for(questionID in data){
+                if(!isnumber(questionID)){
+                    res.status(400).json({error: `Invalid question ID: ${questionID}`})
+                    console.log("Invalid Question ID")
+                    res.end()
+                }
+                else{
+                    choiceID = data[questionID]
+                    if(!isnumber(choiceID)){
+                        res.status(400).json({error: `Invalid choice ID: ${choiceID}`})
+                        console.log("Invalid Choice ID")
+                        res.end()                        
+                    }
+                    else{
+                        db.addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
+                            if(result === "scenario/status ID error"){
+                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else if (result === "response/question/choice ID error"){
+                                res.status(404).json({error: `response ID or question ID does not exist in database`})
+                            }
+                            else{
+                                res.status(200).send(result)
+                                console.log("Updated inital action")
+                            }
+                    })
+                    }
+                }
+            }
+        }
     })
 
 router.route('/scenarios/finalAction')
@@ -257,8 +295,8 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else {
-        db.getFinalAction(scenarioID, function(result){
-            if(result.length == 0) {
+        db.getFinalActionPageQuestionsAndChoices(scenarioID, function(result){
+            if(Object.entries(result).length == 0) {
                 res.status(404).json({error: `No scenario final action page found for scenarioID: ${scenarioID}`})
             }
             else{
@@ -285,15 +323,34 @@ router.route('/scenarios/finalAction')
             res.end()
         }
         else{
-        db.addFinalActionChoice(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated final action")
-          }
-        })}
+            timestamp = new Date()
+            for(questionID in data){
+                if(!isnumber(questionID)){
+                    res.status(400).json({error: `Invalid question ID: ${questionID}`})
+                    console.log("Invalid Question ID")
+                    res.end()
+                }
+                else{
+                    choiceID = data[questionID]
+                    if(!isnumber(choiceID)){
+                        res.status(400).json({error: `Invalid choice ID: ${choiceID}`})
+                        console.log("Invalid Choice ID")
+                        res.end()                        
+                    }
+                    else{
+                        db.addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
+                            if(result.length === 0){
+                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            }
+                            else{
+                                res.status(200).send(result)
+                                console.log("Updated final action")
+                            }
+                    })
+                    }
+                }
+            }
+        }
     })
 
 router.route('/scenarios/consequences')
@@ -442,7 +499,7 @@ router.route('/scenarios/middleReflection')
         }
         else {
         db.getMidReflectPage(scenarioID, function(result){
-            if(result.length == 0){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No middle reflection found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -468,17 +525,26 @@ router.route('/scenarios/middleReflection')
             res.end()
         }
         else{
-        db.addMidReflectResponse(studentID, scenarioID, data, function(result){
-          if(result.length === 0){
-              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-          }
-          else{
-              res.status(200).send(result)
-              console.log("Updated middle reflection")
-          }
-        })
-        }
-
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addMidReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated middle reflection")
+                    }
+                })
+            }
+        }}
     })
 
 router.route('/scenarios/middleReflection/response')
@@ -498,13 +564,13 @@ router.route('/scenarios/middleReflection/response')
         }
         else{
         db.getMidReflectResponse(studentID, scenarioID, function(result){
-            // if(result.length == 0) {
-            //     res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
-            // }
-            // else{
-            res.status(200).json(result)
-            console.log("Got middle relfection response")
-            // }
+            if(result == null) {
+                res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
+            }
+            else{
+                res.status(200).json(result)
+                console.log("Got middle relfection response")
+            }
         })
         }
     })
@@ -521,7 +587,7 @@ router.route('/scenarios/finalReflection')
         else{
             db.getFinalReflectPage(scenarioID, function(result){
                 // console.log("Final Relfection-", result)
-                if(result.length == 0){
+                if(Object.entries(result).length == 0){
                     res.status(404).json({error: `No final reflection found for scenarioID: ${scenarioID}`})
                 }
                 else{
@@ -537,27 +603,37 @@ router.route('/scenarios/finalReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-    	if(!isnumber(scenarioID)){
+        if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
             res.end()
         }
-    	else if(!isnumber(studentID)){
+        else if(!isnumber(studentID)){
             res.status(400).json({error: `Invalid student ID: ${studentID}`})
             console.log("Invalid Student ID")
             res.end()
         }
-    	else {
-    	  db.addFinalReflectResponse(studentID, scenarioID, data, function(result){
-                if(result.length === 0){
-                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
-                }
-                else{
-                    res.status(200).send(result)
-                    console.log("Updated final reflection")
-                }
-            })}
-            console.log("Updated final reflection")
+        else{
+        timestamp = new Date()
+        for(prompt_num in data){
+            if(!isnumber(prompt_num)){
+                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                console.log("Invalid prompt number")
+                res.end()
+            }
+            else{
+                input = data[prompt_num]
+                db.addFinalReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                    if(result.length === 0){
+                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                    }
+                    else{
+                        res.status(200).send(result)
+                        console.log("Updated final reflection")
+                    }
+                })
+            }
+        }}
     })
 
 
@@ -578,13 +654,13 @@ router.route('/scenarios/finalReflection/response')
             }
             else{
             db.getFinalReflectResponse(studentID, scenarioID, function(result){
-                // if(result.length == 0) {
-                //     res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
-                // }
-                // else{
-                res.status(200).json(result)
-                console.log("Got final relfection response")
-                // }
+                if(result == null) {
+                    res.status(404).json({error: `No middle reflection response found with one or both of the ID's`});
+                }
+                else{
+                    res.status(200).json(result)
+                    console.log("Got final relfection response")
+                }
             })
             }
         })

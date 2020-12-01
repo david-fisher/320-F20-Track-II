@@ -1,6 +1,8 @@
 import React from "react";
 import Radar from "./chart/chart";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import axios from 'axios'
 import ScrollableTabsButtonAuto from "./components/tabs"
 
 const TextTypography = withStyles({
@@ -9,7 +11,7 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-function Results({pages, setPages, activePage, setActivePage}) {
+function Summary({pages, setPages, activePage, setActivePage}) {
   function goToMiddleReflection(){
     if (!pages.middleReflection.visited) {
       setPages(prevPages => {
@@ -37,7 +39,7 @@ function Results({pages, setPages, activePage, setActivePage}) {
       <Grid container direction="row" justify="center" alignItems="center">
         <Box mt = {5}>
           <TextTypography variant="h4" align="center" gutterBottom>
-            Coverage Of Issues
+            Summary
           </TextTypography>
         </Box>
       </Grid>
@@ -58,4 +60,4 @@ function Results({pages, setPages, activePage, setActivePage}) {
   );
 }
 
-export default Results;
+export default Summary;

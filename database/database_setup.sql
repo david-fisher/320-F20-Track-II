@@ -26,21 +26,21 @@ DROP TYPE IF EXISTS simulation_status CASCADE;
 CREATE TABLE "users" (
 	"id" SERIAL,
 	PRIMARY KEY (id),
-	"full_name" VARCHAR NOT NULL,
-	"email" CHAR(254) NOT NULL,
+	"full_name" VARCHAR NOT NULL CHECK (full_name <> ''),
+	"email" CHAR(254) NOT NULL CHECK (email <> ''),
 	"demographics" VARCHAR
 );  
 
 CREATE TABLE "courses" (
 	"id" SERIAL PRIMARY KEY,
-	"webpage" VARCHAR,
-	"name" VARCHAR,
-	"semester" CHAR(10) NOT NULL
+	"webpage" VARCHAR NOT NULL,
+	"name" VARCHAR NOT NULL CHECK (name <> ''),
+	"semester" CHAR(10) NOT NULL CHECK (semester <> '')
 );
 
 CREATE TABLE "instructs" (
 	"instructor_id" INT REFERENCES users,
-	"webpage" VARCHAR,
+	"webpage" VARCHAR NOT NULL,
 	"course_id" INT REFERENCES courses,
 	PRIMARY KEY("course_id", "instructor_id")
 );
@@ -54,9 +54,9 @@ CREATE TABLE "enrolled" (
 CREATE TYPE simulation_status AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED');
 CREATE TABLE "scenario" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR,
+	"name" VARCHAR NOT NULL CHECK(name <> ''),
 	"due_date" TIMESTAMP,
-	"description" VARCHAR,
+	"description" VARCHAR NOT NULL,
 	"status" simulation_status DEFAULT 'DRAFT',
 	"additional_data" VARCHAR
 ); 
@@ -69,30 +69,30 @@ CREATE TABLE "partof" (
 -- TODO: make type below an ENUM
 CREATE TABLE "pages" (
 	"id" SERIAL PRIMARY KEY,
-	"order" INT,
-	"type" CHAR(5),
-	"body_text" VARCHAR,
+	"order" INT NOT NULL,
+	"type" CHAR(5) NOT NULL,
+	"body_text" VARCHAR NOT NULL,
 	"scenario_id" INT REFERENCES scenario
 );
 
 CREATE TABLE "prompt" (
 	"page_id" INT REFERENCES pages,
-	"prompt" VARCHAR,
-	"prompt_num" INT,
+	"prompt" VARCHAR NOT NULL CHECK (prompt <> ''),
+	"prompt_num" INT NOT NULL CHECK (prompt_num > 0),
 	PRIMARY KEY(page_id, prompt_num)
 );
 
 CREATE TABLE "conversation_task" (
 	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"content" VARCHAR
+	"conversation_limit" INT NOT NULL CHECK("conversation_limit" > 0)
 );
 
 CREATE TABLE "stakeholders" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR,
+	"name" VARCHAR NOT NULL CHECK ("name" <> ''),
 	"designation" VARCHAR,
-	"description" VARCHAR,
-	"conversation" VARCHAR,
+	"description" VARCHAR NOT NULL,
+	"conversation" VARCHAR NOT NULL,
 	"scenario_id" INT REFERENCES scenario,
 	"conversation_task_id" INT REFERENCES conversation_task
 );
@@ -102,39 +102,41 @@ CREATE TABLE "conversation" (
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"question" varchar,
 	"conversation_text" VARCHAR
-
 );
 
 CREATE TABLE "issues" (
 	"id" SERIAL PRIMARY KEY,
-	"name" VARCHAR,
-	"description" VARCHAR
+	"name" VARCHAR NOT NULL CHECK("name" <> ''),
+	"description" VARCHAR NOT NULL,
+	-- Do not need high precision so not using NUMERIC type
+	"importance" REAL NOT NULL CHECK ("importance" >= 0 AND "importance" <= 1)
 );
 
-	
+
 CREATE TABLE "score" (
 	"stakeholder_id" INT REFERENCES stakeholders,
 	"issue_id" INT REFERENCES issues,
 	PRIMARY KEY (stakeholder_id, issue_id),
-	"value" INT
+	"value" INT NOT NULL CHECK("value" >= 0 AND "value" <= 4)
 );
 
+-- Probably redundant
 CREATE TABLE "mcq" (
-	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"content" VARCHAR
+	"page_id" INT REFERENCES pages PRIMARY KEY
 );
 
 
 CREATE TABLE "question" (
 	"id" SERIAL PRIMARY KEY,
-	"question" VARCHAR,
+	"question" VARCHAR NOT NULL CHECK(question <> ''),
 	"mcq_id" INT REFERENCES mcq
 );
 
 CREATE TABLE "mcq_option" (
 	"id" SERIAL PRIMARY KEY,
-	"option" VARCHAR NOT NULL,
-	"question_id" INT REFERENCES question
+	"option" VARCHAR NOT NULL CHECK("option" <> ''),
+	"question_id" INT REFERENCES question,
+	UNIQUE(question_id, "option")
 );
 
 CREATE TABLE "submissions" (
@@ -148,15 +150,15 @@ CREATE TABLE "submissions" (
 CREATE TABLE "response" (
 	"id" SERIAL PRIMARY KEY,
 	"submission_id" INT REFERENCES submissions,
-	"page_num" INT,
+	"page_id" INT REFERENCES pages,
 	"time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	UNIQUE(submission_id, page_num)
+	UNIQUE(submission_id, page_id)
 );
 
 CREATE TABLE "prompt_response" (
 	"id" INT REFERENCES response,
-	"prompt_num" INT,
-	"response" VARCHAR,
+	"prompt_num" INT NOT NULL CHECK (prompt_num > 0),
+	"response" VARCHAR NOT NULL,
 	PRIMARY KEY (id, prompt_num)
 );
 

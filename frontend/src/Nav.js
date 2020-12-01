@@ -1,9 +1,8 @@
 import React from "react";
 
-import Results from "./pages/results";
+import Summary from "./pages/summary";
 import Home from "./pages/home";
 import RadarTest from "./pages/chartTest";
-import InitialReflection from "./pages/initialReflection";
 
 import {
   ThemeProvider,
@@ -57,8 +56,8 @@ const menuItems = [
     listPath: "/",
   },
   {
-    listText: "Results",
-    listPath: "/results",
+    listText: "Summary",
+    listPath: "/summary",
   },
   {
     listText: "Simulation Window",
@@ -70,8 +69,11 @@ const menuItems = [
   },
 ];
 
+export const ScenariosContext = React.createContext();
+
 function Nav() {
   const classes = useStyles();
+  const scenariosState = React.useState({});
 
   return (
     <div className={classes.root}>
@@ -94,9 +96,9 @@ function Nav() {
                       Home
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/results">
+                  <Link className={classes.link} to="/summary">
                     <Button className={classes.title} color="inherit">
-                      Results
+                    Summary
                     </Button>
                   </Link>
                   <Link className={classes.link} to="/simulation">
@@ -120,11 +122,13 @@ function Nav() {
             <Route path="/" exact>
               <Home />
             </Route>
-            <Route path="/results" exact>
-              <Results />
+            <Route path="/summary" exact>
+              <Summary />
             </Route>
             <Route path="/simulation" exact>
-              <SimulationWindow />
+              <ScenariosContext.Provider value={scenariosState}>
+                <SimulationWindow />
+              </ScenariosContext.Provider>
             </Route>
             <Route path="/chartTest" exact>
               <RadarTest />

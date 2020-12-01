@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Grid, Typography , withStyles, Button } from '@material-ui/core';
+import { Box, Grid, Typography , withStyles, Button, FormHelperText } from '@material-ui/core';
 
 const alignMiddle = {
   position: 'fixed',
@@ -16,14 +16,25 @@ const TextTypography = withStyles({
   },
 })(Typography);
 
-function getQuestions(questionArr) {
+// onChange={(event) => {
+//   setTestInput3(event.target.value);
+
+function getQuestions(questionArr, responses, setResponses, previouslyResponded) {
   let arr = [];
   for (let i = 0; i < questionArr.length; i++) {
-    let question = questionArr[i];
+    const question = questionArr[i];
     arr.push(
       <div>
-        <p><b>{question}</b></p>
-        <textarea rows="4" cols="90" style={{ resize: "none" }}></textarea>
+        <p><b>{question.text}</b></p>
+        <textarea disabled={previouslyResponded} id={question.id} value={responses[question.id]} onChange={event => {
+          const target = event.target
+          setResponses((reses) => {
+            let newObj = {...reses};
+            newObj[target.id] = target.value;
+            return newObj;
+          });
+        }}
+          rows="4" cols="90" style={{ resize: "none" }}></textarea>
       </div>
     )
   }
@@ -31,40 +42,59 @@ function getQuestions(questionArr) {
 }
 
 export default function StateTextFields(props) {
-  const [testInput1, setTestInput1] = useState("");
-  let qAndA = getQuestions(props.questions).map((question) => <>{question}</>)
-  let header = props.header;
 
-  const [value, setValue] = React.useState('');
+  const previouslyResponded = Object.keys(props.prevResponses).length > 0;
+
+  const [responses, setResponses] = React.useState({});
   const [error, setError] = React.useState(false);
+  let header = props.header;
+  const [helperText, setHelperText] = React.useState('');
+
+  React.useEffect(() => {
+    setResponses(props.questions.reduce((prev, question) => {
+      prev[question.id] = (previouslyResponded && props.prevResponses[question.id] !== undefined) 
+        ? props.prevResponses[question.id] : '';
+      return prev;
+    }, {}));
+  }, [props.prevResponses])
+
+  let qAndA = getQuestions(props.questions, responses, setResponses, previouslyResponded);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setError(true);
-    console.log(props.nextPageName)
-    props.pages[props.nextPageName].completed = true;
-    props.nextPage();
+    if(!Object.values(responses).includes('') && Object.keys(responses).length === props.questions.length){
+      props.handleResponse(responses).then(res => {
+        if(props.nextPageName !== 'home'){
+          props.pages[props.nextPageName].completed = true;
+        }
+        props.nextPage();
+      }).catch(err => alert(err));
+    }else{
+      setError(true);
+      setHelperText('Please provide a response.');
+    }
   };
-
+  
   return (
     <form onSubmit={handleSubmit}>
-    <Grid container spacing={2}>
-      <Grid item lg={12}>
-        <TextTypography variant="body1" align="center">
-          {header}
-        </TextTypography>
+      <Grid container spacing={2}>
+        <Grid item lg={12}>
+          <TextTypography variant="body1" align="center">
+            {header}
+          </TextTypography>
+        </Grid>
+        <Grid item lg={12}>
+          <TextTypography variant="body1" align="center">
+            {qAndA}
+          </TextTypography>
+        </Grid>
+        <Grid item lg={12}>
+        <FormHelperText>{helperText}</FormHelperText>
+          <Button type="submit" variant="outlined" color="primary">
+            Submit
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item lg={12}>
-        <TextTypography variant="body1" align="center">
-          {qAndA}
-        </TextTypography>
-      </Grid>
-      <Grid item lg={12}>
-        <Button type="submit" variant="outlined" color="primary">
-          Submit
-        </Button>
-      </Grid>
-    </Grid>
     </form>
 
 

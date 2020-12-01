@@ -1,3 +1,5 @@
+import axios from "axios";
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import React from "react";
 import {
   withStyles,
@@ -7,6 +9,9 @@ import {
   Button,
   makeStyles,
 } from "@material-ui/core";
+import HTMLRenderer from './components/htmlRenderer';
+import { ScenariosContext } from "../Nav";
+
 const TextTypography = withStyles({
   root: {
     color: "#373a3c",
@@ -51,6 +56,28 @@ const mainText =
   "Part of your assignment is to identify specific companies who would be willing to provide data and also make recommendations for further data to collect, in order to refine the above list. Once the data is in hand, you will use it to improve the existing predictive model for cognitive decline, by incorporating new training features as appropriate.";
 
 function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
+
+  const [task, setTask] = React.useState("");
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
+
+  React.useEffect(() => {
+    axios({
+      method: "get",
+      url: BASE_URL + "/scenarios/task",
+      headers: {
+        scenarioID: scenarios.currentScenarioID,
+        studentID: STUDENT_ID,
+      },
+    })
+    .then((response) => {
+      setTask((text) => response.data[0].body_text);
+    })
+    .catch((err) => {
+      console.log("err", err);
+      alert(err);
+    });
+  }, [scenarios])
+
   const classes = useStyles();
   function goToIntroduction() {
     if (!pages.introduction.visited) {
@@ -62,17 +89,16 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
     }
     setActivePage((prevPage) => "introduction");
   }
-  function goToInitialReflection(){
+  function goToInitialReflection() {
     if (!pages.initialReflection.visited) {
-      setPages(prevPages => {
-        let copy = {...prevPages};
+      setPages((prevPages) => {
+        let copy = { ...prevPages };
         copy.initialReflection.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'initialReflection')
+    setActivePage((prevPage) => "initialReflection");
   }
-
 
   function getUpperText(headings, subtext) {
     let text = [];
@@ -127,8 +153,8 @@ function ProjectAssignment({ pages, setPages, activePage, setActivePage }) {
         <Grid item lg={12}>
           <Box p={2} className={classes.textBox}>
             {/* <TextTypography variant="body1">{upperText}</TextTypography> */}
-            <>{textList}</>
-            <TextTypography variant="body1">{mainText}</TextTypography>
+            {/* <>{textList}</> */}
+            <HTMLRenderer html={task}/>
           </Box>
         </Grid>
       </Grid>
