@@ -833,7 +833,7 @@ function loadScenarioCSV(scenario_csv_string){
 }
 
 async function getMCQResponse(pageOrder,submissionID, questionID){
-    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_num=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
+    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_id=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
     const client = await pool.connect();
     try {
         const queryReturn= await client.query(thisQuery, [pageOrder, submissionID, questionID]);
