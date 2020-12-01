@@ -832,6 +832,28 @@ function loadScenarioCSV(scenario_csv_string){
     
 }
 
+async function getMCQResponse(pageOrder,submissionID, questionID){
+    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_num=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
+    const client = await pool.connect();
+    try {
+        const queryReturn= await client.query(thisQuery, [pageOrder, submissionID, questionID]);
+        let mcqResponse=queryReturn.rows[0];
+        return mcqResponse;
+    } catch (e) {
+        throw e;
+
+    } finally {
+        client.release();
+    }
+}
+function getInitActionResponse(submissionID, questionID, callback){
+    getMCQResponse(INIT_ACTION,submissionID, questionID).then((result) => callback(result));
+}
+
+function getFinalActionResponse(submissionID, questionID, callback){
+    getMCQResponse(FINAL_ACTION,submissionID, questionID).then((result) => callback(result));
+}
+
 
 function cb(results){
     console.log(results)
@@ -886,5 +908,8 @@ module.exports = {
     addMCQResponse,
     addInitActionResponse,
     addFinalActionResponse,
-    createScenario
+    createScenario,
+    getMCQResponse,
+    getInitActionResponse,
+    getFinalActionResponse
 }
