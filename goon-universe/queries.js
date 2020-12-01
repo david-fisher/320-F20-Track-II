@@ -803,31 +803,58 @@ async function getScenarioCSV(scenarioID, callback){
 
 // helper for version control
 function loadScenarioCSV(scenario_csv_string){
+    let scenario_cols = "scenario.id, scenario.name, scenario.due_date, scenario.description, scenario.status, scenario.additional_data "
+    let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
+    let prompt_cols = "prompt.page_id, prompt.prompt, prompt.prompt_num "
+    let conversation_task_cols = "conversation_task.page_id " 
+    let stakeholders_cols = "stakeholders.id, stakeholders.name , stakeholders.designation, stakeholders.description, stakeholders.conversation, stakeholders.conversation_task_id "
+    let conversation_cols = "conversation.id, conversation.stakeholder_id, conversation.question, conversation.conversation_text "
+    let score_cols = "score.stakeholder_id, score.issue_id, score.value "
+    let issues_cols = "issues.id, issues.name, issues.description "
+    let mcq_cols = "mcq.page_id "
+    let question_cols = "question.id, question.question, question.mcq_id "
+    let mcq_option_cols = "mcq_option.id, mcq_option.option, mcq_option.question_id "
+    let _fields = [scenario_cols, pages_cols, prompt_cols, conversation_task_cols, stakeholders_cols, conversation_cols, score_cols, issues_cols, mcq_cols, question_cols, mcq_option_cols]
+    let fields = (_fields.map(function(itm) {return itm.split(",").map(function(t) {return t.trim();})}))
+
+
+
+
     // creates new scenario using scenario_csv_string
 
-    // create scenario object
+    // create scenario
+    createScenario(courseID, name, due_date, description, additional_data, callback)
 
     // create pages objects
-    // addIntroPage
-    // addConvTaskPage
-    // addMidReflectPage
+    // intro
+    addIntroPage(scenarioID, text, callback)
+
+    // Initial reflection
+    addInitReflectPage(scenarioID, body_text, prompts, callback)
+
+    // Initial Action
+    addInitActionPage(scenarioID, body_text, QA_array, callback)
+    addMCQ(scenarioID, order, QA_array)
+
+
+    // Conversations
+    addConvTaskPage(scenarioID, body_text, convLimit, callback)
+    addStakeholder(scenarioID, name, designation, description, callback)
+    addStakeholderConversations(stakeholderID, conv_ques_text_array)
+
+    // Middle Reflection
+    addMidReflectPage(scenarioID, body_text, prompts, callback)
+
     // addFinalActionPage
+    addFinalActionPage(scenarioID, body_text, QA_array, callback)
+    addMCQ(scenarioID, order, QA_array)
+
     // addFinalReflectPage
-    // create conversation_task objects
+    addFinalReflectPage(scenarioID, body_text, prompts, callback)
 
-    // create stakeholders objects
+    // addConclusionPage
+    addConclusionPage(scenarioID, text, callback)
 
-    // create conversation objects
-
-    // create score objects
-
-    // create issues objects
-
-    // create mcq objects
-
-    // create question objects
-
-    // create mcq_option objects
 
 }
 
