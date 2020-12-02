@@ -478,8 +478,8 @@ async function addReflectPage(scenarioID, body_text, prompts, ORDER){
     const client = await pool.connect();
     try{
         await client.query("BEGIN");
-        if (scenarioExists(scenarioID)){
-            pageID = createPage(ORDER, TYPE_PROMPT, body_text, scenarioID)
+        if (await scenarioExists(scenarioID)){
+            pageID = await createPage(ORDER, TYPE_PROMPT, body_text, scenarioID)
             for (let p of prompts){
                 await client.query(thisQuery, [pageID, p]);
             }
@@ -507,20 +507,20 @@ async function addConvTaskPage(scenarioID, body_text, convLimit, callback){
     const client = await pool.connect()
     try {
         client.query("BEGIN")
-        if (scenarioExists(scenarioID)){
+        if (await scenarioExists(scenarioID)){
 
             // create page object (checks for conflicts)
-            pageID = createPage(CONVERSATION, TYPE_CONV, body_text, scenarioID)
+            pageID = await createPage(CONVERSATION, TYPE_CONV, body_text, scenarioID)
             //TODO: upsert new limit count?
-            client.query(thisQuery, [pageID, convLimit])
+            await client.query(thisQuery, [pageID, convLimit])
 
-            client.query("COMMIT")
+            await client.query("COMMIT")
         } else {
             // TODO return InvalidScenarioError
             throw error;
         }
     } catch (e) {
-        client.query("ROLLBACK")
+        await client.query("ROLLBACK")
         throw e
     } finally {
         client.release()
@@ -550,20 +550,20 @@ async function addStakeholder(scenarioID, name, designation, description, callba
     let thisQuery = 'insert into stakeholders values(DEFAULT, $1, $2, $3, "", $4, $5) returning id;'
     const client = await pool.connect()
     try {
-        client.query("BEGIN")
-        if (scenarioExists(scenarioID)){
+        await client.query("BEGIN")
+        if (await scenarioExists(scenarioID)){
             // create page object (checks for c)
-            let conv_task_pageID = getPageID(scenarioID, CONVERSATION)
+            let conv_task_pageID = await getPageID(scenarioID, CONVERSATION)
             if (conv_task_pageID === -1) throw RangeError(`conversation task page does not exist for scenarioID ${scenarioID}`);
             //create conversation_task object
-            client.query(thisQuery, [name, designation, description, scenarioID, conv_task_pageID])       
-            client.query("COMMIT")
+            await client.query(thisQuery, [name, designation, description, scenarioID, conv_task_pageID])       
+            await client.query("COMMIT")
         }
         else{
             throw RangeError(`scenarioID ${scenarioID} does not exist`);
         }
     } catch (e) {
-        client.query("ROLLBACK")
+        await client.query("ROLLBACK")
         throw e
     } finally {
         client.release()
@@ -578,14 +578,14 @@ async function addStakeholderConversations(stakeholderID, conv_ques_text_array){
     let thisQuery = 'insert into conversation values(DEFAULT, $1, $2, $3)'
     const client = await pool.connect();
     try{
-        client.query("BEGIN")
+        await client.query("BEGIN")
         // insert conversations from array
         for(let conv of conv_ques_text_array){    
             await client.query(thisQuery, [stakeholderID, conv[0], conv[1]])
         }
-        client.query("COMMIT")
+        await client.query("COMMIT")
     } catch (e) {
-        client.query("ROLLBACK")
+        await client.query("ROLLBACK")
         throw e
     } finally {
         client.release()
@@ -619,8 +619,8 @@ function addFinalActionPage(scenarioID, body_text, QA_array, callback){
 
 function addActionPage(scenarioID, order, body_text, QA_array){
     try {
-        if (scenarioExists(scenarioID)){
-            let pageID = createPage(order, TYPE_MCQ, body_text, scenarioID)
+        if (await scenarioExists(scenarioID)){
+            let pageID = await createPage(order, TYPE_MCQ, body_text, scenarioID)
             addMCQ(scenarioID, FINAL_ACTION, QA_array)
         }
         else{
@@ -635,7 +635,7 @@ function addActionPage(scenarioID, order, body_text, QA_array){
 // function addMCQ(scenarioID, )
 async function addMCQ(scenarioID, order, QA_array){
     // QA_array = [[Q1, [op1, op2, op3]], [Q2, [op1, op2, op3]]]
-    let pageID = getPageID(scenarioID, order)
+    let pageID = await getPageID(scenarioID, order)
     try {
         for (let QA of QA_array){
             let Q_ID = addMCQQuestion(QA[0], pageID)
