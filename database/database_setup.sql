@@ -72,7 +72,8 @@ CREATE TABLE "pages" (
 	"order" INT NOT NULL,
 	"type" CHAR(5) NOT NULL,
 	"body_text" VARCHAR NOT NULL,
-	"scenario_id" INT REFERENCES scenario
+	"scenario_id" INT REFERENCES scenario,
+	UNIQUE("scenario_id", "order")
 );
 
 CREATE TABLE "prompt" (
