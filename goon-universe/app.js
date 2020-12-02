@@ -152,7 +152,7 @@ router.route('/scenarios/initialReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-        let flag = true
+        let no_error = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -175,7 +175,7 @@ router.route('/scenarios/initialReflection')
                     input = data[prompt_num]
                     db.addInitReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
                         if(result.length === 0){
-                            flag = false
+                            no_error = false
                         }
                         // else{
                         //     res.status(200).send(result)
@@ -184,7 +184,7 @@ router.route('/scenarios/initialReflection')
                     })
                 }
             }
-            if(flag){
+            if(no_error){
                 res.status(200).send("Success")
                 console.log("Updated initial reflection")
             }
@@ -585,7 +585,7 @@ router.route('/scenarios/middleReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-        let flag = true
+        let no_error = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -608,7 +608,7 @@ router.route('/scenarios/middleReflection')
                     input = data[prompt_num]
                     db.addMidReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
                         if(result.length === 0){
-                            flag = false
+                            no_error = false
                         }
                         // else{
                         //     res.status(200).send(result)
@@ -617,7 +617,7 @@ router.route('/scenarios/middleReflection')
                     })
                 }
             }
-            if(flag){
+            if(no_error){
                 res.status(200).send("Success")
                 console.log("Updated middle reflection")
             }
@@ -684,7 +684,7 @@ router.route('/scenarios/finalReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
-        let flag = true
+        let no_error = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -707,7 +707,7 @@ router.route('/scenarios/finalReflection')
                     input = data[prompt_num]
                     db.addFinalReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
                         if(result.length === 0){
-                            flag = false
+                            no_error = false
                         }
                         // else{
                         //     res.status(200).send(result)
@@ -716,7 +716,7 @@ router.route('/scenarios/finalReflection')
                     })
                 }
             }
-            if(flag){
+            if(no_error){
                 res.status(200).send("Success")
                 console.log("Updated final reflection")
             }
@@ -777,6 +777,32 @@ router.route('/scenarios/conclusion')
         })
 
         }
+    })
+
+    .put(function(req, res){
+        scenarioID = req.body.scenarioID
+        studentID = req.body.studentID
+        data = req.body.data
+        if(!isnumber(scenarioID)){
+            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
+            console.log("Invalid Scenario ID")
+            res.end()
+        }
+        else if(!isnumber(studentID)){
+            res.status(400).json({error: `Invalid student ID: ${studentID}`})
+            console.log("Invalid Student ID")
+            res.end()
+        }
+        else{
+        db.addConclusionResponse(studentID, scenarioID, data, function(result){
+          if(result.length === 0){
+              res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+          }
+          else{
+              res.status(200).send(result)
+              console.log("Updated Conclusion response")
+          }
+        })}
     })
 
 router.route('/scenarios/feedback')
