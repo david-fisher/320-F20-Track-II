@@ -1000,14 +1000,20 @@ async function replicateScenario(csv_as_array){
     // 7 = page order
 
     // Initial reflection
-    console.log(data[10])
-    console.log(`hello = ${(data[6][data[7].indexOf(INITIAL_REFLECTION.toString())])}`)
-    // get page id from data[6] of page with order = INITREFLECT from data[7]
-    let init_prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(INITIAL_REFLECTION.toString()))] ? i : '').filter(String)
-    console.log(init_prompt_indices)
+    prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(INITIAL_REFLECTION.toString()))] ? i : '').filter(String)
     let body_text = data[9][(data[7].indexOf(INITIAL_REFLECTION.toString()))]
-    console.log(`body text = ${body_text}`)
-    await addInitReflectPage(scenarioID, body_text, init_prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
+    await addInitReflectPage(scenarioID, body_text, prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
+
+    // mid reflection
+    prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(MIDDLE_REFLECTION.toString()))] ? i : '').filter(String)
+    body_text = data[9][(data[7].indexOf(MIDDLE_REFLECTION.toString()))]
+    await addMidReflectPage(scenarioID, body_text, prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
+
+    // final reflection
+    prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(FINAL_REFLECTION.toString()))] ? i : '').filter(String)
+    body_text = data[9][(data[7].indexOf(FINAL_REFLECTION.toString()))]
+    await addFinalReflectPage(scenarioID, body_text, prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
+
     return
     // Initial Action
     // get page id from data[6] of page with order = INITACTION from data[7]
