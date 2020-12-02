@@ -377,8 +377,8 @@ async function scenarioPageExists(order, type, scenarioID){
     } finally {
         client.release()
     }
-    console.log(`page = ${await pageID}`)
-    return await pageID
+    console.log(`page = ${pageID}`)
+    return pageID
     
     // return new Promise(function(resolve, reject){
     //     pool.query(thisQuery, [scenarioID, order, type], (error, results) => {
@@ -415,7 +415,7 @@ async function createPage(order, type, body_text, scenarioID){
         throw e;
     } finally {
         client.release()
-        return await pageID
+        return pageID
     }
 }
 
@@ -482,15 +482,15 @@ async function addFinalReflectPage(scenarioID, body_text, prompts, callback){
 }
 
 async function addReflectPage(scenarioID, body_text, prompts, ORDER){
-    let thisQuery = 'insert into prompt values($1, $2, DEFAULT)';
+    let thisQuery = 'insert into prompt values($1, $2, $3)';
     let pageID = -1
     const client = await pool.connect();
     try{
         await client.query("BEGIN");
         if (await scenarioExists(scenarioID)){
             pageID = await createPage(ORDER, TYPE_PROMPT, body_text, scenarioID)
-            for (let p of prompts){
-                await client.query(thisQuery, [pageID, p]);
+            for (let p = 0; p < prompts.length; p++){
+                await client.query(thisQuery, [pageID, prompts[p], p+1]);
             }
             await client.query("COMMIT");
         }
@@ -503,7 +503,6 @@ async function addReflectPage(scenarioID, body_text, prompts, ORDER){
     } finally{
         client.release();
     }
-    callback(SUCCESS);
     return pageID
 }
 
@@ -996,12 +995,20 @@ async function replicateScenario(csv_as_array){
 
     // return
     await addIntroPage(scenarioID, data[9][(data[7].indexOf(INTROPAGE.toString()))], temp_callback) // ideally use index of order=1 from data[7]
-    return
+    
+    // 6 = pageid
+    // 7 = page order
 
     // Initial reflection
+    console.log(data[10])
+    console.log(`hello = ${(data[6][data[7].indexOf(INITIAL_REFLECTION.toString())])}`)
     // get page id from data[6] of page with order = INITREFLECT from data[7]
-    addInitReflectPage(scenarioID, body_text, prompts, callback)
-
+    let init_prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(INITIAL_REFLECTION.toString()))] ? i : '').filter(String)
+    console.log(init_prompt_indices)
+    let body_text = data[9][(data[7].indexOf(INITIAL_REFLECTION.toString()))]
+    console.log(`body text = ${body_text}`)
+    await addInitReflectPage(scenarioID, body_text, init_prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
+    return
     // Initial Action
     // get page id from data[6] of page with order = INITACTION from data[7]
     addInitActionPage(scenarioID, body_text, QA_array, callback)
