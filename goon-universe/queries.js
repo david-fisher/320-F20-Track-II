@@ -753,18 +753,49 @@ function getFinalReflectPage(scenarioID, callback){
 //Returns question IDs as well for getChoices functions
 
 function getActionPageQuestionsAndChoices(scenarioID, pageOrder, callback) {
-    let thisQuery='SELECT question.id AS question_id, question.question, mcq_option.id AS option_id, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id'
+    let thisQuery='SELECT question.id AS question_id, question.question, mcq_option.id AS option_id, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id ORDER BY question_id'
     pool.query(thisQuery, [scenarioID, pageOrder], (error,results) => {
         if (error) {
             throw error
         }
-        let resultObject = {}
+        let resultObject = []
         if (results.rows.length !== 0) {
-            // Selected question will be the same across all rows
-            resultObject.question_id=results.rows[0].question_id
-            resultObject.question=results.rows[0].question
-            resultObject.mcq_choices_id=results.rows.map((row) => row.option_id)
-            resultObject.mcq_choices=results.rows.map((row) => row.option)
+            /*
+             * Populate the first item, then use difference in loop
+             * Group rows with the same question together
+             * Delta checking below relies on ORDER BY clause above
+             */
+            let questionObject = {
+                question_id: results.rows[0].question_id,
+                question: results.rows[0].question,
+                option_id: [results.rows[0].option_id],
+                option: [results.rows[0].option]
+            }
+            for (i = 1; i < results.rows.length; i++) {
+                let question_id_current = questionObject.question_id
+                let question_id_new = results.rows[i].question_id
+                /*
+                 * If question is new, create new question object
+                 * Otherwise, append MCQ option to existing question
+                 */
+                if (question_id_current !== question_id_new) {
+                    resultObject.push(questionObject)
+                    // Create new object to avoid shallow copy issues
+                    questionObject = {
+                        question_id: results.rows[i].question_id,
+                        question: results.rows[i].question,
+                        option_id: [results.rows[i].option_id],
+                        option: [results.rows[i].option]
+                    }
+                } else {
+                    questionObject.option_id.push(results.rows[i].option_id)
+                    questionObject.option.push(results.rows[i].option)
+                }
+            }
+            // Push the final question+MCQ choices into result list
+            if (Object.entries(questionObject).length !== 0) {
+                resultObject.push(questionObject)
+            }
         }
         callback(resultObject)
     })
