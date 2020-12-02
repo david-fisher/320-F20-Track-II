@@ -776,13 +776,15 @@ router.route('/scenarios/test')
 
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
-        if(!isnumber(scenarioID)){
-            res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
-            console.log("Invalid ID")
-            res.end()
-        }
-        else{
-            db.getScenarioCSV(scenarioID, function(result){
+        // let text = req.get('text')
+        // if(!isnumber(scenarioID)){
+        //     res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
+        //     console.log("Invalid ID")
+        //     res.end()
+        // }
+        // else{
+            db.loadScenarioCSV(scenarioID, function(result){
+            // db.getScenarioCSV(scenarioID, function(result){
                 if(result.length == 0){
                     res.status(404).json({error: `No scenario found with scenarioid: ${scenarioID}`})
                 }
@@ -792,7 +794,7 @@ router.route('/scenarios/test')
                     
                 }
             })
-        }
+        // }
     })
 
 

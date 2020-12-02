@@ -1,5 +1,6 @@
 const { query } = require('express');
 const { Parser, transforms: { unwind } } = require('json2csv');
+const csvtojson = require("csvtojson");
 var env = require('node-env-file');
 env(__dirname + '/.env');
 // require("dotenv").config()
@@ -617,7 +618,7 @@ function addFinalActionPage(scenarioID, body_text, QA_array, callback){
 
 }
 
-function addActionPage(scenarioID, order, body_text, QA_array){
+async function addActionPage(scenarioID, order, body_text, QA_array){
     try {
         if (await scenarioExists(scenarioID)){
             let pageID = await createPage(order, TYPE_MCQ, body_text, scenarioID)
@@ -919,7 +920,7 @@ async function getScenarioCSV(scenarioID, callback){
     const csv = json2csvParser.parse(query_results);
     // output needs to be unescaped before saving to csv
     callback(csv)
-    return query_results;
+    return unescape(query_results);
 }
 
  
@@ -927,6 +928,7 @@ async function getScenarioCSV(scenarioID, callback){
 
 // helper for version control
 function loadScenarioCSV(scenario_csv_string){
+    transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     let scenario_cols = "scenario.id, scenario.name, scenario.due_date, scenario.description, scenario.status, scenario.additional_data "
     let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
     let prompt_cols = "prompt.page_id, prompt.prompt, prompt.prompt_num "
@@ -940,8 +942,28 @@ function loadScenarioCSV(scenario_csv_string){
     let mcq_option_cols = "mcq_option.id, mcq_option.option, mcq_option.question_id "
     let _fields = [scenario_cols, pages_cols, prompt_cols, conversation_task_cols, stakeholders_cols, conversation_cols, score_cols, issues_cols, mcq_cols, question_cols, mcq_option_cols]
     let fields = (_fields.map(function(itm) {return itm.split(",").map(function(t) {return t.trim();})}))
+    fields_flat = [].concat(...fields)
+    console.log(fields)
+    let csv_as_array = []
+    csvtojson({
+        output: "csv",
+        // alwaysSplitAtEOL: true,
+        delimiter: 'auto',
+        // flatKeys: true,
+        noheader: false,
+        headers: fields_flat,
+        // ignoreEmpty: true
+    })
+    .fromString(scenario_csv_string.replace(/\\n/g, '\n').replace(/\\"/g, '"'))
+    .then((csvRow)=>{ 
+        // console.log(csvRow) // => [["1","2","3"], ["4","5","6"], ["7","8","9"]]
+        csv_as_array = csv_as_array.concat(csvRow)
+        return csv_as_array
+    }).then((ar) =>{
+    console.log(transpose(ar))
+    })
 
-
+    return
 
 
     // creates new scenario using scenario_csv_string
@@ -1059,6 +1081,7 @@ module.exports = {
     addInitActionResponse,
     addFinalActionResponse,
     getScenarioCSV,
+    loadScenarioCSV,
     createScenario,
     getMCQResponse,
     getInitActionResponse,
