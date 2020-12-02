@@ -152,6 +152,7 @@ router.route('/scenarios/initialReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        let flag = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -163,26 +164,36 @@ router.route('/scenarios/initialReflection')
             res.end()
         }
         else{
-        timestamp = new Date()
-        for(prompt_num in data){
-            if(!isnumber(prompt_num)){
-                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
-                console.log("Invalid prompt number")
-                res.end()
+            timestamp = new Date()
+            for(prompt_num in data){
+                if(!isnumber(prompt_num)){
+                    res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                    console.log("Invalid prompt number")
+                    res.end()
+                }
+                else{
+                    input = data[prompt_num]
+                    db.addInitReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                        if(result.length === 0){
+                            flag = false
+                        }
+                        // else{
+                        //     res.status(200).send(result)
+                        //     console.log("Updated initial reflection")
+                        // }
+                    })
+                }
+            }
+            if(flag){
+                res.status(200).send("Success")
+                console.log("Updated initial reflection")
             }
             else{
-                input = data[prompt_num]
-                db.addInitReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
-                    if(result.length === 0){
-                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
-                    }
-                    else{
-                        res.status(200).send(result)
-                        console.log("Updated initial reflection")
-                    }
-                })
+                res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                console.log("Middle reflection not added")
             }
-        }}
+        }
+        
     })
 
 router.route('/scenarios/initialReflection/response')
@@ -383,7 +394,7 @@ router.route('/scenarios/finalAction')
     })
 
 
-router.route('/scenarios/initialAction/response')
+router.route('/scenarios/finalAction/response')
 
     .get(function(req, res){
         scenarioID = req.get('scenarioid')
@@ -405,7 +416,7 @@ router.route('/scenarios/initialAction/response')
             }
             else{
                 res.status(200).json(result)
-                console.log("Got finaL action response")
+                console.log("Got final action response")
             }
         })
         }
@@ -574,6 +585,7 @@ router.route('/scenarios/middleReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        let flag = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -585,26 +597,35 @@ router.route('/scenarios/middleReflection')
             res.end()
         }
         else{
-        timestamp = new Date()
-        for(prompt_num in data){
-            if(!isnumber(prompt_num)){
-                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
-                console.log("Invalid prompt number")
-                res.end()
+            timestamp = new Date()
+            for(prompt_num in data){
+                if(!isnumber(prompt_num)){
+                    res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                    console.log("Invalid prompt number")
+                    res.end()
+                }
+                else{
+                    input = data[prompt_num]
+                    db.addMidReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                        if(result.length === 0){
+                            flag = false
+                        }
+                        // else{
+                        //     res.status(200).send(result)
+                        //     console.log("Updated initial reflection")
+                        // }
+                    })
+                }
+            }
+            if(flag){
+                res.status(200).send("Success")
+                console.log("Updated middle reflection")
             }
             else{
-                input = data[prompt_num]
-                db.addMidReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
-                    if(result.length === 0){
-                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
-                    }
-                    else{
-                        res.status(200).send(result)
-                        console.log("Updated middle reflection")
-                    }
-                })
+                res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                console.log("Middle reflection not added")
             }
-        }}
+        }
     })
 
 router.route('/scenarios/middleReflection/response')
@@ -663,6 +684,7 @@ router.route('/scenarios/finalReflection')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        let flag = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -674,26 +696,35 @@ router.route('/scenarios/finalReflection')
             res.end()
         }
         else{
-        timestamp = new Date()
-        for(prompt_num in data){
-            if(!isnumber(prompt_num)){
-                res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
-                console.log("Invalid prompt number")
-                res.end()
+            timestamp = new Date()
+            for(prompt_num in data){
+                if(!isnumber(prompt_num)){
+                    res.status(400).json({error: `Invalid prompt: ${prompt_num}`})
+                    console.log("Invalid prompt number")
+                    res.end()
+                }
+                else{
+                    input = data[prompt_num]
+                    db.addFinalReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
+                        if(result.length === 0){
+                            flag = false
+                        }
+                        // else{
+                        //     res.status(200).send(result)
+                        //     console.log("Updated initial reflection")
+                        // }
+                    })
+                }
+            }
+            if(flag){
+                res.status(200).send("Success")
+                console.log("Updated final reflection")
             }
             else{
-                input = data[prompt_num]
-                db.addFinalReflectResponse(studentID, input, prompt_num, scenarioID, timestamp, function(result){
-                    if(result.length === 0){
-                        res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
-                    }
-                    else{
-                        res.status(200).send(result)
-                        console.log("Updated final reflection")
-                    }
-                })
+                res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
+                console.log("Final reflection not added")
             }
-        }}
+        }
     })
 
 
