@@ -269,19 +269,24 @@ function addFinalReflectResponse(studentID, input, promptNum, scenarioID, timest
 // .catch(function(err){
 //     console.log(err);
 // });
-function scenarioExists(scenarioID){
+
+// tested. works.
+async function scenarioExists(scenarioID){
     //returns True if scenarioID exists
     let thisQuery = 'select scenario.id from scenario where scenario.id = $1'
-        return new Promise(function(resolve, reject){
-            pool.query(thisQuery, [scenarioID], (error, results) => {
-                if (error){
-                    return reject(error)
-                }
-                // TODO return if results is not zero
-                return resolve(results.rows.length!=0)
-            })
-        })
+    const client = await pool.connect();
+    let result = null
+    try {
+        let Qresult = await client.query(thisQuery, [scenarioID])
+        result = (Qresult.rows.length != 0)
+    } catch (e) {
+        console.log("scenarioExists query failed")
+        throw e
 
+    } finally {
+        client.release()
+    }
+    return result
 }
 
 /*
@@ -357,19 +362,20 @@ function addScenarioToCourse(scenarioID, courseID){
 async function scenarioPageExists(order, type, scenarioID){
     // returns pageID
     let thisQuery = 'select pages.id from pages, scenario where pages.scenario_id = $1 and pages.order = $2 and pages.type = $3'
-    let pageID = -1;
+    let pageID = null;
     const client = await pool.connect();
     try{
         await client.query("BEGIN")
         let pageResult = await client.query(thisQuery, [scenarioID, order, type])
-        pageID = pageResult.rows[0].id
+        pageID = await pageResult.rows[0].id
         await client.query("COMMIT")
     } catch (e) {
         await client.query("ROLLBACK")
     } finally {
         client.release()
     }
-    return pageID
+    console.log(`page = ${await pageID}`)
+    return await pageID
     
     // return new Promise(function(resolve, reject){
     //     pool.query(thisQuery, [scenarioID, order, type], (error, results) => {
@@ -389,17 +395,16 @@ async function scenarioPageExists(order, type, scenarioID){
 
 async function createPage(order, type, body_text, scenarioID){
     // returns pageID if exists, else creates new
-    let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4)'
+    console.log(`running create page with ${[order, type, body_text, scenarioID]}`)
+    let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4) ON CONFLICT (scenario_id, "order") DO UPDATE SET body_text = $3'
     const client = await pool.connect();
     let pageID = -1;
     try{
         await client.query("BEGIN");
-        pageID = scenarioPageExists(order, type, scenarioID);
-        if (pageID === null){
-            await client.query(thisQuery, [order, type, body_text, scenarioID]);
-            await client.query("COMMIT");
-            pageID = scenarioPageExists(order, type, scenarioID);
-        }
+        await client.query(thisQuery, [order, type, body_text, scenarioID]);
+        await client.query("COMMIT");
+        // console.log("____________________________.....___________________________")
+        pageID = await getPageID(scenarioID, order)
     } catch (e) {
         await client.query("ROLLBACK")
         throw e;
@@ -434,9 +439,10 @@ async function addIntroPage(scenarioID, text, callback){
     let pageID = -1
     try{
         await client.query("BEGIN");
-        if (scenarioExists(scenarioID)){
-            pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+        if (await scenarioExists(scenarioID)){
+            pageID = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
             await client.query("COMMIT");
+            console.log("intro page addition transaction complete!")
         }
         else{
             throw error
@@ -449,6 +455,7 @@ async function addIntroPage(scenarioID, text, callback){
 
     }
     callback(SUCCESS)
+    console.log(`added page with page ID = ${pageID}`)
     return pageID
 }
 
