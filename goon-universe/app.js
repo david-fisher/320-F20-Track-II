@@ -226,7 +226,7 @@ router.route('/scenarios/initialAction')
         }
         else{
         db.getInitActionPageQuestionsAndChoices(scenarioID, function(result){
-            if(Object.entries(result).length == 0) {
+            if(result.length == 0) {
                 res.status(404).json({error: `No initial actions found with scenarioID: ${scenarioID}`})
             }
             else{
@@ -296,7 +296,7 @@ router.route('/scenarios/finalAction')
         }
         else {
         db.getFinalActionPageQuestionsAndChoices(scenarioID, function(result){
-            if(Object.entries(result).length == 0) {
+            if(result.length == 0) {
                 res.status(404).json({error: `No scenario final action page found for scenarioID: ${scenarioID}`})
             }
             else{
