@@ -307,11 +307,12 @@ async function createScenario(courseID, name, due_date, description, additional_
     const insertScenarioQuery='insert into scenario values(DEFAULT, $1, $2, $3, DEFAULT, $4) RETURNING id';
     const insertScenarioToCoursesQuesry='insert into partof values($1, $2)';
     const client = await pool.connect();
+    let scenarioID = null
     try {
         await client.query("BEGIN");
         
         const scenarioInsert= await client.query(insertScenarioQuery, [name, due_date, description, additional_data]);
-        let scenarioID=scenarioInsert.rows[0].id;
+        scenarioID = await scenarioInsert.rows[0].id;
         const partofInsert= await client.query(insertScenarioToCoursesQuesry, [courseID, scenarioID]);
 
         await client.query("COMMIT");
@@ -323,6 +324,7 @@ async function createScenario(courseID, name, due_date, description, additional_
     } finally {
         client.release();
     }
+    return scenarioID
 }
 
 function setScenarioStatus(scenarioID, scenarioStatus) {
@@ -405,14 +407,16 @@ async function createPage(order, type, body_text, scenarioID){
         await client.query(thisQuery, [order, type, body_text, scenarioID]);
         await client.query("COMMIT");
         // console.log("____________________________.....___________________________")
-        pageID = await getPageID(scenarioID, order)
+        let page = await getPageID(scenarioID, order)
+        pageID = await page
     } catch (e) {
+        console.log("rollback occured")
         await client.query("ROLLBACK")
         throw e;
     } finally {
         client.release()
+        return await pageID
     }
-    return pageID
 }
 
 async function getPageID(scenarioID, order){
@@ -421,7 +425,7 @@ async function getPageID(scenarioID, order){
     const client = await pool.connect()
     let pageID = -1
     try{
-        let pageIDresult = client.query(pageIDQuery, [scenarioID, order])
+        let pageIDresult = await client.query(pageIDQuery, [scenarioID, order])
         pageID = pageIDresult.rows[0].id
     } catch (e) {
         // error handling can be improved
@@ -429,26 +433,29 @@ async function getPageID(scenarioID, order){
     } finally {
         client.release()
     }
-    return pageID
+    return await pageID
 }
 
 // TODO: client BEGIN/COMMIT/ROLLBACK does not have intended effect
 // Helper functions allocate their own clients
 // The helpers may need to take an allocated client as a parameter
 async function addIntroPage(scenarioID, text, callback){
+    console.log(`adding intro page to ${scenarioID}`)
     const client = await pool.connect();
     let pageID = -1
     try{
         await client.query("BEGIN");
         if (await scenarioExists(scenarioID)){
-            pageID = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+            let page = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+            pageID = await page
             await client.query("COMMIT");
             console.log("intro page addition transaction complete!")
         }
         else{
-            throw error
+            throw RangeError("scenario does not exist")
         }
     } catch (e) {
+        console.log("rollback occured")
         await client.query("ROLLBACK");
         throw e;
     } finally {
@@ -456,8 +463,9 @@ async function addIntroPage(scenarioID, text, callback){
 
     }
     callback(SUCCESS)
-    console.log(`added page with page ID = ${pageID}`)
-    return pageID
+    console.log(`added page with page ID = ${await pageID}`)
+    return  await pageID
+    
 }
 
 
@@ -947,39 +955,58 @@ function loadScenarioCSV(scenario_csv_string){
     let csv_as_array = []
     csvtojson({
         output: "csv",
-        // alwaysSplitAtEOL: true,
         delimiter: 'auto',
-        // flatKeys: true,
         noheader: false,
         headers: fields_flat,
-        // ignoreEmpty: true
     })
     .fromString(scenario_csv_string.replace(/\\n/g, '\n').replace(/\\"/g, '"'))
-    .then((csvRow)=>{ 
-        // console.log(csvRow) // => [["1","2","3"], ["4","5","6"], ["7","8","9"]]
-        csv_as_array = csv_as_array.concat(csvRow)
-        return csv_as_array
-    }).then((ar) =>{
-    console.log(transpose(ar))
+    .then((ar) =>{
+    // console.log(transpose(ar))
+    return transpose(ar)
+    })
+    .then((ar) =>{
+        replicateScenario(ar)
     })
 
     return
 
 
-    // creates new scenario using scenario_csv_string
+}
 
+async function replicateScenario(csv_as_array){
+    temp_callback = (f) => {console.log(f)}
+    data = []
+    for(col of csv_as_array){
+        data = data.concat([col.filter(e => e)])
+        
+    }
+    console.log(data)
+
+    // return
+    // creates new scenario using csv_array
+    console.log(`vals = ${[data[1][0], data[2][0], data[3][0], data[5][0]]}`)
     // create scenario
-    createScenario(courseID, name, due_date, description, additional_data, callback)
+    scenarioID = await createScenario(1, data[1][0], data[2][0], data[3][0], data[5][0], temp_callback ) //data[4][0] is status
+    console.log(scenarioID)
+    // TODO find scenarioID of new scenario and update the variable below
 
-    // create pages objects
     // intro
-    addIntroPage(scenarioID, text, callback)
+    // console.log(`index = ${data[9][0]}`)
+    console.log(`index = ${data[9][(data[7].indexOf(INTROPAGE.toString()))]}`)
+
+    // return
+    await addIntroPage(scenarioID, data[9][(data[7].indexOf(INTROPAGE.toString()))], temp_callback) // ideally use index of order=1 from data[7]
+    return
 
     // Initial reflection
+    // get page id from data[6] of page with order = INITREFLECT from data[7]
     addInitReflectPage(scenarioID, body_text, prompts, callback)
 
     // Initial Action
+    // get page id from data[6] of page with order = INITACTION from data[7]
     addInitActionPage(scenarioID, body_text, QA_array, callback)
+
+
     addMCQ(scenarioID, order, QA_array)
 
 
@@ -1000,7 +1027,6 @@ function loadScenarioCSV(scenario_csv_string){
 
     // addConclusionPage
     addConclusionPage(scenarioID, text, callback)
-
 
 }
 
