@@ -56,6 +56,11 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option B', 2);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option C', 2);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 2);
 
+INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 2: <text>', 8);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option A', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option B', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 3);
+
 -- Double check page types
 INSERT INTO pages VALUES(DEFAULT, 9, 'PLAIN', 'Body text of summary page', 1);
 INSERT INTO pages VALUES(DEFAULT, 10, 'PLAIN', 'Body text of feedback page', 1);
