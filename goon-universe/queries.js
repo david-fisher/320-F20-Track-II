@@ -274,15 +274,6 @@ function addFinalReflectResponse(studentID, input, promptNum, scenarioID, timest
 }
 
 
-// scenarioExists(scenarioID)
-// .then(function(result){
-//     console.log(result);
-// })
-// .catch(function(err){
-//     console.log(err);
-// });
-
-// tested. works.
 async function scenarioExists(scenarioID){
     //returns True if scenarioID exists
     let thisQuery = 'select scenario.id from scenario where scenario.id = $1'
@@ -301,19 +292,6 @@ async function scenarioExists(scenarioID){
     return result
 }
 
-/*
-// helper for createScenario
-function addScenario(name, due_date, description, additional_data){
-    let thisQuery = 'insert into scenario values(DEFAULT, $1, $2, $3, DEFAULT, $4)'
-    pool.query(thisQuery, [name, due_date, description, additional_data], (error, results) => {
-        if (error){
-            throw error
-        }
-        return results.rows
-    })
-
-}
-*/
 async function createScenario(courseID, name, due_date, description, additional_data, callback){
     const insertScenarioQuery='insert into scenario values(DEFAULT, $1, $2, $3, DEFAULT, $4) RETURNING id';
     const insertScenarioToCoursesQuesry='insert into partof values($1, $2)';
@@ -388,21 +366,6 @@ async function scenarioPageExists(order, type, scenarioID){
         client.release()
     }
     return pageID
-    
-    // return new Promise(function(resolve, reject){
-    //     pool.query(thisQuery, [scenarioID, order, type], (error, results) => {
-    //         if (error){
-    //             return reject(error);
-    //         }
-    //         // return pageID from results
-    //         if (results.rows.length != 0){
-    //             return resolve(results.rows[0].id);
-    //         }
-    //         else{
-    //             return resolve(-1)
-    //         }
-    //     })
-    // })
 }
 
 async function createPage(order, type, body_text, scenarioID){
@@ -416,6 +379,7 @@ async function createPage(order, type, body_text, scenarioID){
         await client.query("COMMIT");
         let page = await getPageID(scenarioID, order)
         pageID = page
+        if (pageID === -1) throw RangeError(`PageID received was invalid: -1`)
     } catch (e) {
         await client.query("ROLLBACK")
         throw e;
@@ -426,7 +390,6 @@ async function createPage(order, type, body_text, scenarioID){
 }
 
 async function getPageID(scenarioID, order){
-    // returns pageID if exists else -1
     let pageIDQuery = "select * from pages where pages.scenario_id = $1 and pages.order = $2"
     const client = await pool.connect()
     let pageID = -1
@@ -434,7 +397,6 @@ async function getPageID(scenarioID, order){
         let pageIDresult = await client.query(pageIDQuery, [scenarioID, order])
         pageID = await pageIDresult.rows[0].id
     } catch (e) {
-        // error handling can be improved
         pageID = -1
     } finally {
         client.release()
@@ -442,31 +404,24 @@ async function getPageID(scenarioID, order){
     return pageID
 }
 
-// TODO: client BEGIN/COMMIT/ROLLBACK does not have intended effect
-// Helper functions allocate their own clients
-// The helpers may need to take an allocated client as a parameter
 async function addIntroPage(scenarioID, text, callback){
     const client = await pool.connect();
     let pageID = -1
     try{
-        await client.query("BEGIN");
         if (await scenarioExists(scenarioID)){
-            let page = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
-            pageID = await page
-            await client.query("COMMIT");
+            pageID = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
         }
         else{
             throw RangeError("scenario does not exist")
         }
     } catch (e) {
-        await client.query("ROLLBACK");
+        console.log("Failed to add intro page")
         throw e;
     } finally {
         client.release();
-
     }
     callback(SUCCESS)
-    return  await pageID
+    return pageID
     
 }
 
@@ -487,23 +442,24 @@ async function addReflectPage(scenarioID, body_text, prompts, ORDER){
     let thisQuery = 'insert into prompt values($1, $2, $3)';
     let pageID = -1
     const client = await pool.connect();
-    try{
-        await client.query("BEGIN");
-        if (await scenarioExists(scenarioID)){
-            pageID = await createPage(ORDER, TYPE_PROMPT, body_text, scenarioID)
+
+    if (await scenarioExists(scenarioID)){
+        pageID = await createPage(ORDER, TYPE_PROMPT, body_text, scenarioID)
+        try{
+            await client.query("BEGIN");
             for (let p = 0; p < prompts.length; p++){
                 await client.query(thisQuery, [pageID, prompts[p], p+1]);
             }
             await client.query("COMMIT");
+        } catch (e) {
+            await client.query("ROLLBACK");
+            throw e;
+        } finally {
+            client.release();
         }
-        else{
-            throw error;
-        }
-    } catch (e) {
-        await client.query("ROLLBACK");
-        throw e;
-    } finally{
-        client.release();
+
+    } else {
+        throw error;
     }
     return pageID
 }
@@ -512,28 +468,23 @@ async function addReflectPage(scenarioID, body_text, prompts, ORDER){
 async function addConvTaskPage(scenarioID, body_text, convLimit, callback){
     // check scenario exists
     // upsert final reflect page
-    let thisQuery = 'insert into conversation_task values($1, $2)'
+    let thisQuery = 'insert into conversation_task values($1, $2) ON CONFLICT ("page_id", "conversation_limit") DO UPDATE SET conversation_limit=$2;'
     let pageID = -1
     const client = await pool.connect()
-    try {
-        client.query("BEGIN")
-        if (await scenarioExists(scenarioID)){
-
-            // create page object (checks for conflicts)
-            pageID = await createPage(CONVERSATION, TYPE_CONV, body_text, scenarioID)
-            //TODO: upsert new limit count?
+    if (await scenarioExists(scenarioID)){
+        pageID = await createPage(CONVERSATION, TYPE_CONV, body_text, scenarioID)
+        try {
+            await client.query("BEGIN")
             await client.query(thisQuery, [pageID, convLimit])
-
             await client.query("COMMIT")
-        } else {
-            // TODO return InvalidScenarioError
-            throw error;
+        } catch (e) {
+            await client.query("ROLLBACK")
+            throw e
+        } finally {
+            client.release()
         }
-    } catch (e) {
-        await client.query("ROLLBACK")
-        throw e
-    } finally {
-        client.release()
+    } else {
+        throw RangeError('ScenarioID not found');
     }
     return pageID
 }
@@ -560,26 +511,26 @@ async function addStakeholder(scenarioID, name, designation, description, callba
     let thisQuery = 'insert into stakeholders values(DEFAULT, $1, $2, $3, \'<empty>\' , $4, $5) returning id;'
     const client = await pool.connect()
     let stakeholderID = -1
-    try {
-        await client.query("BEGIN")
-        if (await scenarioExists(scenarioID)){
-            // create page object (checks for c)
-            let conv_task_pageID = await getPageID(scenarioID, CONVERSATION)
-            if (conv_task_pageID === -1) throw RangeError(`conversation task page does not exist for scenarioID ${scenarioID}`);
-            //create conversation_task object
-            let result = await client.query(thisQuery, [name, designation, description, scenarioID, conv_task_pageID])     
-            stakeholderID = await result.rows[0].id
-            await client.query("COMMIT")
+    
+    if (await scenarioExists(scenarioID)){
+        let conv_task_pageID = await getPageID(scenarioID, CONVERSATION)
+        if (conv_task_pageID === -1) throw RangeError(`conversation task page does not exist for scenarioID ${scenarioID}`);
 
+        try{
+            await client.query("BEGIN")
+            let result = await client.query(thisQuery, [name, designation, description, scenarioID, conv_task_pageID])     
+            await client.query("COMMIT")
+            stakeholderID = await result.rows[0].id
+
+        } catch (e) {
+            await client.query("ROLLBACK")
+            throw e
+        } finally {
+            client.release()
         }
-        else{
-            throw RangeError(`scenarioID ${scenarioID} does not exist`);
-        }
-    } catch (e) {
-        await client.query("ROLLBACK")
-        throw e
-    } finally {
-        client.release()
+    }
+    else{
+        throw RangeError(`scenarioID ${scenarioID} does not exist`);
     }
     callback(SUCCESS)
     if (stakeholderID === -1) throw RangeError('stakeholder ID not found')
@@ -612,7 +563,6 @@ async function addStakeholderConversations(stakeholderID, conv_ques_text_array){
 async function addInitActionPage(scenarioID, body_text, QA_array, callback){
     try {
         addActionPage(scenarioID, INIT_ACTION, body_text, QA_array)
-        // addMCQ(scenarioID, INIT_ACTION, QA_array)
     } catch (e) {
         console.log("Failed to add InitActionPage")
         throw (e)
@@ -623,7 +573,6 @@ async function addInitActionPage(scenarioID, body_text, QA_array, callback){
 async function addFinalActionPage(scenarioID, body_text, QA_array, callback){
     try {
         addActionPage(scenarioID, FINAL_ACTION, body_text, QA_array)
-        // addMCQ(scenarioID, FINAL_ACTION, QA_array)
     } catch (e) {
         console.log("Failed to add FinalActionPage")
         throw (e)
@@ -636,7 +585,7 @@ async function addActionPage(scenarioID, order, body_text, QA_array){
     try {
         if (await scenarioExists(scenarioID)){
             let pageID = await createPage(order, TYPE_MCQ, body_text, scenarioID)
-            addMCQ(scenarioID, order, QA_array)
+            addMCQ(pageID, QA_array)
         }
         else{
             throw RangeError(`ScenarioID ${scenarioID} does not exist`);
@@ -648,12 +597,10 @@ async function addActionPage(scenarioID, order, body_text, QA_array){
     return
 }
 
-// function addMCQ(scenarioID, )
-async function addMCQ(scenarioID, order, QA_array){
+async function addMCQ(pageID, QA_array){
     // QA_array = [[Q1, [op1, op2, op3]], [Q2, [op1, op2, op3]]]
-    // console.log(QA_array)
     let thisQuery = "insert into mcq values($1) "
-    let pageID = await getPageID(scenarioID, order)
+    if (pageID === -1) throw RangeError("Action page missing")
     const client = await pool.connect()
     try{
         await client.query('BEGIN')
@@ -679,9 +626,8 @@ async function addMCQ(scenarioID, order, QA_array){
     return
 }
 
-// may be used as a helper
+// Helper for addMCQ
 async function addMCQQuestion(question, mcq_id){
-    // TODO check for invalid parameters
     let thisQuery = 'insert into question values(DEFAULT, $1, $2) RETURNING id'
     let questionID = -1
     const client = await pool.connect()
@@ -701,9 +647,8 @@ async function addMCQQuestion(question, mcq_id){
     return questionID
 }
 
-// may be used as a helper
+// Helper for addMCQ
 async function addMCQOptions(option_array, question_id){
-    // TODO check for invalid parameters
     let thisQuery = 'insert into mcq_option values(DEFAULT, $1, $2)'
     const client = await pool.connect()
     try {
@@ -722,8 +667,7 @@ async function addMCQOptions(option_array, question_id){
 }
 
 function getStakeholderDescriptions(scenarioID){
-    // TODO check for invalid parameters
-    if (scenarioExists()){
+    if (await scenarioExists(scenarioID)){
         let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=$1'
         pool.query(thisQuery, [scenarioID], (error, results) => {
             if (error){
@@ -965,14 +909,13 @@ async function getScenarioCSV(scenarioID, callback){
     let query_results = {}
     const client = await pool.connect();
     try {
-        // await client.query("BEGIN");
+        // no transaction query for select
         for (let q = 0; q < table_queries.length; q++){
             let query_output = await client.query(table_queries[q], [scenarioID]);
             query_results[table_names[q]]  = query_output.rows;
         }
-        // await client.query("COMMIT");
     } catch (e) {
-        // await client.query("ROLLBACK");
+        console.log("failed to convert scenario to CSV")
         throw (e);
     } finally {
         client.release()
@@ -984,7 +927,6 @@ async function getScenarioCSV(scenarioID, callback){
     const transforms = [unwind({ paths: table_names, blankOut: true })];
     const json2csvParser = new Parser({ fields, transforms });
     const csv = json2csvParser.parse(query_results);
-    // output needs to be unescaped before saving to csv
     callback(csv)
     return unescape(query_results);
 }
@@ -992,8 +934,9 @@ async function getScenarioCSV(scenarioID, callback){
  
 
 
-// helper for version control
-function loadScenarioCSV(scenario_csv_string){
+// Creates scenario from CSV string and returns ScenarioID.
+// CSV string should not begin with a ` " ` (double quote). It should begin with ` \" ` (escaped double quote)
+function loadScenarioCSV(scenario_csv_string, courseID){
     let transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     let scenario_cols = "scenario.id, scenario.name, scenario.due_date, scenario.description, scenario.status, scenario.additional_data "
     let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
@@ -1040,8 +983,7 @@ async function replicateScenario(csv_as_array){
     }
     console.log(data)
 
-    // TODO : COURSE ID BELOW IS INCORRECT. ADD NEW PARAMETER
-    let scenarioID = await createScenario(1, data[1][0], data[2][0], data[3][0], data[5][0], temp_callback ) //data[4][0] is status
+    let scenarioID = await createScenario(courseID, data[1][0], data[2][0], data[3][0], data[5][0], temp_callback ) //data[4][0] is status
     console.log(`NEW SCENARIO: ID = ${scenarioID}`)
 
     /* 
@@ -1110,8 +1052,8 @@ async function replicateScenario(csv_as_array){
     await addConvTaskPage(scenarioID, body_text, data[14][0], temp_callback)
     for (let i  = 0; i < data[15].length; i++){
         let stakeholderID = await addStakeholder(scenarioID, data[16][i], data[17][i], data[18][i], temp_callback)
-        let question_indices = data[23].map((e, i) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? i : '').filter(String)
-        let conv_text_indices = data[24].map((e, i) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? i : '').filter(String)
+        let question_indices = data[23].map((e, j) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? j : '').filter(String)
+        let conv_text_indices = data[24].map((e, j) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? j : '').filter(String)
         let ques_arr = question_indices.map((e) => {return data[23][e]})
         let txt_arr = conv_text_indices.map((e) => {return data[24][e]})
         let conv_ques_text_array = transpose([ques_arr, txt_arr])
