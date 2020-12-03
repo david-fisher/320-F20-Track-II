@@ -980,6 +980,29 @@ function getStakeholderHistory(studentID, scenarioID, callback){
     getStakeholderHistoryHelper(studentID, scenarioID).then((result) => convIdsToStakeholderIds(result).then(result2 => callback(result2)) )
 }
 
+async function getScenarioIssueCoverageMatrix(scenarioID, callback){
+    let matrixquery = `
+    select score.stakeholder_id, score.issue_id, score.value
+    from stakeholders
+    left join score on score.stakeholder_id = stakeholders.id
+    where stakeholders.scenario_id = $1
+    `
+    const client = await pool.connect()
+    try{
+        let matrix = await client.query(matrixquery, [scenarioID])
+        callback(matrix.rows)
+
+    } catch (e) {
+
+    } finally {
+        client.release()
+    }
+}
+
+async function getScenarioSubmissions(instructorID, scenarioID){
+
+}
+
 function cb(results){
     console.log(results)
     pool.end()
@@ -1040,5 +1063,6 @@ module.exports = {
     addStakeholderChoice,
     getStakeholderHistoryHelper,
     convIdsToStakeholderIds,
-    getStakeholderHistory
+    getStakeholderHistory,
+    getScenarioIssueCoverageMatrix
 }
