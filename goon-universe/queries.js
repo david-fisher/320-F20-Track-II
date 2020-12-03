@@ -61,8 +61,8 @@ function getScenarios(studentID, callback){
     })  
 }
 
-function getIntroPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text from pages where pages.order = ' + INTROPAGE + 'and scenario_id = $1'
+function getPlainPage(scenarioID, order, callback){
+    let thisQuery= 'select pages.body_text from pages where pages.order = ' + order + 'and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -71,14 +71,16 @@ function getIntroPage(scenarioID, callback){
     })
 }
 
+function getSummaryPage(scenarioID, callback){
+    getPlainPage(scenarioID, SUMMARY_PAGE, callback)
+}
+
+function getIntroPage(scenarioID, callback){
+    getPlainPage(scenarioID, INTROPAGE, callback)
+}
+
 function getTaskPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text from pages where pages.order = ' + TASKPAGE + 'and scenario_id = $1'
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    })
+    getPlainPage(scenarioID, TASKPAGE, callback)
 }
 
 // May not be usable
@@ -93,13 +95,7 @@ function getConversationTaskPage(scenarioID, callback){
 }
 
 function getConclusionPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text from pages where pages.order = ' + CONCLUSIONPAGE + 'and scenario_id = $1'
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    })
+    getPlainPage(scenarioID, CONCLUSIONPAGE, callback)
 }
 
 function getAuthenticatedInstructorDashboardSummary(instructorID, callback){
