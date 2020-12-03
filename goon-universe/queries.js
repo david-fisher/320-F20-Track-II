@@ -329,7 +329,6 @@ async function createScenario(courseID, name, due_date, description, additional_
         await client.query("COMMIT");
         callback(scenarioID);
     } catch (e) {
-        console.log("ROLLBACK")
         await client.query("ROLLBACK");
         throw e;
     } finally {
@@ -388,7 +387,6 @@ async function scenarioPageExists(order, type, scenarioID){
     } finally {
         client.release()
     }
-    console.log(`page = ${pageID}`)
     return pageID
     
     // return new Promise(function(resolve, reject){
@@ -409,7 +407,6 @@ async function scenarioPageExists(order, type, scenarioID){
 
 async function createPage(order, type, body_text, scenarioID){
     // returns pageID if exists, else creates new
-    console.log(`running create page with ${[order, type, body_text, scenarioID]}`)
     let thisQuery = 'insert into pages values(DEFAULT, $1, $2, $3, $4) ON CONFLICT (scenario_id, "order") DO UPDATE SET body_text = $3'
     const client = await pool.connect();
     let pageID = -1;
@@ -420,12 +417,10 @@ async function createPage(order, type, body_text, scenarioID){
         let page = await getPageID(scenarioID, order)
         pageID = page
     } catch (e) {
-        console.log("rollback occured")
         await client.query("ROLLBACK")
         throw e;
     } finally {
         client.release()
-        
     }
     return pageID
 }
@@ -451,7 +446,6 @@ async function getPageID(scenarioID, order){
 // Helper functions allocate their own clients
 // The helpers may need to take an allocated client as a parameter
 async function addIntroPage(scenarioID, text, callback){
-    console.log(`adding intro page to ${scenarioID}`)
     const client = await pool.connect();
     let pageID = -1
     try{
@@ -460,13 +454,11 @@ async function addIntroPage(scenarioID, text, callback){
             let page = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
             pageID = await page
             await client.query("COMMIT");
-            console.log("intro page addition transaction complete!")
         }
         else{
             throw RangeError("scenario does not exist")
         }
     } catch (e) {
-        console.log("rollback occured")
         await client.query("ROLLBACK");
         throw e;
     } finally {
@@ -577,7 +569,6 @@ async function addStakeholder(scenarioID, name, designation, description, callba
             //create conversation_task object
             let result = await client.query(thisQuery, [name, designation, description, scenarioID, conv_task_pageID])     
             stakeholderID = await result.rows[0].id
-            console.log(`adding stakeholder with ID = ${stakeholderID}`);
             await client.query("COMMIT")
 
         }
@@ -629,7 +620,7 @@ async function addInitActionPage(scenarioID, body_text, QA_array, callback){
     callback(SUCCESS)
 }
 
-function addFinalActionPage(scenarioID, body_text, QA_array, callback){
+async function addFinalActionPage(scenarioID, body_text, QA_array, callback){
     try {
         addActionPage(scenarioID, FINAL_ACTION, body_text, QA_array)
         // addMCQ(scenarioID, FINAL_ACTION, QA_array)
@@ -645,7 +636,6 @@ async function addActionPage(scenarioID, order, body_text, QA_array){
     try {
         if (await scenarioExists(scenarioID)){
             let pageID = await createPage(order, TYPE_MCQ, body_text, scenarioID)
-            console.log(`action page id, order = ${[pageID, order]}`)
             addMCQ(scenarioID, order, QA_array)
         }
         else{
@@ -653,6 +643,7 @@ async function addActionPage(scenarioID, order, body_text, QA_array){
         }
     } catch (e) {
         console.log("Failed to add final action page")
+        throw e
     }
     return
 }
@@ -942,6 +933,8 @@ async function getScenarioCSV(scenarioID, callback){
         "left join question on question.mcq_id = mcq.page_id " +
         "left join mcq_option on mcq_option.question_id = question.id " +
         "where scenario.id = $1 "
+
+    // Fields
     let scenario_cols = "scenario.id, scenario.name, scenario.due_date, scenario.description, scenario.status, scenario.additional_data "
     let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
     let prompt_cols = "prompt.page_id, prompt.prompt, prompt.prompt_num "
@@ -954,6 +947,8 @@ async function getScenarioCSV(scenarioID, callback){
     let question_cols = "question.id, question.question, question.mcq_id "
     let mcq_option_cols = "mcq_option.id, mcq_option.option, mcq_option.question_id "
 
+
+    // Table Queries
     let scenario_tbl = "select " + scenario_cols + "from scenario where scenario.id = $1"
     let pages_tbl = "select " + pages_cols + "from pages where pages.scenario_id = $1 "
     let prompt_tbl = "select " + prompt_cols + "from pages, prompt where pages.scenario_id = $1 and prompt.page_id = pages.id "
@@ -965,20 +960,19 @@ async function getScenarioCSV(scenarioID, callback){
     let mcq_tbl = "select " + mcq_cols + "from pages, mcq where pages.scenario_id = $1 and mcq.page_id = pages.id "
     let question_tbl = "select " + question_cols + "from pages, mcq, question where pages.scenario_id = $1 and mcq.page_id = pages.id and question.mcq_id = mcq.page_id "
     let mcq_option_tbl = "select " + mcq_option_cols + "from pages, mcq, question, mcq_option where pages.scenario_id = $1 and  mcq.page_id = pages.id and question.mcq_id = mcq.page_id and mcq_option.question_id = question.id"
-    
     let table_queries = [scenario_tbl, pages_tbl, prompt_tbl, conversation_task_tbl, stakeholders_tbl, conversation_tbl, score_tbl, issues_tbl, mcq_tbl, question_tbl, mcq_option_tbl]
     let table_names = ["scenario", "pages", "prompt", "conversation_task", "stakeholders", "conversation", "score", "issues", "mcq", "question", "mcq_option"]
     let query_results = {}
     const client = await pool.connect();
     try {
-        await client.query("BEGIN");
+        // await client.query("BEGIN");
         for (let q = 0; q < table_queries.length; q++){
             let query_output = await client.query(table_queries[q], [scenarioID]);
             query_results[table_names[q]]  = query_output.rows;
         }
-        await client.query("COMMIT");
+        // await client.query("COMMIT");
     } catch (e) {
-        await client.query("ROLLBACK");
+        // await client.query("ROLLBACK");
         throw (e);
     } finally {
         client.release()
@@ -1014,7 +1008,7 @@ function loadScenarioCSV(scenario_csv_string){
     let mcq_option_cols = "mcq_option.id, mcq_option.option, mcq_option.question_id "
     let _fields = [scenario_cols, pages_cols, prompt_cols, conversation_task_cols, stakeholders_cols, conversation_cols, score_cols, issues_cols, mcq_cols, question_cols, mcq_option_cols]
     let fields = (_fields.map(function(itm) {return itm.split(",").map(function(t) {return t.trim();})}))
-    fields_flat = [].concat(...fields)
+    let fields_flat = [].concat(...fields)
     console.log(fields)
     let csv_as_array = []
     csvtojson({
@@ -1025,7 +1019,6 @@ function loadScenarioCSV(scenario_csv_string){
     })
     .fromString(scenario_csv_string.replace(/\\n/g, '\n').replace(/\\"/g, '"'))
     .then((ar) =>{
-    // console.log(transpose(ar))
     return transpose(ar)
     })
     .then((ar) =>{
@@ -1038,7 +1031,7 @@ function loadScenarioCSV(scenario_csv_string){
 }
 
 async function replicateScenario(csv_as_array){
-    let temp_callback = (f) => {console.log(f)}
+    let temp_callback = (f) => {console.log(`LoadScenarioCSV CALLBACK: ${f}`)}
     let transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     let data = []
     for(let col of csv_as_array){
@@ -1047,43 +1040,72 @@ async function replicateScenario(csv_as_array){
     }
     console.log(data)
 
-    // return
-    // creates new scenario using csv_array
-    // create scenario
+    // TODO : COURSE ID BELOW IS INCORRECT. ADD NEW PARAMETER
     let scenarioID = await createScenario(1, data[1][0], data[2][0], data[3][0], data[5][0], temp_callback ) //data[4][0] is status
-    console.log(scenarioID)
-    // TODO find scenarioID of new scenario and update the variable below
+    console.log(`NEW SCENARIO: ID = ${scenarioID}`)
 
-    // intro
-    // console.log(`index = ${data[9][0]}`)
-    console.log(`index = ${data[9][(data[7].indexOf(INTROPAGE.toString()))]}`)
+    /* 
+    DATA INDEX VALUES 
+    0   'scenario.id'
+    1   'scenario.name'
+    2   'scenario.due_date' 
+    3   'scenario.description' 
+    4   'scenario.status' 
+    5   'scenario.additional_data'
+    6   'pages.id' 
+    7   'pages.order'  
+    8   'pages.type'  
+    9   'pages.body_text' 
+    10  'prompt.page_id' 
+    11  'prompt.prompt'  
+    12  'prompt.prompt_num' 
+    13  'conversation_task.page_id' 
+    14  'conversation_task.conversation_limit' 
+    15  'stakeholders.id' 
+    16  'stakeholders.name' 
+    17  'stakeholders.designation' 
+    18  'stakeholders.description' 
+    19  'stakeholders.conversation' 
+    20  'stakeholders.conversation_task_id' 
+    21  'conversation.id' 
+    22  'conversation.stakeholder_id' 
+    23  'conversation.question' 
+    24 'conversation.conversation_text' 
+    25  'score.stakeholder_id'  
+    26  'score.issue_id'  
+    27  'score.value' 
+    28  'issues.id'  
+    20  'issues.name'  
+    30  'issues.description' 
+    31  'mcq.page_id' 
+    32  'question.id'  
+    33  'question.question'  
+    34  'question.mcq_id' 
+    35  'mcq_option.id'  
+    36  'mcq_option.option'  
+    37  'mcq_option.question_id'
+    */
 
-    // return
-    await addIntroPage(scenarioID, data[9][(data[7].indexOf(INTROPAGE.toString()))], temp_callback) // ideally use index of order=1 from data[7]
-    
-    // 6 = pageid
-    // 7 = page order
-    //
-    // 9 = body text
+    // Intro Page
+    await addIntroPage(scenarioID, data[9][(data[7].indexOf(INTROPAGE.toString()))], temp_callback)
 
-    // Initial reflection
+    // Initial Reflection Page
     let prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(INITIAL_REFLECTION.toString()))] ? i : '').filter(String)
     let body_text = data[9][(data[7].indexOf(INITIAL_REFLECTION.toString()))]
     await addInitReflectPage(scenarioID, body_text, prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
 
-    // mid reflection
+    // Mid Reflection Page
     prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(MIDDLE_REFLECTION.toString()))] ? i : '').filter(String)
     body_text = data[9][(data[7].indexOf(MIDDLE_REFLECTION.toString()))]
     await addMidReflectPage(scenarioID, body_text, prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
 
-    // final reflection
+    // Final Reflection Page
     prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(FINAL_REFLECTION.toString()))] ? i : '').filter(String)
     body_text = data[9][(data[7].indexOf(FINAL_REFLECTION.toString()))]
     await addFinalReflectPage(scenarioID, body_text, prompt_indices.map((e)=>{return data[11][e]}), temp_callback)
 
 
-
-    // 21, 22, 23, 24 (id, stake, ques, conv)
+    // Conversation Task
     body_text = data[9][(data[7].indexOf(CONVERSATION.toString()))]
     await addConvTaskPage(scenarioID, body_text, data[14][0], temp_callback)
     for (let i  = 0; i < data[15].length; i++){
@@ -1092,65 +1114,41 @@ async function replicateScenario(csv_as_array){
         let conv_text_indices = data[24].map((e, i) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? i : '').filter(String)
         let ques_arr = question_indices.map((e) => {return data[23][e]})
         let txt_arr = conv_text_indices.map((e) => {return data[24][e]})
-        // transpose so that all questions are in a column and all answers in another
         let conv_ques_text_array = transpose([ques_arr, txt_arr])
         addStakeholderConversations(stakeholderID, conv_ques_text_array)
     }
 
+    // TODO Issue Matrix
 
-    // (index of (page id of action))
-    // let pageID_of_init_action = data[6][(data[7].indexOf(INIT_ACTION.toString()))]
+
+    // Initial Action
     let quest_idx_init_action = data[34].map((e, i) => e === data[6][(data[7].indexOf(INIT_ACTION.toString()))] ? i : '').filter(String)
-    console.log(`quest_idx = ${quest_idx_init_action}`)
     let QA_array = []
     for (let q of quest_idx_init_action){
-        console.log(`q = ${q}`)
         let question_id = data[32][q]
-        console.log(`op index 37 = ${data[37]}`)
         let options_index = data[37].map((e, i) => e === data[37][(data[37].indexOf(question_id))] ? i : '').filter(String)
-        console.log(`op index = ${options_index}`)
         QA_array = QA_array.concat([[data[33][q],options_index.map((v) => {return data[36][v]})]])
     }
     body_text = data[9][(data[7].indexOf(INIT_ACTION.toString()))]
-    console.log(`action body text = ${scenarioID}`)
     await addInitActionPage(scenarioID, body_text, QA_array, temp_callback)
 
 
 
-    // final action
+    // Final Action
     let quest_idx_final_action = data[34].map((e, i) => e === data[6][(data[7].indexOf(FINAL_ACTION.toString()))] ? i : '').filter(String)
-    console.log(`quest_idx = ${quest_idx_final_action}`)
     QA_array = []
     for (let q of quest_idx_final_action){
-        console.log(`q = ${q}`)
         let question_id = data[32][q]
-        console.log(`op index 37 = ${data[37]}`)
         let options_index = data[37].map((e, i) => e === data[37][(data[37].indexOf(question_id))] ? i : '').filter(String)
-        console.log(`op index = ${options_index}`)
         QA_array = QA_array.concat([[data[33][q],options_index.map((v) => {return data[36][v]})]])
     }
     body_text = data[9][(data[7].indexOf(FINAL_ACTION.toString()))]
-    console.log(`action body text = ${scenarioID}`)
     await addFinalActionPage(scenarioID, body_text, QA_array, temp_callback)
 
 
+    // TODO addConclusionPage(scenarioID, text, callback)
 
-    return
-
-    // Initial Action
-    // get page id from data[6] of page with order = INITACTION from data[7]
-    
-
-    addMCQ(scenarioID, order, QA_array)
-
-
-    // addFinalActionPage
-    addFinalActionPage(scenarioID, body_text, QA_array, callback)
-    addMCQ(scenarioID, order, QA_array)
-
-
-    // addConclusionPage
-    addConclusionPage(scenarioID, text, callback)
+    return scenarioID    
 
 }
 
@@ -1247,7 +1245,6 @@ async function convIdsToStakeholderIds(convIds){
             let stakeholderID = thisStakeholderID.rows[0].stakeholder_id;
             output.push(stakeholderID);
         }
-        //console.log(stakeholderID)
         return output
 	} catch (e) {
 		throw e;
