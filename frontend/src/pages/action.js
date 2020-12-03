@@ -105,7 +105,7 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
           </TextTypography>
         </Grid>
         <Grid item lg={12}>
-          <Checkbox content_url = {content_url} nextPage={() => goToPage(nextPageID)} handleResponse={handleResponse} pages={pages} nextPageName={"gatheredInformation"} /> 
+          <Checkbox content_url = {content_url} nextPage={() => goToPage(nextPageID)} handleResponse={handleResponse} pages={pages} nextPageName={nextPageID} /> 
         </Grid>
       </Grid>
     </div>

@@ -5,8 +5,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import FormLabel from '@material-ui/core/FormLabel';
-import Button from '@material-ui/core/Button';
+import {Box, Button} from "@material-ui/core";
 
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../../constants/config";
 import axios from 'axios';
@@ -103,9 +102,11 @@ export default function ErrorRadios(props)
           }
         </RadioGroup>
         <FormHelperText>{helperText}</FormHelperText>
-        <Button type="submit" variant="outlined" color="primary" className={classes.button}>
-          Submit
-        </Button>
+        <Box width={100}>
+          <Button type="submit" variant="outlined" color="primary" className={classes.button}>
+            Submit
+          </Button>
+        </Box>
       </FormControl>
     </form>
   );
