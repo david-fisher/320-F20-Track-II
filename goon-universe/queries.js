@@ -1027,24 +1027,15 @@ async function replicateScenario(csv_as_array){
 
     // 21, 22, 23, 24 (id, stake, ques, conv)
     body_text = data[9][(data[7].indexOf(CONVERSATION.toString()))]
-    console.log(`conv values = ${[body_text, data[14][0]]}`)
     await addConvTaskPage(scenarioID, body_text, data[14][0], temp_callback)
     for (let i  = 0; i < data[15].length; i++){
-        console.log(`conv values2 = ${[data[16][i], data[17][i], data[18][i]]}`)
         let stakeholderID = await addStakeholder(scenarioID, data[16][i], data[17][i], data[18][i], temp_callback)
-        console.log(`stakeholder added : ID = ${stakeholderID}`)
-        console.log(`? = ${data[22]}`)
-        console.log(`??? = ${data[21][(data[22].indexOf(await stakeholderID.toString()))]}`)
         let question_indices = data[23].map((e, i) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? i : '').filter(String)
         let conv_text_indices = data[24].map((e, i) => e === data[21][(data[22].indexOf(stakeholderID.toString()))] ? i : '').filter(String)
-        console.log(`quest idx = ${question_indices}`)
-        console.log(`conv txt idx = ${conv_text_indices}`)
-
         let ques_arr = question_indices.map((e) => {return data[23][e]})
         let txt_arr = conv_text_indices.map((e) => {return data[24][e]})
+        // transpose so that all questions are in a column and all answers in another
         let conv_ques_text_array = transpose([ques_arr, txt_arr])
-        console.log(conv_ques_text_array)
-        // TODO get index from values, transpose so that all questions are in a column and all answers in another
         addStakeholderConversations(stakeholderID, conv_ques_text_array)
     }
     return
