@@ -931,6 +931,54 @@ function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, c
     addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((result) => callback(result))
 }
 
+async function getStakeholderHistoryHelper(studentID, scenarioID) {
+	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+    const selectResponseQuery = 'select id from response where submission_id=$1 and page_num=$2';
+    const getConvsFromResponse = 'select conversation_id from conversation_choices where id=$1'
+	const client = await pool.connect();
+	try {
+		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
+		let pageID = pageSelection.rows[0].id;
+		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        let submissionID = submissionSelection.rows[0].id;
+		const responseSelection = await client.query(selectResponseQuery, [submissionID, pageID]);
+        let responseID = responseSelection.rows[0].id;
+        const convIdSelection = await client.query(getConvsFromResponse, [responseID]);
+		let convIDs = convIdSelection.rows;
+        // RETURNING clause returns ID at the same time
+        //convIDs.forEach(el => el= convIdToStakeholderId(el.conversation_id))
+        return convIDs;
+	} catch (e) {
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
+async function convIdsToStakeholderIds(convIds){
+    const getStakeholderID = 'select stakeholder_id from conversation where id=$1'
+    var output=[];
+	const client = await pool.connect();
+	try {
+        for(let i=0;i<convIds.length;i++){
+            let convId=convIds[i].conversation_id
+            const thisStakeholderID = await client.query(getStakeholderID, [convId]);
+            let stakeholderID = thisStakeholderID.rows[0].stakeholder_id;
+            output.push(stakeholderID);
+        }
+        //console.log(stakeholderID)
+        return output
+	} catch (e) {
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
+function getStakeholderHistory(studentID, scenarioID, callback){
+    getStakeholderHistoryHelper(studentID, scenarioID).then((result) => convIdsToStakeholderIds(result).then(result2 => callback(result2)) )
+}
 
 function cb(results){
     console.log(results)
@@ -989,5 +1037,8 @@ module.exports = {
     getMCQResponse,
     getInitActionResponse,
     getFinalActionResponse,
-    addStakeholderChoice
+    addStakeholderChoice,
+    getStakeholderHistoryHelper,
+    convIdsToStakeholderIds,
+    getStakeholderHistory
 }
