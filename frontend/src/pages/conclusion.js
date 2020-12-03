@@ -1,7 +1,10 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { withStyles, Typography, Box, Grid, Button } from "@material-ui/core";
 import QA from "./components/q&a";
 import { useHistory } from 'react-router-dom';
+import axios from 'axios';
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import { ScenariosContext } from "../Nav";
 
 
 const TextTypography = withStyles({
@@ -10,11 +13,29 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-const bodyText = 'Although current AI offers us few ethical issues that are not already present in the design of cars or power plants, the approach of AI algorithms toward more humanlike thought portends predictable complications. Social roles may be filled by AI algorithms, implying new design requirements like transparency and predictability. Sufficiently general AI algorithms may no longer execute in predictable contexts, requiring new kinds of safety assurance and the engineering of artificial ethical considerations. AIs with sufficiently advanced mental states, or the right kind of states, will have moral status, and some may count as persons—though perhaps persons very much unlike the sort that exist now, perhaps governed by different rules. And finally, the prospect of AIs with superhuman intelligence and superhuman abilities presents us with the extraordinary challenge of stating an algorithm that outputs superethical behavior. These challenges may seem visionary, but it seems predictable that we will encounter them; and they are not devoid of suggestions for present-day research directions.';
-
 const questions = [{text: "We would appreciate receiving any comments that you have on this online ethics simulation: ", id: 1}];
 
 function Conclusion({pages, setPages, activePage, setActivePage}) {
+  const [body,setBody] = useState('');
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
+  useEffect(() => {
+    // backend call
+    axios({
+      method: 'get',
+      url: BASE_URL + '/scenarios/conclusion',
+      headers: {
+        scenarioID: scenarios.currentScenarioID,
+        studentID: STUDENT_ID,
+      }
+    }).then(response => {
+      setBody(text => response.data[0].body_text);
+    }).catch((err)=>{
+      console.log("err",err);
+      //alert(err);
+    });
+  }, [scenarios])
+
+
   function goToFinalReflection(){
     if (!pages.finalReflection.visited) {
       setPages(prevPages => {
@@ -52,7 +73,7 @@ function Conclusion({pages, setPages, activePage, setActivePage}) {
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <QA header={bodyText} questions={questions}
+          <QA header={body} questions={questions}
             handleResponse={async (data) => console.log(data)}
             nextPage={goToHome} pages={pages} nextPageName={"home"}
             prevResponses={{}}/>
