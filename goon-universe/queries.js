@@ -75,6 +75,17 @@ function getIntroPage(scenarioID, callback){
 }
 
 function getTaskPage(scenarioID, callback){
+    let thisQuery= 'select pages.body_text from pages where pages.order = ' + TASKPAGE + 'and scenario_id = $1'
+    pool.query(thisQuery, [scenarioID], (error,results) => {
+        if (error) {
+            throw error
+        }
+        callback(results.rows)
+    })
+}
+
+// May not be usable
+function getConversationTaskPage(scenarioID, callback){
     let thisQuery= 'select pages.body_text from conversation_task, pages where conversation_task.page_id = pages.id and pages.scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
@@ -770,18 +781,49 @@ function getFinalReflectPage(scenarioID, callback){
 //Returns question IDs as well for getChoices functions
 
 function getActionPageQuestionsAndChoices(scenarioID, pageOrder, callback) {
-    let thisQuery='SELECT question.id AS question_id, question.question, mcq_option.id AS option_id, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id'
+    let thisQuery='SELECT question.id AS question_id, question.question, mcq_option.id AS option_id, mcq_option.option FROM pages, mcq, question, mcq_option WHERE pages.scenario_id = $1 AND pages.order = $2 AND mcq.page_id = pages.id AND question.mcq_id = mcq.page_id AND mcq_option.question_id = question.id ORDER BY question_id'
     pool.query(thisQuery, [scenarioID, pageOrder], (error,results) => {
         if (error) {
             throw error
         }
-        let resultObject = {}
+        let resultObject = []
         if (results.rows.length !== 0) {
-            // Selected question will be the same across all rows
-            resultObject.question_id=results.rows[0].question_id
-            resultObject.question=results.rows[0].question
-            resultObject.mcq_choices_id=results.rows.map((row) => row.option_id)
-            resultObject.mcq_choices=results.rows.map((row) => row.option)
+            /*
+             * Populate the first item, then use difference in loop
+             * Group rows with the same question together
+             * Delta checking below relies on ORDER BY clause above
+             */
+            let questionObject = {
+                question_id: results.rows[0].question_id,
+                question: results.rows[0].question,
+                option_id: [results.rows[0].option_id],
+                option: [results.rows[0].option]
+            }
+            for (i = 1; i < results.rows.length; i++) {
+                let question_id_current = questionObject.question_id
+                let question_id_new = results.rows[i].question_id
+                /*
+                 * If question is new, create new question object
+                 * Otherwise, append MCQ option to existing question
+                 */
+                if (question_id_current !== question_id_new) {
+                    resultObject.push(questionObject)
+                    // Create new object to avoid shallow copy issues
+                    questionObject = {
+                        question_id: results.rows[i].question_id,
+                        question: results.rows[i].question,
+                        option_id: [results.rows[i].option_id],
+                        option: [results.rows[i].option]
+                    }
+                } else {
+                    questionObject.option_id.push(results.rows[i].option_id)
+                    questionObject.option.push(results.rows[i].option)
+                }
+            }
+            // Push the final question+MCQ choices into result list
+            if (Object.entries(questionObject).length !== 0) {
+                resultObject.push(questionObject)
+            }
         }
         callback(resultObject)
     })
@@ -1044,7 +1086,7 @@ async function replicateScenario(csv_as_array){
 }
 
 async function getMCQResponse(pageOrder,submissionID, questionID){
-    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_num=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
+    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_id=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
     const client = await pool.connect();
     try {
         const queryReturn= await client.query(thisQuery, [pageOrder, submissionID, questionID]);
@@ -1065,6 +1107,89 @@ function getFinalActionResponse(submissionID, questionID, callback){
     getMCQResponse(FINAL_ACTION,submissionID, questionID).then((result) => callback(result));
 }
 
+async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp) {
+	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
+    const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
+    const insertStakeholderChoiceQuery='insert into conversation_choices(id, conversation_id) VALUES ($1, $2)';
+	const client = await pool.connect();
+	try {
+		await client.query("BEGIN");
+		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
+		let pageID = pageSelection.rows[0].id;
+		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        let submissionID = submissionSelection.rows[0].id;
+        const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
+		let convID = convIdSelection.rows[0].id;
+		// RETURNING clause returns ID at the same time
+		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
+        let responseID = responseCreation.rows[0].id;
+        
+		await client.query(insertStakeholderChoiceQuery, [responseID, convID]);
+        await client.query("COMMIT");
+        callback("SUCCESS");
+	} catch (e) {
+        callback("ROLLBACK");
+		await client.query("ROLLBACK");
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
+function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
+    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((result) => callback(result))
+}
+
+async function getStakeholderHistoryHelper(studentID, scenarioID) {
+	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+    const selectResponseQuery = 'select id from response where submission_id=$1 and page_num=$2';
+    const getConvsFromResponse = 'select conversation_id from conversation_choices where id=$1'
+	const client = await pool.connect();
+	try {
+		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
+		let pageID = pageSelection.rows[0].id;
+		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        let submissionID = submissionSelection.rows[0].id;
+		const responseSelection = await client.query(selectResponseQuery, [submissionID, pageID]);
+        let responseID = responseSelection.rows[0].id;
+        const convIdSelection = await client.query(getConvsFromResponse, [responseID]);
+		let convIDs = convIdSelection.rows;
+        // RETURNING clause returns ID at the same time
+        //convIDs.forEach(el => el= convIdToStakeholderId(el.conversation_id))
+        return convIDs;
+	} catch (e) {
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
+async function convIdsToStakeholderIds(convIds){
+    const getStakeholderID = 'select stakeholder_id from conversation where id=$1'
+    var output=[];
+	const client = await pool.connect();
+	try {
+        for(let i=0;i<convIds.length;i++){
+            let convId=convIds[i].conversation_id
+            const thisStakeholderID = await client.query(getStakeholderID, [convId]);
+            let stakeholderID = thisStakeholderID.rows[0].stakeholder_id;
+            output.push(stakeholderID);
+        }
+        //console.log(stakeholderID)
+        return output
+	} catch (e) {
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
+function getStakeholderHistory(studentID, scenarioID, callback){
+    getStakeholderHistoryHelper(studentID, scenarioID).then((result) => convIdsToStakeholderIds(result).then(result2 => callback(result2)) )
+}
 
 function cb(results){
     console.log(results)
@@ -1124,5 +1249,9 @@ module.exports = {
     createScenario,
     getMCQResponse,
     getInitActionResponse,
-    getFinalActionResponse
+    getFinalActionResponse,
+    addStakeholderChoice,
+    getStakeholderHistoryHelper,
+    convIdsToStakeholderIds,
+    getStakeholderHistory
 }

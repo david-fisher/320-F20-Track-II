@@ -34,10 +34,8 @@ INSERT INTO prompt VALUES(3, 'Initial reflection prompt (b)...', 2);
 INSERT INTO pages VALUES(DEFAULT, 4, 'MCQ', 'Body text before initial action', 1);
 INSERT INTO mcq VALUES(4);
 INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Initial Action: <text>', 4);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option A', 1);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option B', 1);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option C', 1);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 1);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Approve', 1);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Postpone', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'PLAIN', 'page: Init action subsequent (start to gather info) for scenario 1', 1);
 
@@ -50,16 +48,9 @@ INSERT INTO prompt VALUES(7, 'prompt: middle reflection', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 8, 'MCQ', 'Body text before final action multiple choice question objects', 1);
 INSERT INTO mcq VALUES(8);
-INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 1: <text>', 8);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option A', 2);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option B', 2);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option C', 2);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (1) option D', 2);
-
-INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Question 2: <text>', 8);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option A', 3);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option B', 3);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (2) option C', 3);
+INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Final Action: <text>', 8);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (FA) Approve', 2);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (FA) Reject', 2);
 
 -- Double check page types
 INSERT INTO pages VALUES(DEFAULT, 9, 'PLAIN', 'Body text of summary page', 1);
@@ -116,6 +107,11 @@ INSERT INTO prompt VALUES(:scenario_2_init_reflect_id, 'prompt: s2 Initial refle
 -- Enter pages here
 INSERT INTO pages VALUES(DEFAULT, 4, 'MCQ', 'Body text before initial action multiple choice question', 2);
 INSERT INTO mcq VALUES(12);
+INSERT INTO question VALUES(DEFAULT, '(S2) MCQ Initial Action: <text>', 4);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option A', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option B', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option C', 3);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option D', 3);
 
 INSERT INTO conversation_task VALUES(10,1); -- ??
 -- Enter pages here?
