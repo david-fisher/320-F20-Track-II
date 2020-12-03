@@ -190,7 +190,7 @@ router.route('/scenarios/initialReflection')
             }
             else{
                 res.status(404).json({error: `student ID, scenario ID or prompt does not exist in database`})
-                console.log("Middle reflection not added")
+                console.log("Initial reflection not added")
             }
         }
         
@@ -252,6 +252,7 @@ router.route('/scenarios/initialAction')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        let no_error = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -280,18 +281,28 @@ router.route('/scenarios/initialAction')
                     else{
                         db.addInitActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
                             if(result === "scenario/status ID error"){
-                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                                no_error = false
+                                // res.status(404).json({error: `student ID or scenario ID does not exist in database`})
                             }
                             else if (result === "response/question/choice ID error"){
-                                res.status(404).json({error: `response ID or question ID does not exist in database`})
+                                no_error = false
+                                // res.status(404).json({error: `response ID or question ID does not exist in database`})
                             }
-                            else{
-                                res.status(200).send(result)
-                                console.log("Updated inital action")
-                            }
+                            // else{
+                            //     res.status(200).send(result)
+                            //     console.log("Updated inital action")
+                            // }
                     })
                     }
                 }
+            }
+            if(no_error){
+                res.status(200).send("Success")
+                console.log("Updated initial action")
+            }
+            else{
+                res.status(404).json({error: `student ID, scenario ID or question ID does not exist in database`})
+                console.log("Initial Action not added")
             }
         }
     })
@@ -352,6 +363,7 @@ router.route('/scenarios/finalAction')
         scenarioID = req.body.scenarioID
         studentID = req.body.studentID
         data = req.body.data
+        let no_error = true
         if(!isnumber(scenarioID)){
             res.status(400).json({error: `Invalid scenario ID: ${scenarioID}`})
             console.log("Invalid Scenario ID")
@@ -379,16 +391,29 @@ router.route('/scenarios/finalAction')
                     }
                     else{
                         db.addFinalActionResponse(studentID, questionID, choiceID, scenarioID, timestamp, function(result){
-                            if(result.length === 0){
-                                res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                            if(result === "scenario/status ID error"){
+                                no_error = false
+                                // res.status(404).json({error: `student ID or scenario ID does not exist in database`})
                             }
-                            else{
-                                res.status(200).send(result)
-                                console.log("Updated final action")
+                            else if (result === "response/question/choice ID error"){
+                                no_error = false
+                                // res.status(404).json({error: `response ID or question ID does not exist in database`})
                             }
+                            // else{
+                            //     res.status(200).send(result)
+                            //     console.log("Updated inital action")
+                            // }
                     })
                     }
                 }
+            }
+            if(no_error){
+                res.status(200).send("Success")
+                console.log("Updated final action")
+            }
+            else{
+                res.status(404).json({error: `student ID, scenario ID or question ID does not exist in database`})
+                console.log("Final Action not added")
             }
         }
     })
