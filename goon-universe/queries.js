@@ -450,6 +450,17 @@ async function addTaskPage(scenarioID, body_text, callback){
     return pageID
 }
 
+async function addSummaryPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, SUMMARY_PAGE)
+    callback(SUCCESS)
+    return pageID
+}
+async function addConclusionPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, CONCLUSIONPAGE)
+    callback(SUCCESS)
+    return pageID
+}
+
 async function addPlainPage(scenarioID, body_text, order){
     const client = await pool.connect();
     let pageID = -1
@@ -541,19 +552,19 @@ async function addConvTaskPage(scenarioID, body_text, convLimit, callback){
     return pageID
 }
 
-function addConclusionPage(scenarioID, text, callback){
-    //check scenario exists
-    // upsert intro page
-    if (scenarioExists(scenarioID)){
-        // create page object - plain-page when no prompt linked
-        let pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
-        callback(SUCCESS)
-    }
-    else{
-        // TODO return InvalidScenarioError
-        throw RangeError(`ScenarioID ${scenarioID} does not exist`)
-    }
-}
+// function addConclusionPage(scenarioID, text, callback){
+//     //check scenario exists
+//     // upsert intro page
+//     if (scenarioExists(scenarioID)){
+//         // create page object - plain-page when no prompt linked
+//         let pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
+//         callback(SUCCESS)
+//     }
+//     else{
+//         // TODO return InvalidScenarioError
+//         throw RangeError(`ScenarioID ${scenarioID} does not exist`)
+//     }
+// }
 
 
 async function addStakeholder(scenarioID, name, designation, description, callback){
