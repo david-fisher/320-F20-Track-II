@@ -33,7 +33,7 @@ function SimulationWindow() {
       content_url="/scenarios/middleReflection" res_url="/scenarios/middleReflection/response"
       nextPageID="finalAction" prevPageID="stakeholders" title="Reflect on Stakeholder Information"/>) },
     finalAction: { visited: true, completed: true, pageNumber: 7, html: (<Action
-      content_url="/scenarios/FinalAction" nextPageID="conclusion" prevPageID="finalReflection" title="Final Action"/>) },
+      content_url="/scenarios/FinalAction" nextPageID="summary" prevPageID="middleReflection" title="Final Action"/>) },
     summary: { visited: false, completed: false, pageNumber: 8, html: (<Summary />) },
     feedback: { visited: false, completed: true, pageNumber: 9, html: (<Feedback />) },
     finalReflection: { visited: true, completed: true, pageNumber: 10, html: (<Reflection

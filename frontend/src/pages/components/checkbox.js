@@ -37,6 +37,7 @@ export default function ErrorRadios(props)
   };
 
   const handleSubmit = (event) => {
+    console.log("CLICKED")
     event.preventDefault();
     if (value !== '') {
       setHelperText('Good Answer!');
@@ -44,10 +45,12 @@ export default function ErrorRadios(props)
       // props.pages[props.nextPageName].completed = true;
       // props.nextPage();
       props.handleResponse(value).then(res => {
+        console.log("LETS GO TO NEXT PAGE")
         props.pages[props.nextPageName].completed = true;
         props.nextPage();
       }).catch(err => alert(err))
     } else {
+      console.log("FAIL TO GO TO NEXT PAGE")
       setHelperText('Please select an option.');
       setError(true);
     }
@@ -70,11 +73,20 @@ export default function ErrorRadios(props)
       console.log(response);
 
       const x = [];
-      for (var i = 0; i < response.data.mcq_choices.length; i++)
-        x.push({value:response.data.mcq_choices_id[i], label: response.data.mcq_choices[i]});
-      console.log(x);
-      setChoices(choices => x);
-      //const clone = Array.from(response.data.mcq_choices_id);
+      console.log(content_url);
+      if (scenarios.currentScenarioID == 1)
+      {
+        for (var i = 0; i < response.data[0].option.length; i++)
+          x.push({value:response.data[0].option_id[i], label: response.data[0].option[i]});
+        console.log(x);
+        setChoices(choices => x);
+      }
+      if ((scenarios.currentScenarioID == 2)){
+        for (var i = 0; i < response.data[1].option.length; i++)
+          x.push({value:response.data[1].option_id[i], label: response.data[1].option[i]});
+        console.log(x);
+        setChoices(choices => x);
+      }
     }).catch((err)=>{
       console.log("err",err);
       //alert(err);

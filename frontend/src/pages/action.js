@@ -18,33 +18,7 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-function Action({ pages, setPages, activePage, setActivePage, content_url, nextPageID, prevPageID , title }) {
-  // function goToInitialReflection() {
-  //   if (pages.initialReflection.completed) {
-  //     if (!pages.initialReflection.visited) {
-  //       setPages(prevPages => {
-  //         let copy = { ...prevPages };
-  //         copy.initialReflection.visited = true;
-  //         return copy;
-  //       });
-  //     }
-  //     setActivePage(prevPage => 'initialReflection')
-  //   }
-  // }
-
-  // function goToGatheredInformation() {
-  //   if (pages.gatheredInformation.completed) {
-  //     if (!pages.gatheredInformation.visited) {
-  //       setPages(prevPages => {
-  //         let copy = { ...prevPages };
-  //         copy.gatheredInformation.visited = true;
-  //         return copy;
-  //       });
-  //     }
-  //     setActivePage(prevPage => 'gatheredInformation')
-  //   }
-  // }
-
+function Action({ pages, setPages, activePage, setActivePage, content_url, nextPageID, prevPageID, title }) {
   function goToPage(pageID) {
     if (pages[pageID].completed) {
       if (!pages[pageID].visited) {
@@ -60,12 +34,10 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
 
   const [actionQuestion, setActionQuestion, setActionChoices] = React.useState('');
   const [questionID, setQuestionID] = React.useState('');
-  const [choices, setChoices] = React.useState([]);
   const [scenarios, setScenarios] = React.useContext(ScenariosContext);
 
   useEffect(() => {
     // backend call
-    console.log({content_url});
     (async () => {
       axios({
         method: 'get',
@@ -76,13 +48,15 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
         }
       }).then(response => {
         console.log(response);
-        setActionQuestion(text => response.data.question);
-        setQuestionID(id => response.data.question_id);
-        // const x = [];
-        // for (var i = 0; i < response.data.mcq_choices.length; i++)
-        //   x.push({value:response.data.mcq_choices_id[i], label: response.data.mcq_choices[i]});
-        // console.log(x);
-        // setChoices(choices => x);
+        if (scenarios.currentScenarioID == 1)
+        {
+          setActionQuestion(text => response.data[0].question);
+          setQuestionID(id => response.data[0].option_id);
+        }
+        if (scenarios.currentScenarioID == 2){
+          setActionQuestion(text => response.data[1].question);
+          setQuestionID(id => response.data[1].option_id);
+        }
       }).catch((err)=>{
         console.log("err",err);
         //alert(err);
@@ -92,7 +66,8 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
 
   async function handleResponse(data) {
     const request_data = {}
-    request_data[questionID.toString()] = data;
+    console.log("Question ID's " + questionID);
+    request_data[questionID[0].toString()] = data;
     await axios({
       url: BASE_URL + content_url,
       method: 'put',
@@ -118,7 +93,7 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
           <Button variant="contained" disableElevation onClick={() => goToPage(prevPageID)}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation color="primary" onClick={() => goToPage(nextPageID)} >Next</Button>
+          {/*<Button variant="contained" disableElevation color="primary" onClick={() => goToPage(nextPageID)} >Next</Button>*/}
         </Grid>
       </Grid>
       <Grid container spacing={2}>
