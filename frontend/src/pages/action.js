@@ -59,6 +59,7 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
   }
 
   const [actionQuestion, setActionQuestion, setActionChoices] = React.useState('');
+  const [questionID, setQuestionID] = React.useState('');
   const [choices, setChoices] = React.useState([]);
   const [scenarios, setScenarios] = React.useContext(ScenariosContext);
 
@@ -76,11 +77,12 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
       }).then(response => {
         console.log(response);
         setActionQuestion(text => response.data.question);
-        const x = [];
-        for (var i = 0; i < response.data.mcq_choices.length; i++)
-          x.push({value:response.data.mcq_choices_id[i], label: response.data.mcq_choices[i]});
-        console.log(x);
-        setChoices(choices => x);
+        setQuestionID(id => response.data.question_id);
+        // const x = [];
+        // for (var i = 0; i < response.data.mcq_choices.length; i++)
+        //   x.push({value:response.data.mcq_choices_id[i], label: response.data.mcq_choices[i]});
+        // console.log(x);
+        // setChoices(choices => x);
       }).catch((err)=>{
         console.log("err",err);
         //alert(err);
@@ -89,13 +91,15 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
   }, [scenarios]);
 
   async function handleResponse(data) {
+    const request_data = {}
+    request_data[questionID.toString()] = data;
     await axios({
       url: BASE_URL + content_url,
       method: 'put',
       data: {
-        scenarioID: SCENARIO_ID.currentScenarioID,
+        scenarioID: scenarios.currentScenarioID,
         studentID: STUDENT_ID,
-        data: data
+        data: request_data
       }
     });
   }

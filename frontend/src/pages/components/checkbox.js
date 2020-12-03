@@ -86,7 +86,7 @@ export default function ErrorRadios(props)
       <FormControl component="fieldset" error={error} className={classes.formControl}>
         <RadioGroup aria-label="quiz" name="quiz" value={value} onChange={handleRadioChange}>
           {choices.map((choice, index) => (
-              <FormControlLabel value= {choice.value.toString()} control={<Radio />} label={choice.label} />
+              <FormControlLabel value={choice.value.toString()} key={choice.value.toString()} control={<Radio />} label={choice.label} />
             ))
           }
         </RadioGroup>
