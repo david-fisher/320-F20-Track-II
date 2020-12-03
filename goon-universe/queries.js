@@ -489,12 +489,12 @@ async function addConvTaskPage(scenarioID, body_text, convLimit, callback){
     return pageID
 }
 
-function addConclusionPage(scenarioID, text, callback){
+async function addConclusionPage(scenarioID, text, callback){
     //check scenario exists
     // upsert intro page
     if (scenarioExists(scenarioID)){
         // create page object - plain-page when no prompt linked
-        let pageID = createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
+        let pageID = await createPage(CONCLUSIONPAGE, TYPE_PLAIN, text, scenarioID)
         callback(SUCCESS)
     }
     else{
@@ -556,7 +556,6 @@ async function addStakeholderConversations(stakeholderID, conv_ques_text_array){
     } finally {
         client.release()
     }
-    // callback(SUCCESS)
     
 }
 
@@ -666,15 +665,19 @@ async function addMCQOptions(option_array, question_id){
     return SUCCESS
 }
 
-function getStakeholderDescriptions(scenarioID){
+async function getStakeholderDescriptions(scenarioID){
     if (await scenarioExists(scenarioID)){
         let thisQuery = 'select stakeholders.id, stakeholders.description from stakeholders where stakeholders.scenario_id=$1'
-        pool.query(thisQuery, [scenarioID], (error, results) => {
-            if (error){
-                throw error;
-            }
-            callback(results.rows)
-        })
+        const client = await pool.connect()
+        try{
+            let result = await client.query(thisQuery, [scenarioID])
+            callback(result.rows)
+        } catch (e) {
+            console.log("Failed to get stakedolder descriptions")
+            throw e
+        } finally {
+            client.release()
+        }
     }
 }
 
@@ -904,6 +907,7 @@ async function getScenarioCSV(scenarioID, callback){
     let mcq_tbl = "select " + mcq_cols + "from pages, mcq where pages.scenario_id = $1 and mcq.page_id = pages.id "
     let question_tbl = "select " + question_cols + "from pages, mcq, question where pages.scenario_id = $1 and mcq.page_id = pages.id and question.mcq_id = mcq.page_id "
     let mcq_option_tbl = "select " + mcq_option_cols + "from pages, mcq, question, mcq_option where pages.scenario_id = $1 and  mcq.page_id = pages.id and question.mcq_id = mcq.page_id and mcq_option.question_id = question.id"
+    
     let table_queries = [scenario_tbl, pages_tbl, prompt_tbl, conversation_task_tbl, stakeholders_tbl, conversation_tbl, score_tbl, issues_tbl, mcq_tbl, question_tbl, mcq_option_tbl]
     let table_names = ["scenario", "pages", "prompt", "conversation_task", "stakeholders", "conversation", "score", "issues", "mcq", "question", "mcq_option"]
     let query_results = {}
@@ -936,7 +940,7 @@ async function getScenarioCSV(scenarioID, callback){
 
 // Creates scenario from CSV string and returns ScenarioID.
 // CSV string should not begin with a ` " ` (double quote). It should begin with ` \" ` (escaped double quote)
-function loadScenarioCSV(scenario_csv_string, courseID){
+function loadScenarioCSV(scenario_csv_string, courseID, callback){
     let transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     let scenario_cols = "scenario.id, scenario.name, scenario.due_date, scenario.description, scenario.status, scenario.additional_data "
     let pages_cols = "pages.id, pages.order, pages.type, pages.body_text "
@@ -965,15 +969,16 @@ function loadScenarioCSV(scenario_csv_string, courseID){
     return transpose(ar)
     })
     .then((ar) =>{
-        replicateScenario(ar)
+        replicateScenario(ar, courseID)
     })
+    .then((res)=>{callback(SUCCESS)})
 
     return
 
 
 }
 
-async function replicateScenario(csv_as_array){
+async function replicateScenario(csv_as_array, courseID){
     let temp_callback = (f) => {console.log(`LoadScenarioCSV CALLBACK: ${f}`)}
     let transpose = m => m[0].map((x,i) => m.map(x => x[i]))
     let data = []
@@ -1031,6 +1036,9 @@ async function replicateScenario(csv_as_array){
     // Intro Page
     await addIntroPage(scenarioID, data[9][(data[7].indexOf(INTROPAGE.toString()))], temp_callback)
 
+    // Conclusion Page
+    await addConclusionPage(scenarioID, data[9][(data[7].indexOf(CONCLUSIONPAGE.toString()))], temp_callback)
+
     // Initial Reflection Page
     let prompt_indices = data[10].map((e, i) => e === data[6][(data[7].indexOf(INITIAL_REFLECTION.toString()))] ? i : '').filter(String)
     let body_text = data[9][(data[7].indexOf(INITIAL_REFLECTION.toString()))]
@@ -1087,8 +1095,6 @@ async function replicateScenario(csv_as_array){
     body_text = data[9][(data[7].indexOf(FINAL_ACTION.toString()))]
     await addFinalActionPage(scenarioID, body_text, QA_array, temp_callback)
 
-
-    // TODO addConclusionPage(scenarioID, text, callback)
 
     return scenarioID    
 
