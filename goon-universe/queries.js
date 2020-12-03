@@ -1020,6 +1020,16 @@ async function getScenarioSubmissions(courseID, scenarioID){
     }
 }
 
+function getStakeholderConversation(stakeholderID, callback){
+    let thisQuery = 'select conversation.question, conversation.conversation_text from conversation where conversation.stakeholder_id=$1'
+    pool.query(thisQuery, [stakeholderID], (error, results) => {
+        if (error){
+            throw error
+        }
+        return callback(results.rows)
+    })
+}
+
 function cb(results){
     console.log(results)
     pool.end()
@@ -1082,5 +1092,6 @@ module.exports = {
     convIdsToStakeholderIds,
     getStakeholderHistory,
     getScenarioIssueCoverageMatrix,
-    getScenarioSubmissions
+    getScenarioSubmissions,
+    getStakeholderConversation
 }
