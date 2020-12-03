@@ -896,7 +896,7 @@ function getFinalActionResponse(submissionID, questionID, callback){
     getMCQResponse(FINAL_ACTION,submissionID, questionID).then((result) => callback(result));
 }
 
-async function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
+async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
     const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
@@ -925,6 +925,10 @@ async function addStakeholderChoice(studentID, scenarioID, stakeholderID, timest
 	} finally {
 		client.release();
 	}
+}
+
+function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
+    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((result) => callback(result))
 }
 
 
