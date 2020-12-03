@@ -896,6 +896,37 @@ function getFinalActionResponse(submissionID, questionID, callback){
     getMCQResponse(FINAL_ACTION,submissionID, questionID).then((result) => callback(result));
 }
 
+async function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
+	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
+	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
+    const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
+    const insertStakeholderChoiceQuery='insert into conversation_choices(id, conversation_id) VALUES ($1, $2)';
+	const client = await pool.connect();
+	try {
+		await client.query("BEGIN");
+		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
+		let pageID = pageSelection.rows[0].id;
+		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        let submissionID = submissionSelection.rows[0].id;
+        const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
+		let convID = convIdSelection.rows[0].id;
+		// RETURNING clause returns ID at the same time
+		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
+        let responseID = responseCreation.rows[0].id;
+        
+		await client.query(insertStakeholderChoiceQuery, [responseID, convID]);
+        await client.query("COMMIT");
+        callback("SUCCESS");
+	} catch (e) {
+        callback("ROLLBACK");
+		await client.query("ROLLBACK");
+		throw e;
+	} finally {
+		client.release();
+	}
+}
+
 
 function cb(results){
     console.log(results)
@@ -953,5 +984,6 @@ module.exports = {
     createScenario,
     getMCQResponse,
     getInitActionResponse,
-    getFinalActionResponse
+    getFinalActionResponse,
+    addStakeholderChoice
 }
