@@ -35,7 +35,7 @@ INSERT INTO pages VALUES(DEFAULT, 4, 'MCQ', 'Body text before initial action', 1
 INSERT INTO mcq VALUES(4);
 INSERT INTO question VALUES(DEFAULT, '(S1) MCQ Initial Action: <text>', 4);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Approve', 1);
-INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Reject', 1);
+INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Postpone', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 5, 'PLAIN', 'page: Init action subsequent (start to gather info) for scenario 1', 1);
 
