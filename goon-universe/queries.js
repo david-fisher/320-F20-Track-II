@@ -999,8 +999,25 @@ async function getScenarioIssueCoverageMatrix(scenarioID, callback){
     }
 }
 
-async function getScenarioSubmissions(instructorID, scenarioID){
+async function getScenarioSubmissions(courseID, scenarioID){
+    let submissions_query = 
+    `
+    select * from enrolled
+    left join submissions on enrolled.student_id = submissions.user_id
+    where enrolled.course_id = $1
+    and submissoins.scenario_id = $2
+    `
 
+    const client = await pool.connect()
+    try{
+        await client.query(submissions_query, [courseID, scenarioID])
+
+    } catch (e) {
+        console.log(`failed to get submissions for [courseID, scenarioID] ${[courseID, scenarioID]}`)
+
+    } finally {
+        client.release()
+    }
 }
 
 function cb(results){
@@ -1064,5 +1081,6 @@ module.exports = {
     getStakeholderHistoryHelper,
     convIdsToStakeholderIds,
     getStakeholderHistory,
-    getScenarioIssueCoverageMatrix
+    getScenarioIssueCoverageMatrix,
+    getScenarioSubmissions
 }
