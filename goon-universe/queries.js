@@ -417,17 +417,17 @@ async function createPage(order, type, body_text, scenarioID){
         await client.query("BEGIN");
         await client.query(thisQuery, [order, type, body_text, scenarioID]);
         await client.query("COMMIT");
-        // console.log("____________________________.....___________________________")
         let page = await getPageID(scenarioID, order)
-        pageID = await page
+        pageID = page
     } catch (e) {
         console.log("rollback occured")
         await client.query("ROLLBACK")
         throw e;
     } finally {
         client.release()
-        return pageID
+        
     }
+    return pageID
 }
 
 async function getPageID(scenarioID, order){
@@ -437,14 +437,14 @@ async function getPageID(scenarioID, order){
     let pageID = -1
     try{
         let pageIDresult = await client.query(pageIDQuery, [scenarioID, order])
-        pageID = pageIDresult.rows[0].id
+        pageID = await pageIDresult.rows[0].id
     } catch (e) {
         // error handling can be improved
         pageID = -1
     } finally {
         client.release()
     }
-    return await pageID
+    return pageID
 }
 
 // TODO: client BEGIN/COMMIT/ROLLBACK does not have intended effect
@@ -474,7 +474,6 @@ async function addIntroPage(scenarioID, text, callback){
 
     }
     callback(SUCCESS)
-    console.log(`added page with page ID = ${await pageID}`)
     return  await pageID
     
 }
@@ -619,10 +618,10 @@ async function addStakeholderConversations(stakeholderID, conv_ques_text_array){
     
 }
 
-function addInitActionPage(scenarioID, body_text, QA_array, callback){
+async function addInitActionPage(scenarioID, body_text, QA_array, callback){
     try {
-        addActionPage(sceanrioID, INIT_ACTION, body_text, QA_array)
-        addMCQ(scenarioID, INIT_ACTION, QA_array)
+        addActionPage(scenarioID, INIT_ACTION, body_text, QA_array)
+        // addMCQ(scenarioID, INIT_ACTION, QA_array)
     } catch (e) {
         console.log("Failed to add InitActionPage")
         throw (e)
@@ -632,8 +631,8 @@ function addInitActionPage(scenarioID, body_text, QA_array, callback){
 
 function addFinalActionPage(scenarioID, body_text, QA_array, callback){
     try {
-        addActionPage(sceanrioID, FINAL_ACTION, body_text, QA_array)
-        addMCQ(scenarioID, FINAL_ACTION, QA_array)
+        addActionPage(scenarioID, FINAL_ACTION, body_text, QA_array)
+        // addMCQ(scenarioID, FINAL_ACTION, QA_array)
     } catch (e) {
         console.log("Failed to add FinalActionPage")
         throw (e)
@@ -646,7 +645,8 @@ async function addActionPage(scenarioID, order, body_text, QA_array){
     try {
         if (await scenarioExists(scenarioID)){
             let pageID = await createPage(order, TYPE_MCQ, body_text, scenarioID)
-            addMCQ(scenarioID, FINAL_ACTION, QA_array)
+            console.log(`action page id, order = ${[pageID, order]}`)
+            addMCQ(scenarioID, order, QA_array)
         }
         else{
             throw RangeError(`ScenarioID ${scenarioID} does not exist`);
@@ -660,11 +660,26 @@ async function addActionPage(scenarioID, order, body_text, QA_array){
 // function addMCQ(scenarioID, )
 async function addMCQ(scenarioID, order, QA_array){
     // QA_array = [[Q1, [op1, op2, op3]], [Q2, [op1, op2, op3]]]
+    // console.log(QA_array)
+    let thisQuery = "insert into mcq values($1) "
     let pageID = await getPageID(scenarioID, order)
+    const client = await pool.connect()
+    try{
+        await client.query('BEGIN')
+        await client.query(thisQuery, [pageID])
+        await client.query('COMMIT')
+    } catch (e){
+        await client.query('ROLLBACK')
+        throw (e)
+    } finally {
+        client.release()
+    }
+    
+
     try {
         for (let QA of QA_array){
-            let Q_ID = addMCQQuestion(QA[0], pageID)
-            addMCQOptions(QA[1], Q_ID)
+            let Q_ID = await addMCQQuestion(QA[0], pageID)
+            await addMCQOptions(QA[1], Q_ID)
         }
     } catch (e){
         console.log("failed to add MCQs")
@@ -678,17 +693,19 @@ async function addMCQQuestion(question, mcq_id){
     // TODO check for invalid parameters
     let thisQuery = 'insert into question values(DEFAULT, $1, $2) RETURNING id'
     let questionID = -1
-    const client = pool.connect()
+    const client = await pool.connect()
     try{
         await client.query("BEGIN")
-        let query_result = pool.query(thisQuery, [question, mcq_id])
+        let query_result = await pool.query(thisQuery, [question, mcq_id])
         questionID = query_result.rows[0].id
         if (questionID === -1) throw RangeError("failed to add question")
-        await client.query("COMMIT")
+        await client.query  ("COMMIT")
     } catch (e) {
+        console.log(`failed to add mcq question`)
         await client.query("ROLLBACK")
+        throw e
     } finally {
-        await client.release()
+        client.release()
     }
     return questionID
 }
@@ -697,18 +714,18 @@ async function addMCQQuestion(question, mcq_id){
 async function addMCQOptions(option_array, question_id){
     // TODO check for invalid parameters
     let thisQuery = 'insert into mcq_option values(DEFAULT, $1, $2)'
-    const client = pool.connect()
+    const client = await pool.connect()
     try {
-        (await client).query("BEGIN")
+        await client.query("BEGIN")
         for (let option of option_array){
             await client.query(thisQuery, [option, question_id])
         }
-        (await client).query("COMMIT")
+        await client.query("COMMIT")
     } catch (e){
-        (await client).query("ROLLBACK")
+        await client.query("ROLLBACK")
         throw e
     } finally {
-        await client.release()
+        client.release()
     }
     return SUCCESS
 }
@@ -805,7 +822,7 @@ function getActionPageQuestionsAndChoices(scenarioID, pageOrder, callback) {
                 option_id: [results.rows[0].option_id],
                 option: [results.rows[0].option]
             }
-            for (i = 1; i < results.rows.length; i++) {
+            for (let i = 1; i < results.rows.length; i++) {
                 let question_id_current = questionObject.question_id
                 let question_id_new = results.rows[i].question_id
                 /*
@@ -1032,7 +1049,6 @@ async function replicateScenario(csv_as_array){
 
     // return
     // creates new scenario using csv_array
-    console.log(`vals = ${[data[1][0], data[2][0], data[3][0], data[5][0]]}`)
     // create scenario
     let scenarioID = await createScenario(1, data[1][0], data[2][0], data[3][0], data[5][0], temp_callback ) //data[4][0] is status
     console.log(scenarioID)
@@ -1080,29 +1096,58 @@ async function replicateScenario(csv_as_array){
         let conv_ques_text_array = transpose([ques_arr, txt_arr])
         addStakeholderConversations(stakeholderID, conv_ques_text_array)
     }
+
+
+    // (index of (page id of action))
+    // let pageID_of_init_action = data[6][(data[7].indexOf(INIT_ACTION.toString()))]
+    let quest_idx_init_action = data[34].map((e, i) => e === data[6][(data[7].indexOf(INIT_ACTION.toString()))] ? i : '').filter(String)
+    console.log(`quest_idx = ${quest_idx_init_action}`)
+    let QA_array = []
+    for (let q of quest_idx_init_action){
+        console.log(`q = ${q}`)
+        let question_id = data[32][q]
+        console.log(`op index 37 = ${data[37]}`)
+        let options_index = data[37].map((e, i) => e === data[37][(data[37].indexOf(question_id))] ? i : '').filter(String)
+        console.log(`op index = ${options_index}`)
+        QA_array = QA_array.concat([[data[33][q],options_index.map((v) => {return data[36][v]})]])
+    }
+    body_text = data[9][(data[7].indexOf(INIT_ACTION.toString()))]
+    console.log(`action body text = ${scenarioID}`)
+    await addInitActionPage(scenarioID, body_text, QA_array, temp_callback)
+
+
+
+    // final action
+    let quest_idx_final_action = data[34].map((e, i) => e === data[6][(data[7].indexOf(FINAL_ACTION.toString()))] ? i : '').filter(String)
+    console.log(`quest_idx = ${quest_idx_final_action}`)
+    QA_array = []
+    for (let q of quest_idx_final_action){
+        console.log(`q = ${q}`)
+        let question_id = data[32][q]
+        console.log(`op index 37 = ${data[37]}`)
+        let options_index = data[37].map((e, i) => e === data[37][(data[37].indexOf(question_id))] ? i : '').filter(String)
+        console.log(`op index = ${options_index}`)
+        QA_array = QA_array.concat([[data[33][q],options_index.map((v) => {return data[36][v]})]])
+    }
+    body_text = data[9][(data[7].indexOf(FINAL_ACTION.toString()))]
+    console.log(`action body text = ${scenarioID}`)
+    await addFinalActionPage(scenarioID, body_text, QA_array, temp_callback)
+
+
+
     return
+
     // Initial Action
     // get page id from data[6] of page with order = INITACTION from data[7]
-    addInitActionPage(scenarioID, body_text, QA_array, callback)
-
+    
 
     addMCQ(scenarioID, order, QA_array)
 
-
-    // Conversations
-    addConvTaskPage(scenarioID, body_text, convLimit, callback)
-    addStakeholder(scenarioID, name, designation, description, callback)
-    addStakeholderConversations(stakeholderID, conv_ques_text_array)
-
-    // Middle Reflection
-    addMidReflectPage(scenarioID, body_text, prompts, callback)
 
     // addFinalActionPage
     addFinalActionPage(scenarioID, body_text, QA_array, callback)
     addMCQ(scenarioID, order, QA_array)
 
-    // addFinalReflectPage
-    addFinalReflectPage(scenarioID, body_text, prompts, callback)
 
     // addConclusionPage
     addConclusionPage(scenarioID, text, callback)
