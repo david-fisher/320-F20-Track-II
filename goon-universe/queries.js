@@ -438,13 +438,25 @@ async function getPageID(scenarioID, order){
 // TODO: client BEGIN/COMMIT/ROLLBACK does not have intended effect
 // Helper functions allocate their own clients
 // The helpers may need to take an allocated client as a parameter
-async function addIntroPage(scenarioID, text, callback){
+async function addIntroPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, INTROPAGE)
+    callback(SUCCESS)
+    return pageID
+}
+
+async function addTaskPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, TASKPAGE)
+    callback(SUCCESS)
+    return pageID
+}
+
+async function addPlainPage(scenarioID, body_text, order){
     const client = await pool.connect();
     let pageID = -1
     try{
         await client.query("BEGIN");
         if (scenarioExists(scenarioID)){
-            pageID = createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+            pageID = createPage(order, TYPE_PLAIN, body_text, scenarioID)
             await client.query("COMMIT");
         }
         else{
@@ -457,7 +469,6 @@ async function addIntroPage(scenarioID, text, callback){
         client.release();
 
     }
-    callback(SUCCESS)
     return pageID
 }
 
