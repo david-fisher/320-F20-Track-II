@@ -1004,6 +1004,7 @@ async function getStakeholderHistoryHelper(studentID, scenarioID) {
 	}
 }
 
+// Function is not helpful anymore
 async function convIdsToStakeholderIds(convIds){
     const getStakeholderID = 'select stakeholder_id from conversation where id=$1'
     var output=[];
@@ -1026,8 +1027,7 @@ async function convIdsToStakeholderIds(convIds){
 
 function getStakeholderHistory(studentID, scenarioID, callback){
     getStakeholderHistoryHelper(studentID, scenarioID)
-            .then((result) => convIdsToStakeholderIds(result))
-            .then((result2) => callback(result2)) 
+            .then((result) => callback(result))
 }
 
 async function getScenarioIssueCoverageMatrix(scenarioID, callback){
@@ -1139,7 +1139,6 @@ module.exports = {
     getFinalActionResponse,
     addStakeholderChoice,
     getStakeholderHistoryHelper,
-    convIdsToStakeholderIds,
     getStakeholderHistory,
     getScenarioIssueCoverageMatrix,
     getScenarioSubmissions,
