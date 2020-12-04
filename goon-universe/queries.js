@@ -300,8 +300,8 @@ async function createScenario(courseID, name, due_date, description, additional_
     try {
         await client.query("BEGIN");
         
-        const scenarioInsert= await client.query(insertScenarioQuery, [name, due_date, description, additional_data]);
-        scenarioID = await scenarioInsert.rows[0].id;
+        const scenarioInsert = await client.query(insertScenarioQuery, [name, due_date, description, additional_data]);
+        scenarioID = scenarioInsert.rows[0].id;
         const partofInsert= await client.query(insertScenarioToCoursesQuesry, [courseID, scenarioID]);
 
         await client.query("COMMIT");
