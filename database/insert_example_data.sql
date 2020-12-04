@@ -40,8 +40,20 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Postpone', 1);
 INSERT INTO pages VALUES(DEFAULT, 5, 'PLAIN', 'page: Init action subsequent (start to gather info) for scenario 1', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'CONV', 'Body text before conversation', 1);
-INSERT INTO conversation_task VALUES(6,1);
+INSERT INTO conversation_task VALUES(6,3);
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 6);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Bob Smith', 'Police', '<description>','<conversation text>', 1, 6);
+INSERT INTO stakeholders VALUES(DEFAULT, 'John Doe', 'Chef', '<description>','<conversation text>', 1, 6);
+INSERT INTO stakeholders VALUES(DEFAULT, 'John Winfrey', 'Electronic equipment installer', '<description>','<conversation text>', 1, 6);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Anna Pierce', 'News camera operator', '<description>','<conversation text>', 1, 6);
+INSERT INTO stakeholders VALUES(DEFAULT, 'Joseph Jackson', 'Record center clerk', '<description>','<conversation text>', 1, 6);
+
+INSERT INTO conversation VALUES(DEFAULT, 1, 'question?', 'Hi im Sherlock Holmes.');
+INSERT INTO conversation VALUES(DEFAULT, 2, 'question?', 'Hi im Bob Smith.');
+INSERT INTO conversation VALUES(DEFAULT, 3, 'question?', 'Hi im John Doe.');
+INSERT INTO conversation VALUES(DEFAULT, 4, 'question?', 'Hi im John Winfrey.');
+INSERT INTO conversation VALUES(DEFAULT, 5, 'question?', 'Hi im Anna Pierce.');
+INSERT INTO conversation VALUES(DEFAULT, 6, 'question?', 'Hi im Joseph Jackson.');
 
 INSERT INTO pages VALUES(DEFAULT, 7, 'PRMPT', 'Body text before middle reflection', 1);
 INSERT INTO prompt VALUES(7, 'prompt: middle reflection', 1);
