@@ -36,7 +36,7 @@ function SimulationWindow() {
       content_url="/scenarios/FinalAction" nextPageID="summary" prevPageID="middleReflection" title="Final Action"/>) },
     summary: { visited: false, completed: false, pageNumber: 8, html: (<Summary />) },
     feedback: { visited: false, completed: true, pageNumber: 9, html: (<Feedback />) },
-    finalReflection: { visited: true, completed: true, pageNumber: 10, html: (<Reflection
+    finalReflection: { visited: false, completed: true, pageNumber: 10, html: (<Reflection
       content_url="/scenarios/finalReflection" res_url="/scenarios/finalReflection/response"
       nextPageID="conclusion" prevPageID="feedback" title="Reflect on Final Information"/>) },
     conclusion:  { visited: false, completed: false, pageNumber: 11, html: (<Conclusion />) }
@@ -54,7 +54,6 @@ function SimulationWindow() {
     imitateGetCompleteStakeholders().then(stakeholders => {
       infoIdsState[1](ids => {
         return [
-          {name: 'Introduction', pageId: 'introduction', id: 'p0'},
           ...stakeholders.map(stakeholder => {
             stakeholder.pageId = 'stakeholders';
             return stakeholder;
