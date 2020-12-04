@@ -936,13 +936,18 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
     const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 RETURNING id';
     //const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
+    const checkStakeholderQuery = 'SELECT * FROM stakeholders WHERE stakeholders.id=$1'
+    const checkStakeholderChoiceQuery = 'SELECT * FROM conversation_choices WHERE id=$1 AND stakeholder_id=$2'
     const insertStakeholderChoiceQuery='insert into conversation_choices(id, stakeholder_id) VALUES ($1, $2)'; // FIX DOWNSTREAM
 	const client = await pool.connect();
 	try {
 		await client.query("BEGIN");
-		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
-		let pageID = pageSelection.rows[0].id;
-		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        if (submissionSelection.rows.length === 0) {
+            return "";
+        }
+        const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
+        let pageID = pageSelection.rows[0].id;
         let submissionID = submissionSelection.rows[0].id;
         //const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
 		//let convID = convIdSelection.rows[0].id;
@@ -950,8 +955,17 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
 		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
         
+        const stakeholderExistsCheck = await client.query(checkStakeholderQuery, [stakeholderID]);
+        if (stakeholderExistsCheck.rows.length === 0) {
+            return ""
+        }
+        const stakeholderChoiceExistsCheck = await client.query(checkStakeholderChoiceQuery, [responseID, stakeholderID]);
+        if (stakeholderChoiceExistsCheck.rows.length === 0) {
+            return ""
+        }
 		await client.query(insertStakeholderChoiceQuery, [responseID, stakeholderID]);
         await client.query("COMMIT");
+        return SUCCESS
 	} catch (e) {
 		await client.query("ROLLBACK");
 		throw e;
@@ -961,7 +975,7 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
 }
 
 function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
-    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then(() => callback(SUCCESS))
+    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((res_str) => callback(res_str))
 }
 
 async function getStakeholderHistoryHelper(studentID, scenarioID) {
