@@ -20,11 +20,15 @@ note: The file `database_setup.sql` can currently be found in the `erd-implement
 4. Worth noting: the `pg` package's use depends on certain user credentials used to access a common database (namely, the username/password for the postgresql database which you've set up using `database_setup.sql`). Since the git repository is public, it's a security risk to store these credentials in public on the clear web. Thus, we are using a .env file (locally, for now) to store these credentials. **You will not be able to access the database from the React app without a properly configured .env file!**
 
 # how to run the frontend react app
-1. Go into the folder `frontend` in the command line
+1. Install Node.js:  
+https://nodejs.org/en/download/
 
-2. run `npm install` in the command line to install all dependencies required to run the app
 
-3. run `npm start` in the command line to start the app
+2. Go into the folder `frontend` in the command line.
+
+3. Run `npm install` in the command line to install all dependencies required to run the app.
+
+4. Run `npm start` in the command line to start the app.
 
 # For testing: populating the database with dummy data
 1. in command prompt or terminal, run `psql -U [user] -f [full filepath to insert_example_data.sql]`. This file can currently be found in the `erd-implementation` branch in the `database` directory.
