@@ -24,8 +24,8 @@ INSERT INTO enrolled VALUES(4, 2);
 -- test scenario 1
 INSERT INTO scenario VALUES(DEFAULT, 'Scenario 1', '2020-12-01 23:59:59', 'description: test scenario', 'DRAFT', '<additional_data>');
 insert into partof values(1,1);
-INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'page: Intro page content for scenario 1', 1);
-INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'page: Task page content for scenario 1', 1);
+INSERT INTO pages VALUES(DEFAULT, 1, 'PLAIN', 'Many software engineers trainees and providers have reported feeling unprepared for the ethical dilemmas they faced while practicing in real life. Simulation is an effective teaching modality in the training of  professionals. This resource describes the development, implementation, and assessment of an innovative simulation training program for global ethics.', 1);
+INSERT INTO pages VALUES(DEFAULT, 2, 'PLAIN', 'You are a software engineer at Walmart Labs working on building a smart refridgerator with voice control and image recognition to keep track of produce.', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 3, 'PRMPT', 'Body text before initial reflection', 1);
 INSERT INTO prompt VALUES(3, 'Initial reflection prompt (a)...', 1);
@@ -40,7 +40,7 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S1) MCQ (IA) Postpone', 1);
 INSERT INTO pages VALUES(DEFAULT, 5, 'PLAIN', 'page: Init action subsequent (start to gather info) for scenario 1', 1);
 
 INSERT INTO pages VALUES(DEFAULT, 6, 'CONV', 'Body text before conversation', 1);
-INSERT INTO conversation_task VALUES(6,3);
+INSERT INTO conversation_task VALUES(6,2);
 INSERT INTO stakeholders VALUES(DEFAULT, 'Sherlock Holmes', 'Detective', '<description>','<conversation text>', 1, 6);
 INSERT INTO stakeholders VALUES(DEFAULT, 'Bob Smith', 'Police', '<description>','<conversation text>', 1, 6);
 INSERT INTO stakeholders VALUES(DEFAULT, 'John Doe', 'Chef', '<description>','<conversation text>', 1, 6);
