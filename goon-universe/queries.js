@@ -64,8 +64,8 @@ function getScenarios(studentID, callback){
     })  
 }
 
-function getIntroPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text from pages where pages.order = ' + INTROPAGE + 'and scenario_id = $1'
+function getPlainPage(scenarioID, order, callback){
+    let thisQuery= 'select pages.body_text from pages where pages.order = ' + order + 'and scenario_id = $1'
     pool.query(thisQuery, [scenarioID], (error,results) => {
         if (error) {
             throw error
@@ -74,14 +74,16 @@ function getIntroPage(scenarioID, callback){
     })
 }
 
+function getSummaryPage(scenarioID, callback){
+    getPlainPage(scenarioID, SUMMARY_PAGE, callback)
+}
+
+function getIntroPage(scenarioID, callback){
+    getPlainPage(scenarioID, INTROPAGE, callback)
+}
+
 function getTaskPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text from pages where pages.order = ' + TASKPAGE + 'and scenario_id = $1'
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    })
+    getPlainPage(scenarioID, TASKPAGE, callback)
 }
 
 // May not be usable
@@ -96,13 +98,7 @@ function getConversationTaskPage(scenarioID, callback){
 }
 
 function getConclusionPage(scenarioID, callback){
-    let thisQuery= 'select pages.body_text from pages where pages.order = ' + CONCLUSIONPAGE + 'and scenario_id = $1'
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    })
+    getPlainPage(scenarioID, CONCLUSIONPAGE, callback)
 }
 
 function getAuthenticatedInstructorDashboardSummary(instructorID, callback){
@@ -163,15 +159,27 @@ function getFinalReflectResponse(studentID, scenarioID, callback) {
 }
 
 //Get the names, ids, and descriptions of each stakeholder in a scenario
-function getStakeholders(scenarioID, callback){
-    let thisQuery= 'select stakeholders.name, stakeholders.id, stakeholders.designation, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
+async function getStakeholdersHelper(scenarioID){
+    const stakeholderLimitQuery='SELECT conversation_task.conversation_limit FROM pages, conversation_task WHERE pages.scenario_id=$1 AND conversation_task.page_id=pages.id'
+    const stakeholderListQuery= 'select stakeholders.name, stakeholders.id, stakeholders.designation, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
+    let stakeholderLimitResult = pool.query(stakeholderLimitQuery, [scenarioID])
+    let stakeholderListResult = pool.query(stakeholderListQuery, [scenarioID])
+    let stakeholderList = (await stakeholderListResult).rows
+    if (stakeholderList.length === 0) {
+        return {}
+    }
+    let stakeholderLimit = await stakeholderLimitResult
+    let resultObject = {
+        conversation_limit: stakeholderLimit.rows[0].conversation_limit,
+        stakeholders: stakeholderList
+    }
+    return resultObject
 }
+
+function getStakeholders(scenarioID, callback) {
+    getStakeholdersHelper(scenarioID).then((res) => callback(res))
+}
+
 function getName(userID, callback){
     let thisQuery= 'select users.full_name from users where id =$1'
     pool.query(thisQuery, [userID], (error,results) => {
@@ -404,12 +412,40 @@ async function getPageID(scenarioID, order){
     return pageID
 }
 
-async function addIntroPage(scenarioID, text, callback){
+// TODO: client BEGIN/COMMIT/ROLLBACK does not have intended effect
+// Helper functions allocate their own clients
+// The helpers may need to take an allocated client as a parameter
+async function addIntroPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, INTROPAGE)
+    callback(SUCCESS)
+    return pageID
+}
+
+async function addTaskPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, TASKPAGE)
+    callback(SUCCESS)
+    return pageID
+}
+
+async function addSummaryPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, SUMMARY_PAGE)
+    callback(SUCCESS)
+    return pageID
+}
+async function addConclusionPage(scenarioID, body_text, callback){
+    let pageID = await addPlainPage(scenarioID, body_text, CONCLUSIONPAGE)
+    callback(SUCCESS)
+    return pageID
+}
+
+async function addPlainPage(scenarioID, body_text, order){
     const client = await pool.connect();
     let pageID = -1
     try{
-        if (await scenarioExists(scenarioID)){
-            pageID = await createPage(INTROPAGE, TYPE_PLAIN, text, scenarioID)
+        await client.query("BEGIN");
+        if (scenarioExists(scenarioID)){
+            pageID = createPage(order, TYPE_PLAIN, body_text, scenarioID)
+            await client.query("COMMIT");
         }
         else{
             throw RangeError("scenario does not exist")
@@ -420,7 +456,6 @@ async function addIntroPage(scenarioID, text, callback){
     } finally {
         client.release();
     }
-    callback(SUCCESS)
     return pageID
     
 }
@@ -502,6 +537,7 @@ async function addConclusionPage(scenarioID, text, callback){
         throw RangeError(`ScenarioID ${scenarioID} does not exist`)
     }
 }
+
 
 
 async function addStakeholder(scenarioID, name, designation, description, callback){
@@ -1100,52 +1136,70 @@ async function replicateScenario(csv_as_array, courseID){
 
 }
 
-async function getMCQResponse(pageOrder,submissionID, questionID){
-    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_id=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
+// Was submissionID and questionID
+async function getMCQResponse(pageOrder,studentID, scenarioID){
+    const getSubmissionIDQuery='SELECT submissions.id FROM users, scenario, submissions WHERE submissions.user_id=users.id AND submissions.scenario_id=scenario.id AND users.id=$1 AND scenario.id=$2'
+    const mcqResponseQuery='select mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_id=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id'
     const client = await pool.connect();
     try {
-        const queryReturn= await client.query(thisQuery, [pageOrder, submissionID, questionID]);
-        let mcqResponse=queryReturn.rows[0];
-        return mcqResponse;
+        await client.query("BEGIN")
+        const submissionIDResult = await client.query(getSubmissionIDQuery, [studentID, scenarioID]);
+        const submissionID = submissionIDResult.rows[0].id
+        const queryReturn = await client.query(mcqResponseQuery, [pageOrder, submissionID]);
+        await client.query("COMMIT")
+        return queryReturn.rows;
     } catch (e) {
+        await client.query("ROLLBACK")
         throw e;
-
     } finally {
         client.release();
     }
 }
-function getInitActionResponse(submissionID, questionID, callback){
-    getMCQResponse(INIT_ACTION,submissionID, questionID).then((result) => callback(result));
+function getInitActionResponse(studentID, scenarioID, callback){
+    getMCQResponse(INIT_ACTION, studentID, scenarioID).then((result) => callback(result));
 }
 
-function getFinalActionResponse(submissionID, questionID, callback){
-    getMCQResponse(FINAL_ACTION,submissionID, questionID).then((result) => callback(result));
+function getFinalActionResponse(studentID, scenarioID, callback){
+    getMCQResponse(FINAL_ACTION, studentID, scenarioID).then((result) => callback(result));
 }
 
 async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
-    const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
-    const insertStakeholderChoiceQuery='insert into conversation_choices(id, conversation_id) VALUES ($1, $2)';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 RETURNING id';
+    //const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
+    const checkStakeholderQuery = 'SELECT * FROM stakeholders WHERE stakeholders.id=$1'
+    const checkStakeholderChoiceQuery = 'SELECT * FROM conversation_choices WHERE id=$1 AND stakeholder_id=$2'
+    const insertStakeholderChoiceQuery='insert into conversation_choices(id, stakeholder_id) VALUES ($1, $2)';
+
 	const client = await pool.connect();
 	try {
 		await client.query("BEGIN");
-		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
-		let pageID = pageSelection.rows[0].id;
-		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
+        if (submissionSelection.rows.length === 0) {
+            return "";
+        }
+        const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
+        let pageID = pageSelection.rows[0].id;
         let submissionID = submissionSelection.rows[0].id;
-        const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
-		let convID = convIdSelection.rows[0].id;
+        //const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
+		//let convID = convIdSelection.rows[0].id;
 		// RETURNING clause returns ID at the same time
 		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
         
-		await client.query(insertStakeholderChoiceQuery, [responseID, convID]);
+        const stakeholderExistsCheck = await client.query(checkStakeholderQuery, [stakeholderID]);
+        if (stakeholderExistsCheck.rows.length === 0) {
+            await client.query("ROLLBACK")
+            return ""
+        }
+        const stakeholderChoiceExistsCheck = await client.query(checkStakeholderChoiceQuery, [responseID, stakeholderID]);
+        if (stakeholderChoiceExistsCheck.rows.length === 0) {
+            await client.query(insertStakeholderChoiceQuery, [responseID, stakeholderID]);
+        }
         await client.query("COMMIT");
-        callback("SUCCESS");
+        return SUCCESS
 	} catch (e) {
-        callback("ROLLBACK");
 		await client.query("ROLLBACK");
 		throw e;
 	} finally {
@@ -1154,14 +1208,14 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
 }
 
 function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
-    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((result) => callback(result))
+    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((res_str) => callback(res_str))
 }
 
 async function getStakeholderHistoryHelper(studentID, scenarioID) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-    const selectResponseQuery = 'select id from response where submission_id=$1 and page_num=$2';
-    const getConvsFromResponse = 'select conversation_id from conversation_choices where id=$1'
+    const selectResponseQuery = 'select id from response where submission_id=$1 and page_id=$2';
+    const getConvsFromResponse = 'select stakeholder_id from conversation_choices where id=$1'
 	const client = await pool.connect();
 	try {
 		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
@@ -1182,6 +1236,7 @@ async function getStakeholderHistoryHelper(studentID, scenarioID) {
 	}
 }
 
+// Function is not helpful anymore
 async function convIdsToStakeholderIds(convIds){
     const getStakeholderID = 'select stakeholder_id from conversation where id=$1'
     var output=[];
@@ -1202,7 +1257,58 @@ async function convIdsToStakeholderIds(convIds){
 }
 
 function getStakeholderHistory(studentID, scenarioID, callback){
-    getStakeholderHistoryHelper(studentID, scenarioID).then((result) => convIdsToStakeholderIds(result).then(result2 => callback(result2)) )
+    getStakeholderHistoryHelper(studentID, scenarioID)
+            .then((result) => callback(result))
+}
+
+async function getScenarioIssueCoverageMatrix(scenarioID, callback){
+    let matrixquery = `
+    select score.stakeholder_id, score.issue_id, score.value
+    from stakeholders
+    left join score on score.stakeholder_id = stakeholders.id
+    where stakeholders.scenario_id = $1
+    `
+    const client = await pool.connect()
+    try{
+        let matrix = await client.query(matrixquery, [scenarioID])
+        callback(matrix.rows)
+
+    } catch (e) {
+
+    } finally {
+        client.release()
+    }
+}
+
+async function getScenarioSubmissions(courseID, scenarioID){
+    let submissions_query = 
+    `
+    select * from enrolled
+    left join submissions on enrolled.student_id = submissions.user_id
+    where enrolled.course_id = $1
+    and submissoins.scenario_id = $2
+    `
+
+    const client = await pool.connect()
+    try{
+        await client.query(submissions_query, [courseID, scenarioID])
+
+    } catch (e) {
+        console.log(`failed to get submissions for [courseID, scenarioID] ${[courseID, scenarioID]}`)
+
+    } finally {
+        client.release()
+    }
+}
+
+function getStakeholderConversation(stakeholderID, callback){
+    let thisQuery = 'select conversation.question, conversation.conversation_text from conversation where conversation.stakeholder_id=$1'
+    pool.query(thisQuery, [stakeholderID], (error, results) => {
+        if (error){
+            throw error
+        }
+        return callback(results.rows)
+    })
 }
 
 function cb(results){
@@ -1266,6 +1372,8 @@ module.exports = {
     getFinalActionResponse,
     addStakeholderChoice,
     getStakeholderHistoryHelper,
-    convIdsToStakeholderIds,
-    getStakeholderHistory
+    getStakeholderHistory,
+    getScenarioIssueCoverageMatrix,
+    getScenarioSubmissions,
+    getStakeholderConversation
 }
