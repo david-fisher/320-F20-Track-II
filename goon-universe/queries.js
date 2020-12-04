@@ -982,7 +982,7 @@ function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, c
 async function getStakeholderHistoryHelper(studentID, scenarioID) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-    const selectResponseQuery = 'select id from response where submission_id=$1 and page_num=$2';
+    const selectResponseQuery = 'select id from response where submission_id=$1 and page_id=$2';
     const getConvsFromResponse = 'select stakeholder_id from conversation_choices where id=$1'
 	const client = await pool.connect();
 	try {
