@@ -16,7 +16,7 @@ const TextTypography = withStyles({
 
 const introText = "Please select the Stakeholder you would like to interact with...";
 
-const CONVERSATION_LIMIT = 2;
+
 
 function ellipses(str, cutoff) {
   let newStr = str;
@@ -34,25 +34,8 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
   const theme = useTheme();
   const [stakeholders, setStakeholders] = React.useState([])
   const [scenarios, setScenarios] = React.useContext(ScenariosContext);
-
-  React.useEffect(() => {
-    axios({
-      method: 'get',
-      url: BASE_URL + '/scenarios/stakeholders',
-      headers: {
-        scenarioID: scenarios.currentScenarioID,
-        studentID: STUDENT_ID
-      }
-    }).then(response => {
-      setStakeholders(response.data);
-    }).catch(err => {
-      console.log(err);
-      alert(err);
-    })
-  }, [scenarios])
-
-
-
+  const [conversationLimit, setConversationLimit] = React.useState(0);
+  const [stakeholdersDisabled, setStakeholdersDisabled] = React.useState({});
   const cardStyles = makeStyles({
     root: {
       width: 275,
@@ -70,25 +53,83 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
       color: '#c2c2c2'
     }
   });
-
-  const [modalOpenToggles, setModalOpenToggles] = React.useState(
-    stakeholders.reduce((obj, stakeholder) => {
-      obj[stakeholder.id] = false;
-      return obj;
-    }, {})
-  );
+  const [modalOpenToggles, setModalOpenToggles] = React.useState({});
   const [gatheredInfo, setGatheredInfo] = useContext(GatheredInfoContext);
   const [showStakeholders, setShowStakeholders] = React.useState(true);
   const [currentStakeholder, setCurrentStakeholder] = React.useState({});
   const [numStakeholderTalkedTo, setNumStakeholderTalkedTo] = React.useState(0);
-  const [stakeholdersDisabled, setStakeholdersDisabled] = React.useState(
-    stakeholders.reduce((obj, stakeholder) => {
-      obj[stakeholder.id] = false;
-      return obj;
-    }, {})
-  );
   const createdCardStyles = cardStyles();
   const stakeholdersGrid = getStakeholdersGrid(stakeholders);
+
+  React.useEffect(() => {
+    (async () => {
+      await axios({
+        method: 'get',
+        url: BASE_URL + '/scenarios/stakeholders',
+        headers: {
+          scenarioID: scenarios.currentScenarioID,
+          studentID: STUDENT_ID
+        }
+      }).then(response => {
+        setConversationLimit(response.data.conversation_limit)
+        const holders = response.data.stakeholders;
+        setStakeholders(holders);
+        setStakeholdersDisabled(prev => {
+          return holders.reduce((obj, stakeholder) => {
+            obj[stakeholder.id] = false;
+            return obj;
+          }, {});
+        });
+        setModalOpenToggles(prev => {
+          return holders.reduce((obj, stakeholder) => {
+            obj[stakeholder.id] = false;
+            return obj;
+          }, {});
+        });
+
+        axios({
+          method: 'get',
+          url: BASE_URL + '/scenarios/stakeholders/history',
+          headers: {
+            scenarioID: scenarios.currentScenarioID,
+            studentID: STUDENT_ID
+          }
+        }).then(histResponse => {
+          const history = histResponse.data;
+          setNumStakeholderTalkedTo(history.length);
+          if (history.length >= response.data.conversation_limit) {
+            setStakeholdersDisabled(prev => {
+              return holders.reduce((obj, stakeholder) => {
+                obj[stakeholder.id] = true;
+                return obj
+              }, {});
+            });
+          } else {
+            setStakeholdersDisabled(prev => {
+              let newDisabled = {...prev};
+              holders.forEach(stakeholder => {
+                let containsID = false;
+                for (let i = 0; i < history.length; ++i){
+                  if (stakeholder.id === history[i].stakeholder_id){
+                    containsID = true;
+                  }
+                }
+                if (containsID) {
+                  newDisabled[stakeholder.id] = true;
+                }
+              });
+              return newDisabled;
+            });
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+      }).catch(err => {
+        console.log(err);
+        alert(err);
+      });
+  })()
+  }, [scenarios])
  
 
   function getStakeholderCards(id, name, designation, description, styles) {
@@ -141,11 +182,11 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
                 }));
                 setStakeholdersDisabled(prev => {
                   let newStakeholdersDisabled = {...prev};
-                  if (numStakeholderTalkedTo + 1 >= CONVERSATION_LIMIT) {
+                  if (numStakeholderTalkedTo + 1 >= conversationLimit) {
                     for (const id in newStakeholdersDisabled) {
                       newStakeholdersDisabled[id] = true;
                     }
-                  } else {
+                  }else {
                     newStakeholdersDisabled[id] = true;
                   }
                   return newStakeholdersDisabled;
@@ -153,6 +194,18 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
                 setNumStakeholderTalkedTo(prev => {
                   return (prev + 1)
                 });
+                axios({
+                  method: 'put',
+                  url: BASE_URL + '/scenarios/stakeholders',
+                  data: {
+                    scenarioID: scenarios.currentScenarioID,
+                    studentID: STUDENT_ID,
+                    stakeholderID: id
+                  }
+                }).catch(err => {
+                  console.error(err);
+                  alert(err);
+                })
                 setShowStakeholders(false);
                 toggleModal(id, false);
                 setGatheredInfo(infos => {
@@ -230,7 +283,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
           <Grid item lg={12} md={12} sm={12}>
             <Box m="1rem" align={'center'}>
               <TextTypography>
-                You've spoken to <b>{numStakeholderTalkedTo} out of {CONVERSATION_LIMIT}</b> stakeholders</TextTypography>
+                You've spoken to <b>{numStakeholderTalkedTo} out of {conversationLimit}</b> stakeholders</TextTypography>
             </Box>
             <TextTypography variant="body1" align="center">
               {introText}

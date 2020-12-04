@@ -7,6 +7,10 @@ import {
   Button,
   makeStyles,
 } from "@material-ui/core";
+import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
+import axios from 'axios';
+import HTMLRenderer from "./components/htmlRenderer";
+import { ScenariosContext } from "../Nav";
 
 const TextTypography = withStyles({
   root: {
@@ -25,13 +29,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// placeholder text
-const introText = "Stakeholder's response";
-
 function Conversation({ showStakeholders, setShowStakeholders, stakeholder }) {
     function goToStakeholders() {
         setShowStakeholders(true);
     }
+
+    const [monologue, setMonologue] = React.useState('');
+    const [scenarios, setScenarios] = React.useContext(ScenariosContext);
+
+    React.useEffect(() => {
+      axios({
+        method: "get",
+        url: BASE_URL + "/scenarios/stakeholders/conversation",
+        headers: {
+          scenarioID: scenarios.currentScenarioID,
+          studentID: STUDENT_ID,
+          stakeholderID: stakeholder.id
+        },
+      })
+      .then((response) => {
+        console.log(response.data[0].conversation_text)
+        setMonologue(prev => response.data[0].conversation_text);
+        console.log(monologue)
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert(err);
+      });
+    }, [scenarios]);
   
     const classes = useStyles();
   
@@ -68,7 +93,7 @@ function Conversation({ showStakeholders, setShowStakeholders, stakeholder }) {
         <Grid container spacing={2}>
           <Grid item lg={12}>
             <Box p={2} className={classes.textBox}>
-              <TextTypography variant="body1">{introText}</TextTypography>
+              <HTMLRenderer html={monologue}/>
             </Box>
           </Grid>
         </Grid>
