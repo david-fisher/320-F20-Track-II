@@ -487,13 +487,12 @@ router.route('/scenarios/stakeholders/history')
         }
         else{
         db.getStakeholderHistory(studentID, scenarioID, function(result){
-            if(result.length == 0){
+            /*if(result.length == 0){
                 res.status(404).json({error: `No stakeholder history found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
             }
-            else{
-                res.status(200).json(result)
-                console.log("Got stakeholder history")
-            }
+            else*/
+            res.status(200).json(result)
+            console.log("Got stakeholder history")
         })
         }
 
