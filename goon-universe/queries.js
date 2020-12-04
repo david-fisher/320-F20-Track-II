@@ -922,9 +922,9 @@ function getFinalActionResponse(studentID, scenarioID, callback){
 async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
-    const insertResponseQuery = 'INSERT INTO response(submission_id, page_num, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_num) DO UPDATE SET TIME = $3 RETURNING id';
-    const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
-    const insertStakeholderChoiceQuery='insert into conversation_choices(id, conversation_id) VALUES ($1, $2)';
+    const insertResponseQuery = 'INSERT INTO response(submission_id, page_id, time) VALUES ($1, $2, $3) ON CONFLICT (submission_id, page_id) DO UPDATE SET TIME = $3 RETURNING id';
+    //const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
+    const insertStakeholderChoiceQuery='insert into conversation_choices(id, stakeholder_id) VALUES ($1, $2)'; // FIX DOWNSTREAM
 	const client = await pool.connect();
 	try {
 		await client.query("BEGIN");
@@ -932,13 +932,13 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
 		let pageID = pageSelection.rows[0].id;
 		const submissionSelection = await client.query(selectSubmissionsQuery, [scenarioID, studentID]);
         let submissionID = submissionSelection.rows[0].id;
-        const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
-		let convID = convIdSelection.rows[0].id;
+        //const convIdSelection = await client.query(getConvIdQuery, [stakeholderID]);
+		//let convID = convIdSelection.rows[0].id;
 		// RETURNING clause returns ID at the same time
 		const responseCreation = await client.query(insertResponseQuery, [submissionID, pageID, timestamp]);
         let responseID = responseCreation.rows[0].id;
         
-		await client.query(insertStakeholderChoiceQuery, [responseID, convID]);
+		await client.query(insertStakeholderChoiceQuery, [responseID, stakeholderID]);
         await client.query("COMMIT");
 	} catch (e) {
 		await client.query("ROLLBACK");
@@ -956,7 +956,7 @@ async function getStakeholderHistoryHelper(studentID, scenarioID) {
 	const selectPageQuery = 'select id from pages where pages.scenario_id=$1 and pages.order=$2';
 	const selectSubmissionsQuery = 'select id from submissions where submissions.scenario_id=$1 and submissions.user_id=$2';
     const selectResponseQuery = 'select id from response where submission_id=$1 and page_num=$2';
-    const getConvsFromResponse = 'select conversation_id from conversation_choices where id=$1'
+    const getConvsFromResponse = 'select stakeholder_id from conversation_choices where id=$1'
 	const client = await pool.connect();
 	try {
 		const pageSelection = await client.query(selectPageQuery, [scenarioID, CONVERSATION]);
