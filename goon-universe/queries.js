@@ -161,9 +161,14 @@ async function getStakeholdersHelper(scenarioID){
     const stakeholderListQuery= 'select stakeholders.name, stakeholders.id, stakeholders.designation, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
     let stakeholderLimitResult = pool.query(stakeholderLimitQuery, [scenarioID])
     let stakeholderListResult = pool.query(stakeholderListQuery, [scenarioID])
+    let stakeholderList = (await stakeholderListResult).rows
+    if (stakeholderList.length === 0) {
+        return {}
+    }
+    let stakeholderLimit = await stakeholderLimitResult
     let resultObject = {
-        conversation_limit: (await stakeholderLimitResult).rows[0].conversation_limit,
-        stakeholders: (await stakeholderListResult).rows
+        conversation_limit: stakeholderLimit.rows[0].conversation_limit,
+        stakeholders: stakeholderList
     }
     return resultObject
 }

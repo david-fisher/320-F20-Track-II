@@ -511,7 +511,7 @@ router.route('/scenarios/stakeholders')
         }
         else{
         db.getStakeholders(scenarioID, function(result){
-            if(result.length == 0){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No stakeholders found for scenarioID: ${scenarioID}`})
             }
             else{
