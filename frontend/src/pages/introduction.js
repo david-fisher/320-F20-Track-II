@@ -41,13 +41,14 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
         copy.projectAssignment.visited = true;
         return copy;
       });
+      setGatheredInfo(infos => {
+        let newInfos = [...infos];
+        newInfos.push({id: 'page', name: 'Project Assignment', pageId: 'projectAssignment'});
+        return newInfos;
+      });
     }
     setActivePage((prevPage) => "projectAssignment");
-    setGatheredInfo(infos => {
-      let newInfos = [...infos];
-      newInfos.push({id: 'page', name: 'Project Assignment', pageId: 'projectAssignment'});
-      return newInfos;
-    });
+
   }
 
   const [introText, setIntroText] = React.useState('');

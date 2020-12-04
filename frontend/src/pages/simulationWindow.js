@@ -62,7 +62,6 @@ function SimulationWindow() {
       });
     });
 
-    if (DEV_MODE) {
       axios({
         method: 'get',
         url: BASE_URL + '/scenarios',
@@ -79,7 +78,6 @@ function SimulationWindow() {
       }).catch(err => {
         console.error(err);
       });
-    }
   }, []) // only fire once
 
   return (
