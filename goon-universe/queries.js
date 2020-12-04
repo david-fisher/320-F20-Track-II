@@ -995,7 +995,9 @@ async function convIdsToStakeholderIds(convIds){
 }
 
 function getStakeholderHistory(studentID, scenarioID, callback){
-    getStakeholderHistoryHelper(studentID, scenarioID).then((result) => convIdsToStakeholderIds(result).then(result2 => callback(result2)) )
+    getStakeholderHistoryHelper(studentID, scenarioID)
+            .then((result) => convIdsToStakeholderIds(result))
+            .then((result2) => callback(result2)) 
 }
 
 async function getScenarioIssueCoverageMatrix(scenarioID, callback){
