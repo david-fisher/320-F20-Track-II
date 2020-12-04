@@ -72,7 +72,8 @@ CREATE TABLE "pages" (
 	"order" INT NOT NULL,
 	"type" CHAR(5) NOT NULL,
 	"body_text" VARCHAR NOT NULL,
-	"scenario_id" INT REFERENCES scenario
+	"scenario_id" INT REFERENCES scenario,
+	UNIQUE("scenario_id", "order")
 );
 
 CREATE TABLE "prompt" (
@@ -84,7 +85,8 @@ CREATE TABLE "prompt" (
 
 CREATE TABLE "conversation_task" (
 	"page_id" INT REFERENCES pages PRIMARY KEY,
-	"conversation_limit" INT NOT NULL CHECK("conversation_limit" > 0)
+	"conversation_limit" INT NOT NULL CHECK("conversation_limit" > 0),
+	UNIQUE("page_id", "conversation_limit")
 );
 
 CREATE TABLE "stakeholders" (
