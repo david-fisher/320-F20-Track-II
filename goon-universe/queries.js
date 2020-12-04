@@ -938,7 +938,8 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
     //const getConvIdQuery = 'select id from conversation where stakeholder_id=$1';
     const checkStakeholderQuery = 'SELECT * FROM stakeholders WHERE stakeholders.id=$1'
     const checkStakeholderChoiceQuery = 'SELECT * FROM conversation_choices WHERE id=$1 AND stakeholder_id=$2'
-    const insertStakeholderChoiceQuery='insert into conversation_choices(id, stakeholder_id) VALUES ($1, $2)'; // FIX DOWNSTREAM
+    const insertStakeholderChoiceQuery='insert into conversation_choices(id, stakeholder_id) VALUES ($1, $2)';
+
 	const client = await pool.connect();
 	try {
 		await client.query("BEGIN");
@@ -957,13 +958,13 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
         
         const stakeholderExistsCheck = await client.query(checkStakeholderQuery, [stakeholderID]);
         if (stakeholderExistsCheck.rows.length === 0) {
+            await client.query("ROLLBACK")
             return ""
         }
         const stakeholderChoiceExistsCheck = await client.query(checkStakeholderChoiceQuery, [responseID, stakeholderID]);
         if (stakeholderChoiceExistsCheck.rows.length === 0) {
-            return ""
+            await client.query(insertStakeholderChoiceQuery, [responseID, stakeholderID]);
         }
-		await client.query(insertStakeholderChoiceQuery, [responseID, stakeholderID]);
         await client.query("COMMIT");
         return SUCCESS
 	} catch (e) {
