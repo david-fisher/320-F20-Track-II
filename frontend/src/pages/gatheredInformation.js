@@ -7,7 +7,7 @@ const TextTypography = withStyles({
   }
 })(Typography);
 
-const introText = "Instructions to chosing Stakeholder";
+const introText = "You've chosen to delay starting the project in order to get more information. You realize that there are a number of stakeholders with whom you could have a face-to-face conversation with.\n\nThere is just enough time for you to hear from a select few different people and still complete your task assignment within the deadline. You should hear from at least one person.\n\nIn the following screen, you will be presented with several possible stakeholders. Each stakeholder that you choose to hear from will share their professional knowledge and opinions based on their individual perspective. Time is short, so be mindful of who is best positioned to fill in your understanding of the project and who will help you think critically about your assigned task.\n\nMake your selected on the next screen.";
 
 
 function GatheredInformation({pages, setPages, activePage, setActivePage}) {
@@ -53,9 +53,9 @@ function GatheredInformation({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container spacing={2}>
         <Grid item lg={12}>
-          <Box m="2rem">
+          <Box p={2}>
+            <TextTypography variant="body1" style={{whiteSpace: 'pre-wrap'}}>{introText}</TextTypography>
           </Box>
-            <TextTypography variant="body1" align="center">{introText}</TextTypography>
         </Grid>
       </Grid>
     </div>

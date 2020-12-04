@@ -11,6 +11,7 @@ import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
 import HTMLRenderer from './components/htmlRenderer';
 import { ScenariosContext } from "../Nav";
+import { GatheredInfoContext } from './simulationWindow';
 
 const TextTypography = withStyles({
   root: {
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Introduction({ pages, setPages, activePage, setActivePage }) {
+
+  const [gatheredInfo, setGatheredInfo] = React.useContext(GatheredInfoContext);
+
   function goToProjectAssignment() {
     if (!pages.projectAssignment.visited) {
       setPages((prevPages) => {
@@ -39,6 +43,11 @@ function Introduction({ pages, setPages, activePage, setActivePage }) {
       });
     }
     setActivePage((prevPage) => "projectAssignment");
+    setGatheredInfo(infos => {
+      let newInfos = [...infos];
+      newInfos.push({id: 'page', name: 'Project Assignment', pageId: 'projectAssignment'});
+      return newInfos;
+    });
   }
 
   const [introText, setIntroText] = React.useState('');

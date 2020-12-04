@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 import { makeStyles, List, ListItem, ListItemText, Button, Box, Typography} from '@material-ui/core';
 import { GatheredInfoContext } from '../simulationWindow';
 import PersonIcon from '@material-ui/icons/Person';
-import InfoModal from './infoModal'
+import InfoModal from './infoModal';
+import axios from 'axios';
+import { ScenariosContext } from '../../Nav';
+import {BASE_URL, STUDENT_ID} from "../../constants/config";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +31,8 @@ export default function InfoGatheredList({pages}) {
   // const inputText = "Some Text 123";
 
   let listContentById = {};
-  let [infos, setInfos] = useContext(GatheredInfoContext);
+  const [infos, setInfos] = useContext(GatheredInfoContext);
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
 
   /*  Retrieve the content to display for a given info button.
       If the info button onClick triggers an alert, this should be a string. If it's a modal popup, it should be html.
@@ -38,7 +42,18 @@ export default function InfoGatheredList({pages}) {
       const mockHttpRequest = async () => { // Simulating async retrieval of data
         switch (info.id) {
           case 'p0':
-            return (<Typography>A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc. \n\n A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc.\n\nA good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc. \n\n A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc.\n\nA good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc. \n\n A good place to start on this course is to look at the reasons why we should study it at all. To facilitate this, we look at a few scenarios. For each of these scenarios, you should write think about any questionable ethical issues about each scenario. At his point you may not be to answer them, but you might have your own opinion. Write this down as well you should revisit them after relevant section and see if your opinion has been affected. Hopefully these typical ethical questions illustrates to you the diverse characters of ethical issues including, property rights, privacy, free speech and professional ethics. Is computer ethics different to those that came before. Partially, the answer is no since all fields have similar problems and issue. Partially, the answer is also yes, since there are issuesspecific to computerssuch asspeed and programs etc.`</Typography>);
+            return (<Typography>placeholder</Typography>);
+          case 'page':
+            return axios({
+              method: 'get',
+              url: BASE_URL + '/scenarios/task',
+              headers: {
+                studentID: STUDENT_ID,
+                scenarioID: scenarios.currentScenarioID
+              }
+            }).then(response => {
+              return response.data[0].body_text;
+            });
           default:
             if (info.id.startsWith('stakeholder:')) {
               return (<Typography>a cool stakeholder</Typography>);
@@ -50,7 +65,7 @@ export default function InfoGatheredList({pages}) {
         .then(res => {
           listContentById[info.id] = res;
           return res;
-        });
+        }).catch(err => console.error(err));
     } else {
       return listContentById[info.id];
     }
