@@ -6,7 +6,7 @@ import { GatheredInfoContext } from './simulationWindow';
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
 import Conversation from './conversation';
-import HTMLRenderer from './components/htmlRenderer';
+import { ScenariosContext } from "../Nav";
 
 const TextTypography = withStyles({
   root: {
@@ -15,17 +15,8 @@ const TextTypography = withStyles({
 })(Typography);
 
 const introText = "Please select the Stakeholder you would like to interact with...";
-const stakeholders = [
-  { name: 'Bob Smith', description: 'I am Bob Smith' , id: 0, background: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'},
-  { name: 'b', description: 'I am stakeholder b' , id: 1, background: 'really cool background for stakeholder B this is not placeholder data'.repeat(2)},
-  { name: 'c', description: 'I am stakeholder c' , id: 2, background: 'really cool background for stakeholder C this is not placeholder data'},
-  { name: 'd', description: 'I am stakeholder d' , id: 3, background: 'really cool background for stakeholder D this is not placeholder data'},
-  { name: 'e', description: 'I am stakeholder e' , id: 4, background: 'really cool background for stakeholder E this is not placeholder data'},
-  { name: 'f', description: 'I am stakeholder f' , id: 5, background: 'really cool background for stakeholder F this is not placeholder data'},
-  { name: 'g', description: 'I am stakeholder g' , id: 6, background: 'really cool background for stakeholder G this is not placeholder data'},
-  { name: 'h', description: 'I am stakeholder h' , id: 7, background: 'abc'}
-  ];
-const CONVERSATION_LIMIT = 2;
+
+
 
 function ellipses(str, cutoff) {
   let newStr = str;
@@ -41,7 +32,10 @@ function ellipses(str, cutoff) {
 
 function Stakeholders({ pages, setPages, activePage, setActivePage }) {
   const theme = useTheme();
-
+  const [stakeholders, setStakeholders] = React.useState([])
+  const [scenarios, setScenarios] = React.useContext(ScenariosContext);
+  const [conversationLimit, setConversationLimit] = React.useState(0);
+  const [stakeholdersDisabled, setStakeholdersDisabled] = React.useState({});
   const cardStyles = makeStyles({
     root: {
       width: 275,
@@ -59,28 +53,86 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
       color: '#c2c2c2'
     }
   });
-
-  const [modalOpenToggles, setModalOpenToggles] = React.useState(
-    stakeholders.reduce((obj, stakeholder) => {
-      obj[stakeholder.id] = false;
-      return obj;
-    }, {})
-  );
+  const [modalOpenToggles, setModalOpenToggles] = React.useState({});
   const [gatheredInfo, setGatheredInfo] = useContext(GatheredInfoContext);
   const [showStakeholders, setShowStakeholders] = React.useState(true);
   const [currentStakeholder, setCurrentStakeholder] = React.useState({});
   const [numStakeholderTalkedTo, setNumStakeholderTalkedTo] = React.useState(0);
-  const [stakeholdersDisabled, setStakeholdersDisabled] = React.useState(
-    stakeholders.reduce((obj, stakeholder) => {
-      obj[stakeholder.id] = false;
-      return obj;
-    }, {})
-  );
+  const createdCardStyles = cardStyles();
   const stakeholdersGrid = getStakeholdersGrid(stakeholders);
+
+  React.useEffect(() => {
+    (async () => {
+      await axios({
+        method: 'get',
+        url: BASE_URL + '/scenarios/stakeholders',
+        headers: {
+          scenarioID: scenarios.currentScenarioID,
+          studentID: STUDENT_ID
+        }
+      }).then(response => {
+        setConversationLimit(response.data.conversation_limit)
+        const holders = response.data.stakeholders;
+        setStakeholders(holders);
+        setStakeholdersDisabled(prev => {
+          return holders.reduce((obj, stakeholder) => {
+            obj[stakeholder.id] = false;
+            return obj;
+          }, {});
+        });
+        setModalOpenToggles(prev => {
+          return holders.reduce((obj, stakeholder) => {
+            obj[stakeholder.id] = false;
+            return obj;
+          }, {});
+        });
+
+        axios({
+          method: 'get',
+          url: BASE_URL + '/scenarios/stakeholders/history',
+          headers: {
+            scenarioID: scenarios.currentScenarioID,
+            studentID: STUDENT_ID
+          }
+        }).then(histResponse => {
+          const history = histResponse.data;
+          setNumStakeholderTalkedTo(history.length);
+          if (history.length >= response.data.conversation_limit) {
+            setStakeholdersDisabled(prev => {
+              return holders.reduce((obj, stakeholder) => {
+                obj[stakeholder.id] = true;
+                return obj
+              }, {});
+            });
+          } else {
+            setStakeholdersDisabled(prev => {
+              let newDisabled = {...prev};
+              holders.forEach(stakeholder => {
+                let containsID = false;
+                for (let i = 0; i < history.length; ++i){
+                  if (stakeholder.id === history[i].stakeholder_id){
+                    containsID = true;
+                  }
+                }
+                if (containsID) {
+                  newDisabled[stakeholder.id] = true;
+                }
+              });
+              return newDisabled;
+            });
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+      }).catch(err => {
+        console.log(err);
+        alert(err);
+      });
+  })()
+  }, [scenarios])
  
 
-  function getStakeholderCards(id, name, description, background) {
-    const card = cardStyles();
+  function getStakeholderCards(id, name, designation, description, styles) {
     const PAGE_ID_OF_PAGE_BEFORE_CONVERSATIONS = 'gatheredInformation';
 
     function toggleModal(id, toggle) {
@@ -90,14 +142,14 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
         return newToggles;
       });
     }
-    let cardClass, nameClass, backgroundClass;
+    let cardClass, nameClass, descriptionClass;
     if (stakeholdersDisabled[id]) {
-      cardClass = `${card.root} ${card.disabled}`;
-      nameClass = backgroundClass = card.disabled;
+      cardClass = `${styles.root} ${styles.disabled}`;
+      nameClass = descriptionClass = styles.disabled;
     } else {
-      cardClass = card.root;
-      nameClass = card.name;
-      backgroundClass = card.background;
+      cardClass = styles.root;
+      nameClass = styles.name;
+      descriptionClass = styles.background;
     }
     return (
       <>
@@ -108,10 +160,10 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
                 {name}
               </Typography>
               <Typography variant="body1" component="p" align='left'>
-                {description}
+                {designation}
               </Typography>
-              <Typography variant="body2" component="p" align='left' className={backgroundClass}>
-                {ellipses(background, 87)}
+              <Typography variant="body2" component="p" align='left' className={descriptionClass}>
+                {ellipses(description, 87)}
               </Typography>
             </CardContent>
           </Card>
@@ -122,7 +174,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
           maxWidth = {'md'}
           >
           <DialogContent>
-            <HTMLRenderer html={background}/>
+            <DialogContentText color = "#000000">{description}</DialogContentText>
             <Button variant="contained" onClick={() => {
                 setCurrentStakeholder(prev => ({
                   name: name,
@@ -130,11 +182,11 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
                 }));
                 setStakeholdersDisabled(prev => {
                   let newStakeholdersDisabled = {...prev};
-                  if (numStakeholderTalkedTo + 1 >= CONVERSATION_LIMIT) {
+                  if (numStakeholderTalkedTo + 1 >= conversationLimit) {
                     for (const id in newStakeholdersDisabled) {
                       newStakeholdersDisabled[id] = true;
                     }
-                  } else {
+                  }else {
                     newStakeholdersDisabled[id] = true;
                   }
                   return newStakeholdersDisabled;
@@ -142,6 +194,18 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
                 setNumStakeholderTalkedTo(prev => {
                   return (prev + 1)
                 });
+                axios({
+                  method: 'put',
+                  url: BASE_URL + '/scenarios/stakeholders',
+                  data: {
+                    scenarioID: scenarios.currentScenarioID,
+                    studentID: STUDENT_ID,
+                    stakeholderID: id
+                  }
+                }).catch(err => {
+                  console.error(err);
+                  alert(err);
+                })
                 setShowStakeholders(false);
                 toggleModal(id, false);
                 setGatheredInfo(infos => {
@@ -161,7 +225,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
 
   function getStakeholdersGrid(stakeholders) {
     let items = stakeholders.map(stakeholder => getStakeholderCards(
-      stakeholder.id, stakeholder.name, stakeholder.description, stakeholder.background));
+      stakeholder.id, stakeholder.name, stakeholder.designation, stakeholder.description, createdCardStyles));
     return (
       <div>
         <Grid container spacing={3} justify={'center'}>
@@ -219,7 +283,7 @@ function Stakeholders({ pages, setPages, activePage, setActivePage }) {
           <Grid item lg={12} md={12} sm={12}>
             <Box m="1rem" align={'center'}>
               <TextTypography>
-                You've spoken to <b>{numStakeholderTalkedTo} out of {CONVERSATION_LIMIT}</b> stakeholders</TextTypography>
+                You've spoken to <b>{numStakeholderTalkedTo} out of {conversationLimit}</b> stakeholders</TextTypography>
             </Box>
             <TextTypography variant="body1" align="center">
               {introText}
