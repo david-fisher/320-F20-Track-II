@@ -325,7 +325,7 @@ router.route('/scenarios/initialAction/response')
         }   
         else{
         db.getInitActionResponse(studentID, scenarioID, function(result){
-            if(result == null) {
+            if(result.length == 0) {
                 res.status(404).json({error: `No initial action response found with one or both of the ID's`});
             }
             else{
@@ -436,7 +436,7 @@ router.route('/scenarios/finalAction/response')
         }   
         else{
         db.getFinalActionResponse(studentID, scenarioID, function(result){
-            if(result == null) {
+            if(result.length == 0) {
                 res.status(404).json({error: `No final action response found with one or both of the ID's`});
             }
             else{
@@ -486,14 +486,13 @@ router.route('/scenarios/stakeholders/history')
             res.end()
         }
         else{
-        db.getStakeholderHistory(scenarioID, studentID, function(result){
-            if(result.length == 0){
+        db.getStakeholderHistory(studentID, scenarioID, function(result){
+            /*if(result.length == 0){
                 res.status(404).json({error: `No stakeholder history found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
             }
-            else{
-                res.status(200).json(result)
-                console.log("Got stakeholder history")
-            }
+            else*/
+            res.status(200).json(result)
+            console.log("Got stakeholder history")
         })
         }
 
@@ -511,7 +510,7 @@ router.route('/scenarios/stakeholders')
         }
         else{
         db.getStakeholders(scenarioID, function(result){
-            if(result.length == 0){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No stakeholders found for scenarioID: ${scenarioID}`})
             }
             else{
@@ -543,9 +542,9 @@ router.route('/scenarios/stakeholders')
         }
         else {
             timestamp = new Date()
-            db.addStakeholderChoice(studentID, stakeholderID, scenarioID, timestamp, function(result){
+            db.addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, function(result){
                 if(result.length === 0){
-                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                    res.status(404).json({error: `student ID, scenario ID or stakeholder ID does not exist in database`})
                 }
                 else{
                     res.status(200).send(result)
@@ -558,21 +557,15 @@ router.route('/scenarios/stakeholders')
 router.route('/scenarios/stakeholders/conversation')
 
     .get(function(req, res){
-        scenarioID = req.get('scenarioid')
         stakeholderID = req.get('stakeholderid')
-        if(!isnumber(scenarioID)){
-            res.status(400).json({error: `Invalid Scenario ID: ${scenarioID}`})
-            console.log("Invalid scenario ID")
-            res.end()
-        }
-        else if(!isnumber(stakeholderID)){
+        if(!isnumber(stakeholderID)){
             res.status(400).json({error: `Invalid Stakeholder ID: ${stakeholderID}`})
             console.log("Invalid stakeholder ID")
             res.end()
         }
         else{
-        db.getStakeholderConversation(scenarioID, stakeholderID, function(result){
-            if(result.length == 0){
+        db.getStakeholderConversation(stakeholderID, function(result){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No conversation found for scenarioID: ${scenarioID} and stakeholderid: ${stakeholderID}`})
             }
             else{
