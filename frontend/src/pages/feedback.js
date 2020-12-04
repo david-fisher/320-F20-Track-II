@@ -1,6 +1,7 @@
 import React from "react";
 import { withStyles,Typography, Box, Grid, Button} from "@material-ui/core";
 import Radar from "./chart/chart";
+import ScrollableTabsButtonAuto from "./components/feedback_tabs";
 
 const TextTypography = withStyles({
   root: {
@@ -67,6 +68,11 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
             transition, or we risk empowering the grimmer side of our nature,
             rather than the brighter.
           </TextTypography>
+        </Grid>
+      </Grid>
+      <Grid container spacing={2}>
+        <Grid lg={12}>
+          <ScrollableTabsButtonAuto/>
         </Grid>
       </Grid>
     </div>
