@@ -325,7 +325,7 @@ router.route('/scenarios/initialAction/response')
         }   
         else{
         db.getInitActionResponse(studentID, scenarioID, function(result){
-            if(result == null) {
+            if(result.length == 0) {
                 res.status(404).json({error: `No initial action response found with one or both of the ID's`});
             }
             else{
@@ -436,7 +436,7 @@ router.route('/scenarios/finalAction/response')
         }   
         else{
         db.getFinalActionResponse(studentID, scenarioID, function(result){
-            if(result == null) {
+            if(result.length == 0) {
                 res.status(404).json({error: `No final action response found with one or both of the ID's`});
             }
             else{

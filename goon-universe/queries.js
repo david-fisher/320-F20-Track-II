@@ -892,26 +892,31 @@ function loadScenarioCSV(scenario_csv_string){
     
 }
 
-async function getMCQResponse(pageOrder,submissionID, questionID){
-    const thisQuery='select response.*, mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_id=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id AND mcq_response.question_id=$3'
+// Was submissionID and questionID
+async function getMCQResponse(pageOrder,studentID, scenarioID){
+    const getSubmissionIDQuery='SELECT submissions.id FROM users, scenario, submissions WHERE submissions.user_id=users.id AND submissions.scenario_id=scenario.id AND users.id=$1 AND scenario.id=$2'
+    const mcqResponseQuery='select mcq_response.* from response, mcq_response, pages where pages.order=$1 AND response.page_id=pages.id AND response.submission_id=$2 AND response.id=mcq_response.id'
     const client = await pool.connect();
     try {
-        const queryReturn= await client.query(thisQuery, [pageOrder, submissionID, questionID]);
-        let mcqResponse=queryReturn.rows[0];
-        return mcqResponse;
+        await client.query("BEGIN")
+        const submissionIDResult = await client.query(getSubmissionIDQuery, [studentID, scenarioID]);
+        const submissionID = submissionIDResult.rows[0].id
+        const queryReturn = await client.query(mcqResponseQuery, [pageOrder, submissionID]);
+        await client.query("COMMIT")
+        return queryReturn.rows;
     } catch (e) {
+        await client.query("ROLLBACK")
         throw e;
-
     } finally {
         client.release();
     }
 }
-function getInitActionResponse(submissionID, questionID, callback){
-    getMCQResponse(INIT_ACTION,submissionID, questionID).then((result) => callback(result));
+function getInitActionResponse(studentID, scenarioID, callback){
+    getMCQResponse(INIT_ACTION, studentID, scenarioID).then((result) => callback(result));
 }
 
-function getFinalActionResponse(submissionID, questionID, callback){
-    getMCQResponse(FINAL_ACTION,submissionID, questionID).then((result) => callback(result));
+function getFinalActionResponse(studentID, scenarioID, callback){
+    getMCQResponse(FINAL_ACTION, studentID, scenarioID).then((result) => callback(result));
 }
 
 async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp) {
