@@ -156,15 +156,22 @@ function getFinalReflectResponse(studentID, scenarioID, callback) {
 }
 
 //Get the names, ids, and descriptions of each stakeholder in a scenario
-function getStakeholders(scenarioID, callback){
-    let thisQuery= 'select stakeholders.name, stakeholders.id, stakeholders.designation, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
-    pool.query(thisQuery, [scenarioID], (error,results) => {
-        if (error) {
-            throw error
-        }
-        callback(results.rows)
-    }) 
+async function getStakeholdersHelper(scenarioID){
+    const stakeholderLimitQuery='SELECT conversation_task.conversation_limit FROM pages, conversation_task WHERE pages.scenario_id=$1 AND conversation_task.page_id=pages.id'
+    const stakeholderListQuery= 'select stakeholders.name, stakeholders.id, stakeholders.designation, stakeholders.description from stakeholders where stakeholders.scenario_id =$1'
+    let stakeholderLimitResult = pool.query(stakeholderLimitQuery, [scenarioID])
+    let stakeholderListResult = pool.query(stakeholderListQuery, [scenarioID])
+    let resultObject = {
+        conversation_limit: (await stakeholderLimitResult).rows[0].conversation_limit,
+        stakeholders: (await stakeholderListResult).rows
+    }
+    return resultObject
 }
+
+function getStakeholders(scenarioID, callback) {
+    getStakeholdersHelper(scenarioID).then((res) => callback(res))
+}
+
 function getName(userID, callback){
     let thisQuery= 'select users.full_name from users where id =$1'
     pool.query(thisQuery, [userID], (error,results) => {

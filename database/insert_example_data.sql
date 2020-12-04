@@ -113,7 +113,7 @@ INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option B', 3);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option C', 3);
 INSERT INTO mcq_option VALUES(DEFAULT, '(S2) MCQ (1) option D', 3);
 
-INSERT INTO conversation_task VALUES(10,1); -- ??
+--INSERT INTO conversation_task VALUES(10,1); -- ??
 -- Enter pages here?
 INSERT INTO pages VALUES(DEFAULT, 7, 'PRMPT', 'Body text before middle reflection', 2) RETURNING id \gset scenario_2_mid_reflect_
 INSERT INTO prompt VALUES(:scenario_2_mid_reflect_id, 'prompt: s2 middle reflection', 1);
