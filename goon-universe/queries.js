@@ -940,9 +940,7 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
         
 		await client.query(insertStakeholderChoiceQuery, [responseID, convID]);
         await client.query("COMMIT");
-        callback("SUCCESS");
 	} catch (e) {
-        callback("ROLLBACK");
 		await client.query("ROLLBACK");
 		throw e;
 	} finally {
