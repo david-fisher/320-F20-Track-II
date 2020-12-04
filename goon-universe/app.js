@@ -545,7 +545,7 @@ router.route('/scenarios/stakeholders')
             timestamp = new Date()
             db.addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, function(result){
                 if(result.length === 0){
-                    res.status(404).json({error: `student ID or scenario ID does not exist in database`})
+                    res.status(404).json({error: `student ID, scenario ID or stakeholder ID does not exist in database`})
                 }
                 else{
                     res.status(200).send(result)
