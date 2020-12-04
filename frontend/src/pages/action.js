@@ -4,6 +4,7 @@ import Checkbox from "./components/checkbox";
 import { BASE_URL, STUDENT_ID, SCENARIO_ID } from "../constants/config";
 import axios from 'axios';
 import { ScenariosContext } from "../Nav";
+import HTMLRenderer from "./components/htmlRenderer";
 
 // const useStyles = makeStyles((theme) => ({
 //   root: {
@@ -100,9 +101,7 @@ function Action({ pages, setPages, activePage, setActivePage, content_url, nextP
         <Grid item lg={12}>
           <Box m="2rem">
           </Box>
-          <TextTypography variant="body1" align="center">
-            {actionQuestion}
-          </TextTypography>
+          <HTMLRenderer html={actionQuestion}/>
         </Grid>
         <Grid item lg={12}>
           <Checkbox content_url = {content_url} nextPage={() => goToPage(nextPageID)} handleResponse={handleResponse} pages={pages} nextPageName={nextPageID} /> 
