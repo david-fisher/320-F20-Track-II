@@ -99,10 +99,10 @@ export default function ScrollableTabsButtonAuto() {
           <Tab label="The quandary..." {...a11yProps(0)} />
           <Tab label="Your information gathering and action taken..." {...a11yProps(1)} />
           <Tab label="Some hypothetical outcome of the proposed project" {...a11yProps(2)} />
-          <Tab label="Issue Four" {...a11yProps(3)} />
+          {/* <Tab label="Issue Four" {...a11yProps(3)} />
           <Tab label="Issue Five" {...a11yProps(4)} />
           <Tab label="Issue Six" {...a11yProps(5)} />
-          <Tab label="Issue Seven" {...a11yProps(6)} />
+          <Tab label="Issue Seven" {...a11yProps(6)} /> */}
         </Tabs>
       </AppBar>
       </Box>

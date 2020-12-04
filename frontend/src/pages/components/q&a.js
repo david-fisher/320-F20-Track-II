@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Grid, Typography , withStyles, Button, FormHelperText } from '@material-ui/core';
+import HTMLRenderer from "./htmlRenderer";
 
 const alignMiddle = {
   position: 'fixed',
@@ -79,9 +80,10 @@ export default function StateTextFields(props) {
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
         <Grid item lg={12}>
-          <TextTypography variant="body1" align="center">
+          {/* <TextTypography variant="body1" align="center">
             {header}
-          </TextTypography>
+          </TextTypography> */}
+          <HTMLRenderer html={header}/>
         </Grid>
         <Grid item lg={12}>
           <TextTypography variant="body1" align="center">
