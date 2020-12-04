@@ -946,7 +946,7 @@ async function addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, 
 }
 
 function addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, callback) {
-    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then((result) => callback(result))
+    addStakeholderChoiceHelper(studentID, scenarioID, stakeholderID, timestamp).then(() => callback(SUCCESS))
 }
 
 async function getStakeholderHistoryHelper(studentID, scenarioID) {

@@ -486,7 +486,7 @@ router.route('/scenarios/stakeholders/history')
             res.end()
         }
         else{
-        db.getStakeholderHistory(scenarioID, studentID, function(result){
+        db.getStakeholderHistory(studentID, scenarioID, function(result){
             if(result.length == 0){
                 res.status(404).json({error: `No stakeholder history found for scenarioID: ${scenarioID} and studentID: ${studentID}`})
             }
@@ -543,7 +543,7 @@ router.route('/scenarios/stakeholders')
         }
         else {
             timestamp = new Date()
-            db.addStakeholderChoice(studentID, stakeholderID, scenarioID, timestamp, function(result){
+            db.addStakeholderChoice(studentID, scenarioID, stakeholderID, timestamp, function(result){
                 if(result.length === 0){
                     res.status(404).json({error: `student ID or scenario ID does not exist in database`})
                 }
@@ -558,21 +558,15 @@ router.route('/scenarios/stakeholders')
 router.route('/scenarios/stakeholders/conversation')
 
     .get(function(req, res){
-        scenarioID = req.get('scenarioid')
         stakeholderID = req.get('stakeholderid')
-        if(!isnumber(scenarioID)){
-            res.status(400).json({error: `Invalid Scenario ID: ${scenarioID}`})
-            console.log("Invalid scenario ID")
-            res.end()
-        }
-        else if(!isnumber(stakeholderID)){
+        if(!isnumber(stakeholderID)){
             res.status(400).json({error: `Invalid Stakeholder ID: ${stakeholderID}`})
             console.log("Invalid stakeholder ID")
             res.end()
         }
         else{
-        db.getStakeholderConversation(scenarioID, stakeholderID, function(result){
-            if(result.length == 0){
+        db.getStakeholderConversation(stakeholderID, function(result){
+            if(Object.entries(result).length == 0){
                 res.status(404).json({error: `No conversation found for scenarioID: ${scenarioID} and stakeholderid: ${stakeholderID}`})
             }
             else{
