@@ -9,15 +9,15 @@ const TextTypography = withStyles({
 })(Typography);
 
 function Feedback({pages, setPages, activePage, setActivePage}) {
-  function goToResults(){
-    if (!pages.results.visited) {
+  function goToSummary(){
+    if (!pages.summary.visited) {
       setPages(prevPages => {
         let copy = {...prevPages};
-        copy.results.visited = true;
+        copy.summary.visited = true;
         return copy;
       });
     }
-    setActivePage(prevPage => 'results')
+    setActivePage(prevPage => 'summary')
   }
 
   function goToFinalReflection(){
@@ -44,7 +44,7 @@ function Feedback({pages, setPages, activePage, setActivePage}) {
       </Grid>
       <Grid container direction="row" justify="space-between">
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
-          <Button variant="contained" disableElevation onClick={goToResults}>Back</Button>
+          <Button variant="contained" disableElevation onClick={goToSummary}>Back</Button>
         </Grid>
         <Grid item style={{ marginRight: "0rem", marginTop: "-3rem" }}>
           <Button variant="contained" disableElevation color="primary" onClick={goToFinalReflection}>Next</Button>
