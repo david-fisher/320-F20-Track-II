@@ -96,21 +96,21 @@ function Nav() {
                       Home
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/summary">
+                  {/* <Link className={classes.link} to="/summary">
                     <Button className={classes.title} color="inherit">
                     Summary
                     </Button>
-                  </Link>
+                  </Link> */}
                   <Link className={classes.link} to="/simulation">
                     <Button className={classes.title} color="inherit">
                       Simulation Window
                     </Button>
                   </Link>
-                  <Link className={classes.link} to="/chartTest">
+                  {/* <Link className={classes.link} to="/chartTest">
                     <Button className={classes.title} color="inherit">
                       Chart
                     </Button>
-                  </Link>
+                  </Link> */}
                 </Typography>
                 <Button color="inherit">LogOut</Button>
               </Toolbar>
